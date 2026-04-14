@@ -1,0 +1,12 @@
+# 개인 설정 파일
+CLAUDE.local.md
+
+# 로컬 Claude Code 설정 (자동 생성)
+.claude/settings.local.json
+
+
+# 훅 임시 파일
+.claude/hooks/.task_start
+
+# Slack 봇 토큰 (민감 정보)
+.claude/hooks/slack-notify/notify.config.json
