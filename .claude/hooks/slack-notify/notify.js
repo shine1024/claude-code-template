@@ -4,6 +4,9 @@ const path     = require('path');
 const readline = require('readline');
 
 // ── 설정 로드 ──────────────────────────────────────────────────────────────
+// 프로젝트별 알림 비활성화: .claude/settings.local.json에 SLACK_NOTIFY_ENABLED=false 설정
+if (process.env.SLACK_NOTIFY_ENABLED === 'false') process.exit(0);
+
 // Bot Token: notify.config.json (팀 공유)
 const configPath = path.join(__dirname, 'notify.config.json');
 if (!fs.existsSync(configPath)) process.exit(0);
