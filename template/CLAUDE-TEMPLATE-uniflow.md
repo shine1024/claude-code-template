@@ -127,6 +127,11 @@ Controller (uniflow-web 또는 uniflow-mobile 모듈)
   - JSP와 HBS를 혼용하지 않는다 — 신규 화면은 HBS 기준으로 작성한다
 - **MyBatis Mapper 수정 시** XML 네임스페이스와 Mapper 인터페이스명 일치 여부를 반드시 확인한다
 - **SAP JCO 호출 시** `uni-rfc` 래퍼 클래스의 기존 패턴을 먼저 탐색하고, `JCoFunction`을 직접 사용하지 않는다
+- **DDL/DML 변경 이력**: `change-history/YYYYMMDD_설명.md`에 변경 내용을 기록한다
+- **설정 파일**: `application.properties`에 직접 값을 넣지 않는다 — pom.xml 프로파일로 관리
+- **응답 방식**: 한국어로 소통하며 짧고 간결하게 답한다 — 변경 내용 요약은 표 형식으로 작성한다
+- **에러 분석**: 스택트레이스 → 원인 클래스/메서드 특정 → 수정 방안 단계별 설명 후 적용
+- **git push 금지**: 사용자가 명시적으로 요청하지 않으면 실행하지 않는다
 
 ---
 
