@@ -35,3 +35,16 @@ claude-code-template/
     └── hooks/                       ← 이벤트 훅
 ```
 
+---
+
+## 3. 스킬 수정 시 체크리스트
+
+`.claude/skills/` 하위 스킬을 수정할 때는 아래 항목을 반드시 함께 확인합니다.
+
+| 변경 내용 | 함께 업데이트할 파일 |
+|-----------|---------------------|
+| `SKILL.md` 실행 절차 변경 | `guides/skills.md` |
+| 컬럼·설정 항목 변경 | `guides/skills.md` + 관련 `scripts/` |
+| 설정 방식 변경 (env, CLAUDE.local.md 등) | `guides/skills.md` + `README.md` |
+| 훅 스크립트 동작 변경 | `guides/hooks.md` |
+| 훅 설정 방식 변경 (env, config 등) | `guides/hooks.md` + `README.md` |

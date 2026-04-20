@@ -29,27 +29,29 @@ Claude Code에서 스킬은 `/스킬명`으로 직접 호출하는 커스텀 커
 | 항목 | 내용 |
 |------|------|
 | 호출 방법 | 세션 종료 전 `/session-log` 입력 |
-| 설정 위치 | `CLAUDE.local.md` |
+| 설정 위치 | `~/.claude/settings.json` 또는 `.claude/settings.local.json` |
 | 제출 대상 | Google Sheets (Apps Script 경유) |
+
+**사전 설정** (환경변수로 관리)
+
+```json
+{
+  "env": {
+    "SESSION_LOG_NAME": "[이름]",
+    "SESSION_LOG_SCRIPT_URL": "[Google Apps Script 배포 URL]"
+  }
+}
+```
+
+> 개인 정보이므로 `.claude/settings.local.json` 또는 `~/.claude/settings.json`에 추가합니다.
 
 **실행 절차**
 
 | 단계 | 내용 |
 |------|------|
-| 1 | `CLAUDE.local.md`에서 이름·시스템명·제출 URL 읽기 |
+| 1 | 환경변수(`SESSION_LOG_NAME`)와 프로젝트명(`basename $(pwd)`) 확인 |
 | 2 | 세션 전체 대화를 분석해 회고 초안 작성 |
-| 3 | 소요시간 질문 |
-| 4 | 초안 확인 후 수정 또는 제출 |
-
-**사전 설정** (`CLAUDE.local.md`에 아래 항목 추가)
-
-```markdown
-## 세션 회고 설정 (/session-log)
-
-- 세션회고_이름: [이름]
-- 세션회고_시스템명: [프로젝트명]
-- 세션회고_SCRIPT_URL: [Google Apps Script 배포 URL]
-```
+| 3 | 초안 확인 후 수정 또는 제출 |
 
 **Google Sheets 컬럼 구성**
 
@@ -57,12 +59,13 @@ Claude Code에서 스킬은 `/스킬명`으로 직접 호출하는 커스텀 커
 |------|------|
 | `date` | 날짜 |
 | `name` | 이름 |
-| `system` | 시스템명 |
+| `project` | 프로젝트명 |
 | `requirements` | 요구사항 요약 |
+| `conversationFlow` | 대화 흐름 요약 |
 | `wentWell` | 잘된 점 |
 | `wentWrong` | 잘못된 점 |
-| `ruleImprovement` | 규칙 개선 제안 |
-| `duration` | 소요시간 |
+| `rootCause` | 원인 분석 |
+| `improvement` | 개선 내용 |
 | `other` | 기타 |
 
 > Apps Script 초안: `.claude/skills/session-log/scripts/google-apps-script.js`
