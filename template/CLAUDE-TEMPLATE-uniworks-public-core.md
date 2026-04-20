@@ -115,17 +115,14 @@ Mapper XML 경로:
 
 ## 5. Claude 작업 지침
 
+> 공통 지침(순차 진행, 기존 패턴 탐색, 신규 화면 접근법, 응답 방식, 에러 분석, git push 금지)은 `CLAUDE-TEMPLATE.md` 참고
+
 - 이 프로젝트의 변경은 downstream(unidocu6-public-sap) 전체에 영향을 준다
   → `AbstractJAVAService`, `SapApiService`, Mapper 인터페이스 등 공개 API 수정 시 반드시 사용자에게 downstream 영향을 먼저 고지한다
 - 메서드 시그니처·클래스명 변경은 downstream 컴파일 오류를 유발할 수 있으므로 신중하게 진행한다
 - **Mapper XML 신규 작성 시** postgresql과 mariadb 양쪽 디렉터리에 모두 작성한다
 - **새로운 공통 기능 추가 시** downstream에서 실제로 필요한지 확인 후 진행한다
-- 프로젝트에 존재하지 않는 클래스·함수를 임의로 생성하지 않는다
-  → 불확실한 경우 기존 코드에서 실제 사용 중인 패턴을 먼저 탐색한다
 - **DB 벤더 판단**: 쿼리 작성 시 해당 환경의 `server/*.properties`에서 주석 해제된 `db.vendor` 값을 기준으로 한다
-- **응답 방식**: 한국어로 소통하며 짧고 간결하게 답한다 — 변경 내용 요약은 표 형식으로
-- **에러 분석**: 스택트레이스 → 원인 클래스/메서드 특정 → 수정 방안 단계별 설명 후 적용
-- **git push 금지**: 사용자가 명시적으로 요청하지 않으면 실행하지 않는다
 
 ---
 

@@ -118,9 +118,8 @@ Controller (uniflow-web 또는 uniflow-mobile 모듈)
 
 ## 5. Claude 작업 지침
 
-- 하나의 요청에 여러 기능이 포함된 경우, 기능 단위로 나눠 순차 진행한다
-- 프로젝트에 존재하지 않는 클래스·함수를 임의로 생성하지 않는다
-  → 불확실한 경우 기존 코드에서 실제 사용 중인 패턴을 먼저 탐색한다
+> 공통 지침(순차 진행, 기존 패턴 탐색, 신규 화면 접근법, 응답 방식, 에러 분석, git push 금지)은 `CLAUDE-TEMPLATE.md` 참고
+
 - **레이어 위치 규칙**: Controller는 web/mobile 모듈에, Service·Mapper는 server-common 모듈에 생성한다
 - **신규 화면 개발 시**:
   - HBS 파일은 `webjars/` 하위에 생성하고, 기존 유사 화면의 구조·JS 패턴을 먼저 탐색한다
@@ -129,9 +128,6 @@ Controller (uniflow-web 또는 uniflow-mobile 모듈)
 - **SAP JCO 호출 시** `uni-rfc` 래퍼 클래스의 기존 패턴을 먼저 탐색하고, `JCoFunction`을 직접 사용하지 않는다
 - **DDL/DML 변경 이력**: `change-history/YYYYMMDD_설명.md`에 변경 내용을 기록한다
 - **설정 파일**: `application.properties`에 직접 값을 넣지 않는다 — pom.xml 프로파일로 관리
-- **응답 방식**: 한국어로 소통하며 짧고 간결하게 답한다 — 변경 내용 요약은 표 형식으로 작성한다
-- **에러 분석**: 스택트레이스 → 원인 클래스/메서드 특정 → 수정 방안 단계별 설명 후 적용
-- **git push 금지**: 사용자가 명시적으로 요청하지 않으면 실행하지 않는다
 
 ---
 
