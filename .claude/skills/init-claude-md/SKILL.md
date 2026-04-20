@@ -5,21 +5,41 @@
 ### 1단계: 출력 경로 확인
 
 인수(args)가 있으면 해당 경로를 출력 디렉터리로 사용합니다.
-인수가 없으면 현재 작업 디렉터리(`pwd`)를 출력 디렉터리로 사용합니다.
+인수가 없으면 아래 메시지를 출력하고 경로 입력을 요청합니다. 경로를 받기 전까지 다음 단계로 진행하지 않습니다.
+
+```
+CLAUDE.md를 생성할 프로젝트 경로를 입력하세요:
+예) C:\intellij-workspace\uniflow
+```
 
 ### 2단계: 템플릿 목록 제시
 
-아래 템플릿 목록을 사용자에게 보여주고 선택을 요청합니다.
+아래 형식으로 출력하고 번호 입력을 요청합니다.
 
-| 번호 | 템플릿 | 대상 프로젝트 |
-|------|--------|--------------|
-| 1 | CLAUDE-TEMPLATE-uniflow.md | uniflow (전자결재) |
-| 2 | CLAUDE-TEMPLATE-uniworks-pce.md | unidocu6 (UniWorks PCE) |
-| 3 | CLAUDE-TEMPLATE-uniworks-pce-core.md | unidocu6-core (UniWorks PCE Core) |
-| 4 | CLAUDE-TEMPLATE-uniworks-pce-mobile.md | unidocu6-mobile (UniWorks PCE Mobile 프론트) |
-| 5 | CLAUDE-TEMPLATE-uniworks-pce-mobile-server.md | unidocu6-mobile-server (UniWorks PCE Mobile 백엔드) |
-| 6 | CLAUDE-TEMPLATE-uniworks-public.md | unidocu6-public-sap (UniWorks Public) |
-| 7 | CLAUDE-TEMPLATE-uniworks-public-core.md | unidocu6-public-sap-core (UniWorks Public Core) |
+```
+출력 경로: {출력 디렉터리}
+
+템플릿을 선택하세요 (번호 입력):
+
+| 번호 | 대상 프로젝트 |
+|------|--------------|
+| 1 | uniflow (전자결재) |
+| 2 | unidocu6 (UniWorks PCE) |
+| 3 | unidocu6-core (UniWorks PCE Core) |
+| 4 | unidocu6-mobile (UniWorks PCE Mobile 프론트) |
+| 5 | unidocu6-mobile-server (UniWorks PCE Mobile 백엔드) |
+| 6 | unidocu6-public-sap (UniWorks Public) |
+| 7 | unidocu6-public-sap-core (UniWorks Public Core) |
+```
+
+템플릿 파일명 매핑:
+- 1 → CLAUDE-TEMPLATE-uniflow.md
+- 2 → CLAUDE-TEMPLATE-uniworks-pce.md
+- 3 → CLAUDE-TEMPLATE-uniworks-pce-core.md
+- 4 → CLAUDE-TEMPLATE-uniworks-pce-mobile.md
+- 5 → CLAUDE-TEMPLATE-uniworks-pce-mobile-server.md
+- 6 → CLAUDE-TEMPLATE-uniworks-public.md
+- 7 → CLAUDE-TEMPLATE-uniworks-public-core.md
 
 ### 3단계: 템플릿 파일 읽기
 
@@ -36,7 +56,11 @@
 
 ### 5단계: 출력 경로 확인 및 파일 생성
 
-출력 경로에 이미 `CLAUDE.md`가 존재하는 경우, 덮어쓸지 사용자에게 확인합니다.
+출력 경로에 이미 `CLAUDE.md`가 존재하는 경우 아래 메시지를 출력하고 확인을 요청합니다.
+
+```
+{출력 경로}/CLAUDE.md 파일이 이미 존재합니다. 덮어쓸까요? (예/아니오)
+```
 
 확인되면 추출한 내용을 `{출력 디렉터리}/CLAUDE.md`로 저장합니다.
 

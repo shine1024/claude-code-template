@@ -118,7 +118,7 @@ Controller (uniflow-web 또는 uniflow-mobile 모듈)
 
 ## 5. Claude 작업 지침
 
-> 공통 지침(순차 진행, 기존 패턴 탐색, 신규 화면 접근법, 응답 방식, 에러 분석, git push 금지)은 `CLAUDE-TEMPLATE.md` 참고
+> 공통 지침(순차 진행, 기존 패턴 탐색, 신규 화면 접근법, 응답 방식, 에러 분석)은 `CLAUDE-TEMPLATE.md` 참고
 
 - **레이어 위치 규칙**: Controller는 web/mobile 모듈에, Service·Mapper는 server-common 모듈에 생성한다
 - **신규 화면 개발 시**:

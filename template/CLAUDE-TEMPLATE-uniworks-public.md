@@ -115,7 +115,7 @@ unidocu6-public-sap/             ← 단일 WAR 프로젝트
 
 ## 5. Claude 작업 지침
 
-> 공통 지침(순차 진행, 기존 패턴 탐색, 신규 화면 접근법, 응답 방식, 에러 분석, git push 금지)은 `CLAUDE-TEMPLATE.md` 참고
+> 공통 지침(순차 진행, 기존 패턴 탐색, 신규 화면 접근법, 응답 방식, 에러 분석)은 `CLAUDE-TEMPLATE.md` 참고
 
 - **신규 비즈니스 로직**은 `AbstractJAVAService`를 상속한 Service 클래스에 `FUNCTION_MODE` 분기로 구현한다
   → 기존 Service의 패턴을 먼저 탐색한 후 동일 방식으로 작성한다

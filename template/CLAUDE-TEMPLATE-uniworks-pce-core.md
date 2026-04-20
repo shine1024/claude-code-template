@@ -113,7 +113,7 @@ unidocu6-core/                   ← Maven 멀티 모듈 (parent POM)
 
 ## 5. Claude 작업 지침
 
-> 공통 지침(순차 진행, 기존 패턴 탐색, 신규 화면 접근법, 응답 방식, 에러 분석, git push 금지)은 `CLAUDE-TEMPLATE.md` 참고
+> 공통 지침(순차 진행, 기존 패턴 탐색, 신규 화면 접근법, 응답 방식, 에러 분석)은 `CLAUDE-TEMPLATE.md` 참고
 
 - 이 프로젝트의 변경은 downstream(unidocu6) 전체에 영향을 준다
   → `AbstractJAVAService`, `NamedService` 등 공개 API 수정 시 반드시 사용자에게 downstream 영향을 먼저 고지한다
