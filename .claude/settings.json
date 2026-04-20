@@ -3,10 +3,9 @@
     "allow": [
       "Bash(git:*)",
       "Bash(mvn:*)",
-      "Bash(chmod +x:*)",
+      "Bash(npm:*)",
       "Bash(node:*)",
-      "WebSearch",
-      "WebFetch(domain:docs.anthropic.com)"
+      "WebSearch"
     ],
     "deny": [
       "Bash(rm -rf:*)",
