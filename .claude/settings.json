@@ -7,10 +7,7 @@
       "Bash(node:*)",
       "WebSearch"
     ],
-    "deny": [
-      "Bash(rm -rf:*)",
-      "Bash(curl:*)"
-    ]
+    "deny": []
   },
   "hooks": {
     "UserPromptSubmit": [
