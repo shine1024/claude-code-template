@@ -11,6 +11,7 @@
 |------|------|
 | `CLAUDE.md` | Claude Code 프로젝트 지침 (git 커밋) |
 | `CLAUDE.local.md` | 개인 환경 설정 (.gitignore 추가) |
+| `.claude/sync.sh` | 각 프로젝트에서 `.claude/` 설정을 최신화하는 동기화 스크립트 |
 | `template/CLAUDE-TEMPLATE-*.md` | 프로젝트별 CLAUDE.md 템플릿 |
 | `basics/` | Claude Code 일반 교육자료 |
 | `guides/` | 이 템플릿 프로젝트 기능 가이드 문서 |
@@ -32,6 +33,7 @@ claude-code-template/
 ├── guides/                          ← 이 템플릿 프로젝트 기능 가이드 문서
 ├── reports/                         ← 피드백 분석 보고서 (git exclude — 로컬 전용)
 └── .claude/
+    ├── sync.sh                      ← 팀 설정 동기화 스크립트
     ├── rules/                       ← 관심사별 규칙 (세션 시작 시 자동 로드)
     ├── skills/                      ← 커스텀 슬래시 커맨드
     └── hooks/                       ← 이벤트 훅
