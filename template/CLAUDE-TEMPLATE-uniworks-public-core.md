@@ -115,8 +115,8 @@ Mapper XML 경로:
 
 ## 5. Claude 작업 지침
 
-> 공통 지침(순차 진행, 기존 패턴 탐색, 신규 화면 접근법, 응답 방식, 에러 분석)은 `CLAUDE-TEMPLATE.md` 참고
-
+- **RealGrid2 관련 API 탐색 시**: 함수 내부에 `gridObj._rg.*` 형태의 호출이 있으면 RealGrid2 공식 문서(https://docs.realgrid.com/)를 참조하여 최종 판단한다
+- **Mapper XML 작성 시**: 변환 패턴 결정 전 postgresql·mariadb 양쪽 디렉토리 전체 파일을 대조하여 예외 케이스를 확인한다
 - 이 프로젝트의 변경은 downstream(unidocu6-public-sap) 전체에 영향을 준다
   → `AbstractJAVAService`, `SapApiService`, Mapper 인터페이스 등 공개 API 수정 시 반드시 사용자에게 downstream 영향을 먼저 고지한다
 - 메서드 시그니처·클래스명 변경은 downstream 컴파일 오류를 유발할 수 있으므로 신중하게 진행한다

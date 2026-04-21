@@ -118,12 +118,12 @@ Controller (uniflow-web 또는 uniflow-mobile 모듈)
 
 ## 5. Claude 작업 지침
 
-> 공통 지침(순차 진행, 기존 패턴 탐색, 신규 화면 접근법, 응답 방식, 에러 분석)은 `CLAUDE-TEMPLATE.md` 참고
-
 - **레이어 위치 규칙**: Controller는 web/mobile 모듈에, Service·Mapper는 server-common 모듈에 생성한다
-- **신규 화면 개발 시**:
-  - HBS 파일은 `webjars/` 하위에 생성하고, 기존 유사 화면의 구조·JS 패턴을 먼저 탐색한다
+- **신규 화면(JS/HBS) 개발 시**:
+  - HBS 파일은 `webjars/` 하위에 생성하고, 같은 도메인의 기존 파일을 먼저 읽어 동일한 구조·네이밍·이벤트 바인딩 방식으로 작성한다. 독자적인 패턴 적용 금지
   - JSP와 HBS를 혼용하지 않는다 — 신규 화면은 HBS 기준으로 작성한다
+- **신규 URL/컨트롤러 생성 시**: 완료 후 인터셉터 제외 처리 필요 여부를 반드시 확인한다
+- **DB INSERT/UPDATE 구현 시**: 중복 데이터 처리 및 입력값 검증 로직을 포함한다
 - **MyBatis Mapper 수정 시** XML 네임스페이스와 Mapper 인터페이스명 일치 여부를 반드시 확인한다
 - **SAP JCO 호출 시** `uni-rfc` 래퍼 클래스의 기존 패턴을 먼저 탐색하고, `JCoFunction`을 직접 사용하지 않는다
 - **DDL/DML 변경 이력**: `change-history/YYYYMMDD_설명.md`에 변경 내용을 기록한다

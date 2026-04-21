@@ -14,6 +14,7 @@
 | `template/CLAUDE-TEMPLATE-*.md` | 프로젝트별 CLAUDE.md 템플릿 |
 | `basics/` | Claude Code 일반 교육자료 |
 | `guides/` | 이 템플릿 프로젝트 기능 가이드 문서 |
+| `reports/` | 피드백 분석 보고서 (git exclude — 로컬 전용) |
 | `.claude/rules/*.md` | 관심사별 규칙 — 세션 시작 시 자동 로드 |
 | `.claude/skills/` | 커스텀 슬래시 커맨드 |
 | `.claude/hooks/` | 이벤트 훅 스크립트 |
@@ -29,6 +30,7 @@ claude-code-template/
 ├── template/                        ← 프로젝트별 CLAUDE.md 템플릿
 ├── basics/                          ← Claude Code 일반 교육자료
 ├── guides/                          ← 이 템플릿 프로젝트 기능 가이드 문서
+├── reports/                         ← 피드백 분석 보고서 (git exclude — 로컬 전용)
 └── .claude/
     ├── rules/                       ← 관심사별 규칙 (세션 시작 시 자동 로드)
     ├── skills/                      ← 커스텀 슬래시 커맨드

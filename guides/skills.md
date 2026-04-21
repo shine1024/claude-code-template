@@ -38,8 +38,9 @@ Claude Code에서 스킬은 `/스킬명`으로 직접 호출하는 커스텀 커
 |------|------|
 | 1 | 출력 경로 확인 (인수 or 현재 디렉터리) |
 | 2 | 프로젝트 템플릿 목록 표시 → 번호 선택 |
-| 3 | 선택한 템플릿에서 `CLAUDE.md` 내용 추출 |
-| 4 | 출력 경로에 `CLAUDE.md` 생성 |
+| 3 | `CLAUDE-TEMPLATE.md`(공통 베이스) + 선택한 프로젝트 템플릿 두 파일 읽기 |
+| 4 | 프로젝트 템플릿 내용 + 공통 규칙 섹션 병합 |
+| 5 | 출력 경로에 `CLAUDE.md` 생성 |
 
 **사용 예시**
 
@@ -53,8 +54,7 @@ Claude Code에서 스킬은 `/스킬명`으로 직접 호출하는 커스텀 커
 2. 각 모듈 디렉터리에 모듈별 `CLAUDE.md` 생성 (템플릿 파일 하단 예시 참고)
 3. Claude가 틀린 결과를 낼 때마다 추가·수정
 
-> **주의**: 생성된 `CLAUDE.md`는 프로젝트 특화 규칙만 포함합니다.  
-> 공통 지침(응답 방식, 에러 분석 등)은 `CLAUDE-TEMPLATE.md`를 참고하여 필요 시 추가하세요.
+> 생성된 `CLAUDE.md`에는 프로젝트 특화 규칙과 공통 규칙(`CLAUDE-TEMPLATE.md`의 `## Claude 동작 규칙 (공통)` 섹션)이 자동으로 포함됩니다.
 
 ---
 
@@ -105,3 +105,50 @@ Claude Code에서 스킬은 `/스킬명`으로 직접 호출하는 커스텀 커
 | `other` | 기타 |
 
 > Apps Script 초안: `.claude/skills/session-log/scripts/google-apps-script.js`
+
+---
+
+### /analyze-feedback — 피드백 분석 및 규칙 개선안 도출
+
+**용도**: Google Sheets 작업세션 데이터를 분석해 CLAUDE.md 규칙 개선안을 보고서로 생성
+
+| 항목 | 내용 |
+|------|------|
+| 호출 방법 | `claude-code-template` 프로젝트에서 `/analyze-feedback` 입력 |
+| 출력 경로 | `reports/feedback-analysis-{YYYY-MM-DD}.md` |
+| 분석 대상 | Google Sheets "2) 작업세션 수집" 시트의 미분석 신규 행 |
+
+**사전 설정** (환경변수로 관리)
+
+```json
+{
+  "env": {
+    "GOOGLE_SERVICE_ACCOUNT_KEY_PATH": "[서비스 계정 JSON 키 파일 경로]",
+    "SHEETS_FEEDBACK_ID": "[Google Spreadsheet ID]"
+  }
+}
+```
+
+> Google Sheets 연동 설정 방법: [`guides/google-sheets-service-account.md`](google-sheets-service-account.md)
+
+**실행 절차**
+
+| 단계 | 내용 |
+|------|------|
+| 1 | 환경변수 확인 (`GOOGLE_SERVICE_ACCOUNT_KEY_PATH`, `SHEETS_FEEDBACK_ID`) |
+| 2 | 시트 데이터 조회 — "클로드 분석여부" 컬럼이 비어있는 행만 자동 필터링 |
+| 3 | 신규 행에 해당하는 프로젝트 템플릿 파일 읽기 |
+| 4 | 규칙 누락·미적용·신규 패턴·성공 패턴 분석 |
+| 5 | `reports/feedback-analysis-{날짜}.md` 보고서 생성 |
+| 6 | 사용자 확인 후 시트 "클로드 분석여부" 컬럼에 날짜 기입 |
+
+**분류 태그**
+
+| 태그 | 기준 |
+|------|------|
+| `[규칙-누락]` | 관련 규칙이 없어서 발생한 문제 |
+| `[규칙-미적용]` | 규칙이 있는데 Claude가 따르지 않은 경우 |
+| `[사용자-가이드]` | 규칙보다 사용자 프롬프트 방식으로 해결해야 할 것 |
+| `[정보-부족]` | 규칙 추가보다 참조 정보(함수 목록, 매핑표 등) 보완이 필요한 것 |
+
+> `reports/` 폴더는 git exclude 처리되어 로컬에만 저장됩니다.

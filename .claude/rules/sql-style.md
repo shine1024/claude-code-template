@@ -51,3 +51,28 @@
     DELETE 테이블명1
      WHERE COLUMN1 = '값1'
 ```
+
+---
+
+## PostgreSQL 전용 규칙
+
+MyBatis XML Mapper에서 PostgreSQL을 사용하는 경우 아래 규칙을 추가로 적용한다.
+
+- **테이블명·컬럼명은 큰따옴표(`"`)로 감싼다**
+  - PostgreSQL은 큰따옴표 없이 쓰면 소문자로 처리되어 식별자 불일치가 발생함
+  - 테이블: `"TB_USER_MASTER"`, 컬럼: `"PERNR"`, `"SNAME"` 등 UPPER_SNAKE_CASE
+- 테이블 alias는 짧은 대문자 사용: `UM`, `UA`, `T`, `R` 등
+- PostgreSQL 내장 함수도 대문자: `TO_CHAR()`, `CURRENT_DATE`, `CURRENT_TIME` 등
+- `IFNULL` 대신 `COALESCE` 사용, `CAST(... AS ...)` 대신 `::타입` 캐스팅 사용
+
+### PostgreSQL → MariaDB 변환 시 주요 차이점
+
+| 구분 | PostgreSQL | MariaDB |
+|------|-----------|---------|
+| 식별자 감싸기 | `"TB_NAME"` | `` `TB_NAME` `` |
+| 날짜 포맷 | `TO_CHAR(col, 'YYYY-MM-DD')` | `DATE_FORMAT(col, '%Y-%m-%d')` |
+| 날짜 파싱 | `TO_DATE(col, 'YYYYMMDD')` | `STR_TO_DATE(col, '%Y%m%d')` |
+| 현재 날짜/시간 | `CURRENT_DATE`, `CURRENT_TIME` | `CURDATE()`, `CURTIME()` |
+| 문자열 합치기 | `a \|\| b` | `CONCAT(a, b)` |
+| 타입 캐스팅 | `::VARCHAR` | `CAST(... AS CHAR)` |
+| NULL 처리 | `COALESCE` | `IFNULL` |

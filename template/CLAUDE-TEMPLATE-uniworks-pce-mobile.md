@@ -118,8 +118,7 @@ Redux Persist 비영속화 (blacklist): properties, searchParams
 
 ## 5. Claude 작업 지침
 
-> 공통 지침(순차 진행, 기존 패턴 탐색, 신규 화면 접근법, 응답 방식, 에러 분석)은 `CLAUDE-TEMPLATE.md` 참고
-
+- **RealGrid2 관련 API 탐색 시**: 함수 내부에 `gridObj._rg.*` 형태의 호출이 있으면 RealGrid2 공식 문서(https://docs.realgrid.com/)를 참조하여 최종 판단한다
 - **API 호출은 반드시 `useAxiosApi` 훅을 사용한다** — axios를 직접 import하지 않는다
 - **상태 변경은 Redux slice를 통한다** — 컴포넌트 로컬 상태는 화면 UI에만 사용한다
 - **신규 API 연동 시** `webpack.config.js` 프록시에 해당 엔드포인트가 등록되어 있는지 확인한다

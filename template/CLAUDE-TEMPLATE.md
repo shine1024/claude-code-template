@@ -54,3 +54,19 @@
 | `CLAUDE-TEMPLATE-uniworks-pce-mobile-server.md` | unidocu6-mobile-server (UniWorks PCE Mobile 백엔드) |
 | `CLAUDE-TEMPLATE-uniworks-public.md` | unidocu6-public-sap (UniWorks Public) |
 | `CLAUDE-TEMPLATE-uniworks-public-core.md` | unidocu6-public-sap-core (UniWorks Public Core) |
+
+---
+
+## Claude 동작 규칙 (공통)
+
+> 이 섹션은 `init-claude-md` 스킬이 생성된 CLAUDE.md에 자동으로 포함합니다.
+
+- 하나의 요청에 여러 기능이 포함된 경우, 기능 단위로 나눠 순차 진행한다
+- 프로젝트에 존재하지 않는 클래스·함수를 임의로 생성하지 않는다. 불확실한 경우 기존 코드에서 먼저 탐색한다
+- 신규 화면 개발 시 기존 유사 화면의 구조·패턴을 먼저 탐색하고 동일 방식으로 작성한다
+- 코드를 직접 읽기 전에는 동작 방식을 추측으로 설명하지 않는다
+- "일관된 패턴"을 근거로 변경을 적용하기 전 관련 파일 전체를 확인한다
+- 주석 처리된 코드는 사용자가 명시적으로 요청하지 않으면 활성화하지 않는다
+- 파일·코드를 이전 상태로 되돌리기 전, uncommitted 변경사항 유무를 확인하고 사용자에게 먼저 안내한다
+- 에러 분석: 스택트레이스 → 원인 클래스/메서드 특정 → 수정 방안 단계별 설명 후 적용
+- 응답 방식: 한국어로 소통하며 짧고 간결하게 답한다 — 변경 내용 요약은 표 형식으로

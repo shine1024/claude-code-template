@@ -120,8 +120,11 @@ unidocu6/                        ← 단일 WAR 프로젝트
 
 ## 5. Claude 작업 지침
 
-> 공통 지침(순차 진행, 기존 패턴 탐색, 신규 화면 접근법, 응답 방식, 에러 분석)은 `CLAUDE-TEMPLATE.md` 참고
-
+- **UI 이벤트·다이얼로그 처리 시**: UniWORKS 전용 함수를 우선 사용한다 (예: `unidocuConfirm()`)
+  → 존재 여부가 불확실한 함수는 코드베이스에서 먼저 검색 후 사용한다. 임의로 함수명을 만들지 않는다
+- **모듈 탐색 순서**: 고객사 전용 모듈(`{고객사}`) → servercore → clientcore → webjars 순으로 확인한다
+  → 1순위 모듈 확인 전 공통 모듈을 수정하지 않는다
+- **RealGrid2 관련 API 탐색 시**: 함수 내부에 `gridObj._rg.*` 형태의 호출이 있으면 RealGrid2 공식 문서(https://docs.realgrid.com/)를 참조하여 최종 판단한다
 - **신규 비즈니스 로직**은 `AbstractJAVAService`를 상속한 Service 클래스에 `FUNCTION_MODE` 분기로 구현한다
   → 기존 Service의 패턴을 먼저 탐색한 후 동일 방식으로 작성한다
 - **로컬 DB·MyBatis·@Transactional을 사용하지 않는다** — 데이터는 SAP RFC로만 처리한다
