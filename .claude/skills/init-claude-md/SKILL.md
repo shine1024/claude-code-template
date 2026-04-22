@@ -45,11 +45,14 @@ CLAUDE.md를 생성할 프로젝트 경로를 입력하세요:
 
 두 파일을 읽습니다.
 
-1. **공통 베이스**: `{Base directory}/../../template/CLAUDE-TEMPLATE.md`
-2. **프로젝트 템플릿**: 사용자가 선택한 번호에 해당하는 파일 `{Base directory}/../../template/{파일명}`
+1. **공통 베이스**: `$CLAUDE_CODE_TEMPLATE_PATH/template/CLAUDE-TEMPLATE.md`
+2. **프로젝트 템플릿**: 사용자가 선택한 번호에 해당하는 파일 `$CLAUDE_CODE_TEMPLATE_PATH/template/{파일명}`
 
-> Base directory는 스킬 실행 시 상단에 표시됩니다. (예: `D:\claude-code-template\.claude\skills\init-claude-md`)
-> 템플릿 경로 = Base directory에서 두 단계 상위의 `template/` 폴더
+> `CLAUDE_CODE_TEMPLATE_PATH` 환경변수가 없으면 아래 메시지를 출력하고 중단합니다.
+> ```
+> ❌ CLAUDE_CODE_TEMPLATE_PATH 환경변수가 설정되어 있지 않습니다.
+> .claude/settings.local.json 의 env 항목에 추가해주세요.
+> ```
 
 ### 4단계: CLAUDE.md 내용 추출 및 병합
 

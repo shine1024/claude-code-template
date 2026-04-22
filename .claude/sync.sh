@@ -12,7 +12,7 @@ SETTINGS_FILE="$SCRIPT_DIR/settings.local.json"
 if [ ! -f "$SETTINGS_FILE" ]; then
   echo "❌ .claude/settings.local.json 파일이 없습니다. 아래 내용으로 생성해주세요."
   echo ""
-  echo '{ "CLAUDE_CODE_TEMPLATE_PATH": "C:/your-path/claude-code-template" }'
+  echo '{ "env": { "CLAUDE_CODE_TEMPLATE_PATH": "C:/your-path/claude-code-template" } }'
   exit 1
 fi
 
