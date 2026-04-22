@@ -67,12 +67,12 @@ Write-Host "settings.local.json 생성 중..."
 
 $JsonContent = "{
   `"env`": {
-    `"CLAUDE_CODE_TEMPLATE_PATH`": `"$ValTemplatePath`"
-    // `"SLACK_USER_EMAIL`": `"`",                   // Slack 알림 훅 — 슬랙 개인 계정 메일주소
-    // `"SESSION_LOG_NAME`": `"`",                   // session-log 스킬 — 회고 제출 시 기록될 이름
-    // `"SESSION_LOG_SCRIPT_URL`": `"`",             // session-log 스킬 — Google Apps Script 배포 URL
-    // `"GOOGLE_SERVICE_ACCOUNT_KEY_PATH`": `"`",   // analyze-feedback 스킬 — 서비스 계정 JSON 키 경로
-    // `"SHEETS_FEEDBACK_ID`": `"`"                 // analyze-feedback 스킬 — 피드백 Google Spreadsheet ID
+    `"CLAUDE_CODE_TEMPLATE_PATH`": `"$ValTemplatePath`",
+    `"SLACK_USER_EMAIL`": `"Slack 알림 훅 — 슬랙 개인 계정 메일주소`",
+    `"SESSION_LOG_NAME`": `"session-log 스킬 — 회고 제출 시 기록될 이름`",
+    `"SESSION_LOG_SCRIPT_URL`": `"session-log 스킬 — Google Apps Script 배포 URL`",
+    `"GOOGLE_SERVICE_ACCOUNT_KEY_PATH`": `"analyze-feedback 스킬 — 서비스 계정 JSON 키 경로`",
+    `"SHEETS_FEEDBACK_ID`": `"analyze-feedback 스킬 — 피드백 Google Spreadsheet ID`"
   }
 }"
 
