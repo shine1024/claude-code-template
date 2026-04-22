@@ -44,9 +44,9 @@ echo "📋 .claude 폴더 동기화 중..."
 TARGET_DIR="$SCRIPT_DIR"
 
 rm -rf "$TARGET_DIR/hooks" "$TARGET_DIR/rules" "$TARGET_DIR/skills"
-cp -rf "$TEMPLATE_PATH/.claude/hooks"  "$TARGET_DIR/"
-cp -rf "$TEMPLATE_PATH/.claude/rules"  "$TARGET_DIR/"
-cp -rf "$TEMPLATE_PATH/.claude/skills" "$TARGET_DIR/"
+cp -rf "$TEMPLATE_PATH/.claude/hooks"  "$TARGET_DIR/hooks"
+cp -rf "$TEMPLATE_PATH/.claude/rules"  "$TARGET_DIR/rules"
+cp -rf "$TEMPLATE_PATH/.claude/skills" "$TARGET_DIR/skills"
 cp -f  "$TEMPLATE_PATH/.claude/settings.json" "$TARGET_DIR/settings.json"
 
 echo "✅ 동기화 완료"
