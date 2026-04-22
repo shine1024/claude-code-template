@@ -28,6 +28,7 @@ CLAUDE.md를 생성할 프로젝트 경로를 입력하세요:
 | 3 | unidocu6-mobile (UniWorks PCE Mobile 프론트) |
 | 4 | unidocu6-mobile-server (UniWorks PCE Mobile 백엔드) |
 | 5 | unidocu6-public-sap (UniWorks Public) |
+| 6 | 기타 (위 목록에 해당하지 않는 프로젝트) |
 ```
 
 템플릿 파일명 매핑:
@@ -36,6 +37,7 @@ CLAUDE.md를 생성할 프로젝트 경로를 입력하세요:
 - 3 → CLAUDE-TEMPLATE-uniworks-pce-mobile.md
 - 4 → CLAUDE-TEMPLATE-uniworks-pce-mobile-server.md
 - 5 → CLAUDE-TEMPLATE-uniworks-public.md
+- 6 → 템플릿 파일 없음 (프로젝트 직접 분석)
 
 ### 3단계: core 구성 선택
 
@@ -62,9 +64,11 @@ core 프로젝트 경로를 입력하세요:
 
 **3 선택 또는 Enter 시**: core 관련 단계를 모두 건너뛰고 6단계로 이동합니다.
 
-**템플릿 1·3·4는 이 단계를 건너뜁니다.**
+**템플릿 1·3·4·6은 이 단계를 건너뜁니다.**
 
 ### 4단계: 템플릿 파일 읽기
+
+**템플릿 6(기타)을 선택한 경우 이 단계를 건너뜁니다.**
 
 아래 파일들을 읽습니다.
 
@@ -138,7 +142,64 @@ core 프로젝트 경로에 이미 `CLAUDE.md`가 존재하는 경우 아래 메
 
 분석 결과는 6단계에서 메인 CLAUDE.md에 병합합니다.
 
-### 6단계: 메인 CLAUDE.md 내용 추출 및 병합
+### 6단계: 기타 프로젝트 분석 및 CLAUDE.md 생성
+
+**템플릿 2~5를 선택한 경우 이 단계를 건너뜁니다.**
+
+#### 6-1. 프로젝트 구조 파악
+
+출력 경로(1단계)를 기준으로 아래를 순서대로 탐색합니다.
+
+1. **빌드 파일 확인** → 기술 스택 판별
+   - `pom.xml` 존재 → Maven (Java)
+   - `build.gradle` 존재 → Gradle (Java/Kotlin)
+   - `package.json` 존재 → Node.js
+   - `requirements.txt` / `pyproject.toml` 존재 → Python
+   - 복수 존재 시 모두 기록
+2. **빌드 파일 읽기** → 프로젝트명·버전·주요 의존성 파악
+3. **디렉터리 구조 탐색** → `src/`, `main/`, `app/`, `lib/` 등 주요 폴더 파악
+4. **핵심 소스 파일 샘플 읽기** → 주요 클래스·모듈·엔트리포인트 파악
+5. **설정 파일 확인** → `application.properties`, `.env`, `config/` 등
+
+#### 6-2. CLAUDE.md 내용 작성
+
+분석 결과를 바탕으로 아래 구조로 CLAUDE.md를 작성합니다.
+공통 베이스(`$CLAUDE_CODE_TEMPLATE_PATH/template/CLAUDE-TEMPLATE.md`)를 읽어 `## Claude 동작 규칙 (공통)` 섹션을 마지막에 병합합니다.
+
+```
+# {프로젝트명} — CLAUDE.md
+
+## 1. 프로젝트 개요
+- 서비스명 / 목적 / 기술 스택 (분석 결과 기반)
+- 주요 외부 연동 (확인된 경우)
+
+---
+
+## 2. 프로젝트 구조
+(탐색한 실제 디렉터리 구조)
+
+---
+
+## 3. 아키텍처 패턴
+(확인된 패턴 기술 — 불명확한 경우 생략)
+
+---
+
+## 4. Claude 작업 지침
+(기술 스택 특성에 맞는 주의사항)
+
+---
+
+[공통 규칙 섹션]
+```
+
+> 분석으로 확인이 어려운 항목은 `{확인 필요}` 플레이스홀더로 표시합니다.
+
+이후 7단계(파일 저장)로 이동합니다.
+
+---
+
+### 7단계: 메인 CLAUDE.md 내용 추출 및 병합 (템플릿 1~5 전용)
 
 아래 두 부분을 추출합니다.
 
