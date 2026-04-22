@@ -111,7 +111,7 @@ git push
 
 특정 이벤트 발생 시 자동으로 실행되는 스크립트입니다.
 
-> 구성된 훅 목록 및 설정 방법: [`guides/hooks.md`](guides/hooks.md)
+> 구성된 훅 목록 및 설정 방법: [`.claude/guides/hooks.md`](.claude/guides/hooks.md)
 
 ---
 
@@ -119,7 +119,7 @@ git push
 
 `/스킬명`으로 호출하는 커스텀 커맨드입니다.
 
-> 구성된 스킬 목록 및 설정 방법: [`guides/skills.md`](guides/skills.md)
+> 구성된 스킬 목록 및 설정 방법: [`.claude/guides/skills.md`](.claude/guides/skills.md)
 
 ---
 
@@ -127,4 +127,4 @@ git push
 
 - 코드 스타일 규칙: `.claude/rules/`
 - 예시 rules: `java-style.md`, `js-style.md`, `sql-style.md`
-- Google Sheets 연동 설정: [`guides/google-sheets-service-account.md`](guides/google-sheets-service-account.md)
+- Google Sheets 연동 설정: [`.claude/guides/google-sheets-setup.md`](.claude/guides/google-sheets-setup.md)

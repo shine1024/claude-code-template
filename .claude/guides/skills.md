@@ -129,7 +129,7 @@ Claude Code에서 스킬은 `/스킬명`으로 직접 호출하는 커스텀 커
 }
 ```
 
-> Google Sheets 연동 설정 방법: [`guides/google-sheets-service-account.md`](google-sheets-service-account.md)
+> Google Sheets 연동 설정 방법: [`.claude/guides/google-sheets-setup.md`](google-sheets-setup.md)
 
 **실행 절차**
 

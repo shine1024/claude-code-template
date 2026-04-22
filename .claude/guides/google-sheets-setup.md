@@ -64,38 +64,6 @@ https://docs.google.com/spreadsheets/d/{Spreadsheet ID}/edit?gid=...
 
 ---
 
-## 4단계. API 호출
-
-서비스 계정 JSON으로 액세스 토큰을 발급하고 Sheets API를 호출합니다.
-
-```bash
-# 액세스 토큰 발급 (Python 예시)
-python3 -c "
-import json, time, jwt, requests
-
-key = json.load(open('$GOOGLE_SERVICE_ACCOUNT_KEY_PATH'))
-now = int(time.time())
-claim = {
-  'iss': key['client_email'],
-  'scope': 'https://www.googleapis.com/auth/spreadsheets.readonly',
-  'aud': 'https://oauth2.googleapis.com/token',
-  'iat': now, 'exp': now + 3600
-}
-token = jwt.encode(claim, key['private_key'], algorithm='RS256')
-res = requests.post('https://oauth2.googleapis.com/token',
-  data={'grant_type': 'urn:ietf:params:oauth:grant-type:jwt-bearer', 'assertion': token})
-print(res.json()['access_token'])
-"
-```
-
-```bash
-# 시트 데이터 조회
-curl -H "Authorization: Bearer {ACCESS_TOKEN}" \
-  "https://sheets.googleapis.com/v4/spreadsheets/${SHEETS_FEEDBACK_ID}/values/{시트명}"
-```
-
----
-
 ## 참고
 
 - JSON 키 파일은 `.gitignore`에 추가하여 절대 커밋하지 않습니다.
