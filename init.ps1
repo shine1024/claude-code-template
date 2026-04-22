@@ -1,4 +1,4 @@
-﻿# init.ps1
+# init.ps1
 # claude-code-template의 .claude/ 폴더를 신규 프로젝트에 초기화
 
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
@@ -51,54 +51,33 @@ Copy-Item (Join-Path $PSScriptRoot ".claude\sync.ps1")      $TargetClaude
 
 Write-Host "복사 완료"
 
-# ── 4. 환경변수 입력
+# ── 4. CLAUDE_CODE_TEMPLATE_PATH 입력
 Write-Host ""
 Write-Host "========================================================================"
 Write-Host " settings.local.json 환경변수 설정"
-Write-Host " (입력하지 않으면 해당 항목은 생략됩니다)"
 Write-Host "========================================================================"
-
 Write-Host ""
 Write-Host "init-claude-md / analyze-feedback 스킬  =>  claude-code-template 프로젝트 경로"
 Write-Host "예) C:\projects\claude-code-template"
 $ValTemplatePath = Read-Host "CLAUDE_CODE_TEMPLATE_PATH"
 
-Write-Host ""
-Write-Host "Slack 알림 훅  =>  슬랙 개인 계정 메일주소"
-$ValSlackEmail = Read-Host "SLACK_USER_EMAIL"
-
-Write-Host ""
-Write-Host "session-log 스킬  =>  회고 제출 시 기록될 이름"
-$ValLogName = Read-Host "SESSION_LOG_NAME"
-
-Write-Host ""
-Write-Host "session-log 스킬  =>  Google Apps Script 배포 URL"
-$ValLogUrl = Read-Host "SESSION_LOG_SCRIPT_URL"
-
-Write-Host ""
-Write-Host "analyze-feedback 스킬  =>  Google 서비스 계정 JSON 키 파일 경로"
-Write-Host "예) C:\Users\{username}\.claude\google-sa-key.json"
-$ValSaKey = Read-Host "GOOGLE_SERVICE_ACCOUNT_KEY_PATH"
-
-Write-Host ""
-Write-Host "analyze-feedback 스킬  =>  피드백 Google Spreadsheet ID"
-$ValSheetsId = Read-Host "SHEETS_FEEDBACK_ID"
-
 # ── 5. settings.local.json 생성
 Write-Host ""
 Write-Host "settings.local.json 생성 중..."
 
-$EnvMap = [ordered]@{}
-if ($ValTemplatePath) { $EnvMap["CLAUDE_CODE_TEMPLATE_PATH"]       = $ValTemplatePath }
-if ($ValSlackEmail)   { $EnvMap["SLACK_USER_EMAIL"]                = $ValSlackEmail }
-if ($ValLogName)      { $EnvMap["SESSION_LOG_NAME"]                = $ValLogName }
-if ($ValLogUrl)       { $EnvMap["SESSION_LOG_SCRIPT_URL"]          = $ValLogUrl }
-if ($ValSaKey)        { $EnvMap["GOOGLE_SERVICE_ACCOUNT_KEY_PATH"] = $ValSaKey }
-if ($ValSheetsId)     { $EnvMap["SHEETS_FEEDBACK_ID"]             = $ValSheetsId }
+$JsonContent = "{
+  `"env`": {
+    `"CLAUDE_CODE_TEMPLATE_PATH`": `"$ValTemplatePath`"
+    // `"SLACK_USER_EMAIL`": `"`",                   // Slack 알림 훅 — 슬랙 개인 계정 메일주소
+    // `"SESSION_LOG_NAME`": `"`",                   // session-log 스킬 — 회고 제출 시 기록될 이름
+    // `"SESSION_LOG_SCRIPT_URL`": `"`",             // session-log 스킬 — Google Apps Script 배포 URL
+    // `"GOOGLE_SERVICE_ACCOUNT_KEY_PATH`": `"`",   // analyze-feedback 스킬 — 서비스 계정 JSON 키 경로
+    // `"SHEETS_FEEDBACK_ID`": `"`"                 // analyze-feedback 스킬 — 피드백 Google Spreadsheet ID
+  }
+}"
 
-$Json = @{ env = $EnvMap } | ConvertTo-Json -Depth 3
 $JsonPath = Join-Path $TargetClaude "settings.local.json"
-[System.IO.File]::WriteAllText($JsonPath, $Json, [System.Text.Encoding]::UTF8)
+[System.IO.File]::WriteAllText($JsonPath, $JsonContent, [System.Text.Encoding]::UTF8)
 
 Write-Host "settings.local.json 생성 완료"
 Write-Host ""
@@ -108,3 +87,4 @@ Write-Host "다음 단계:"
 Write-Host "1. CLAUDE.md 를 생성하세요: /init-claude-md"
 Write-Host "2. CLAUDE.local.md 를 작성하고 .gitignore 에 추가하세요."
 Write-Host "3. .gitignore 에 .claude/settings.local.json 을 추가하세요."
+Write-Host "4. 나머지 환경변수는 .claude/settings.local.json 주석을 참고하여 직접 입력하세요."
