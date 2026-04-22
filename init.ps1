@@ -59,7 +59,7 @@ Write-Host "====================================================================
 Write-Host ""
 Write-Host "init-claude-md / analyze-feedback 스킬  =>  claude-code-template 프로젝트 경로"
 Write-Host "예) C:\projects\claude-code-template"
-$ValTemplatePath = Read-Host "CLAUDE_CODE_TEMPLATE_PATH"
+$ValTemplatePath = (Read-Host "CLAUDE_CODE_TEMPLATE_PATH") -replace '\\', '/'
 
 # ── 5. settings.local.json 생성
 Write-Host ""
