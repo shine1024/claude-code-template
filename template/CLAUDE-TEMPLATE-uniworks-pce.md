@@ -7,4 +7,6 @@
 - **주요 사용자**: 웹브라우저로 접속하는 내부 사용자
 - **통신**: SAP JCO(RFC) 공통 구현부를 통해 SAP 서버와 통신
 - **참조 라이브러리**: `unidocu6-core` (.jar) — base class, SAP RFC 공통 구현, 공통 유틸 제공
-- **분석 순서**: `unidocu6-core` → `unidocu6`
+
+## 2. 분석 순서
+`unidocu6-core` → `unidocu6`
