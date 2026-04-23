@@ -1,82 +1,76 @@
-프로젝트 템플릿을 선택하여 CLAUDE.md 파일을 생성합니다.
+프로젝트를 분석하여 CLAUDE.md 파일을 생성합니다.
 
 ## 실행 절차
 
-### 1단계: 출력 경로 확인
+### 1단계: 프로젝트 유형 선택
 
-인수(args)가 있으면 해당 경로를 출력 디렉터리로 사용합니다.
-인수가 없으면 아래 메시지를 출력하고 경로 입력을 요청합니다. 경로를 받기 전까지 다음 단계로 진행하지 않습니다.
-
-```
-CLAUDE.md를 생성할 프로젝트 경로를 입력하세요:
-예) C:\intellij-workspace\uniflow
-```
-
-### 2단계: 템플릿 목록 제시
+출력 경로는 현재 작업 디렉터리(`pwd`)를 사용합니다.
 
 아래 형식으로 출력하고 번호 입력을 요청합니다.
 
 ```
-출력 경로: {출력 디렉터리}
-
-템플릿을 선택하세요 (번호 입력):
+프로젝트를 선택하세요 (번호 입력):
 
 | 번호 | 대상 프로젝트 |
 |------|--------------|
-| 1 | uniflow (전자결재) |
-| 2 | unidocu6 (UniWorks PCE) |
-| 3 | unidocu6-mobile (UniWorks PCE Mobile 프론트) |
-| 4 | unidocu6-mobile-server (UniWorks PCE Mobile 백엔드) |
-| 5 | unidocu6-public-sap (UniWorks Public) |
-| 6 | 기타 (위 목록에 해당하지 않는 프로젝트) |
+| 1 | unidocu6 (UniWorks PCE) |
+| 2 | unidocu6-core (UniWorks PCE Core) |
+| 3 | unidocu6-public-sap (UniWorks Public) |
+| 4 | unidocu6-public-sap-core (UniWorks Public Core) |
+| 5 | unidocu6-mobile (UniWorks PCE Mobile 프론트) |
+| 6 | unidocu6-mobile-server (UniWorks PCE Mobile 백엔드) |
+| 7 | uniflow (전자결재) |
+| 8 | 기타 (위 목록에 해당하지 않는 프로젝트) |
 ```
 
 템플릿 파일명 매핑:
-- 1 → CLAUDE-TEMPLATE-uniflow.md
-- 2 → CLAUDE-TEMPLATE-uniworks-pce.md
-- 3 → CLAUDE-TEMPLATE-uniworks-pce-mobile.md
-- 4 → CLAUDE-TEMPLATE-uniworks-pce-mobile-server.md
-- 5 → CLAUDE-TEMPLATE-uniworks-public.md
-- 6 → 템플릿 파일 없음 (프로젝트 직접 분석)
+- 1 → CLAUDE-TEMPLATE-uniworks-pce.md
+- 2 → CLAUDE-TEMPLATE-uniworks-pce-core.md
+- 3 → CLAUDE-TEMPLATE-uniworks-public.md
+- 4 → CLAUDE-TEMPLATE-uniworks-public-core.md
+- 5 → CLAUDE-TEMPLATE-uniworks-pce-mobile.md
+- 6 → CLAUDE-TEMPLATE-uniworks-pce-mobile-server.md
+- 7 → CLAUDE-TEMPLATE-uniflow.md
+- 8 → 없음
 
-### 3단계: core 구성 선택
+**core 프로젝트 연결 (UniWorks 구현 프로젝트 전용):**
 
-**템플릿 2(UniWorks PCE) 또는 5(UniWorks Public)를 선택한 경우에만** 아래 메시지를 출력하고 선택을 요청합니다.
-
-```
-core 구성을 선택하세요:
-
-| 번호 | 설명 |
-|------|------|
-| 1 | 별도 프로젝트 — core가 독립된 프로젝트로 분리되어 있음 (경로 입력) |
-| 2 | 현재 프로젝트에 통합 — core 코드가 이 프로젝트 안에 포함되어 있음 |
-| 3 | 없음 — core 참조 없는 단일 프로젝트 (Enter) |
-```
-
-**1 선택 시**: 아래 메시지를 출력하고 경로를 입력받습니다.
+선택 1·3·6은 core 프로젝트의 base class·공통 유틸에 의존합니다. core는 외부 경로에 있으므로 `@import` 방식으로 연동합니다.
+아래 메시지를 출력하고 core 프로젝트 경로 입력을 요청합니다.
 
 ```
-core 프로젝트 경로를 입력하세요:
+이 프로젝트는 core 프로젝트를 참조합니다.
+core 프로젝트 경로를 입력하세요 (건너뛰려면 엔터):
 예) C:\intellij-workspace\unidocu6-core
 ```
 
-**2 선택 시**: 경로 입력 없이 5단계(통합 분석)로 진행합니다.
+| 선택 번호 | 참조 core 프로젝트 |
+|----------|-----------------|
+| 1 (unidocu6) | unidocu6-core |
+| 3 (unidocu6-public-sap) | unidocu6-public-sap-core |
+| 6 (unidocu6-mobile-server) | unidocu6-core |
 
-**3 선택 또는 Enter 시**: core 관련 단계를 모두 건너뛰고 6단계로 이동합니다.
+경로가 입력되면:
+- **2단계**: 해당 core 프로젝트의 CONTEXT 파일도 함께 읽어 참조합니다.
+- **3단계**: core 프로젝트 코드를 먼저 분석합니다 (3-0).
+- **4단계**: **core 프로젝트 CLAUDE.md를 먼저 생성**한 후, 구현 프로젝트 CLAUDE.md를 생성합니다 (최상단에 `@import {core-path}/CLAUDE.md` 포함).
 
-**템플릿 1·3·4·6은 이 단계를 건너뜁니다.**
+### 2단계: CONTEXT 파일 읽기
 
-### 4단계: 템플릿 파일 읽기
+**8번(기타)이 아닌 경우:** `$CLAUDE_CODE_TEMPLATE_PATH/template/{파일명}`을 읽어 아래 6개 섹션 전체를 추출합니다.
 
-**템플릿 6(기타)을 선택한 경우 이 단계를 건너뜁니다.**
+| 섹션 | 내용 | CLAUDE.md 반영 위치 |
+|------|------|-------------------|
+| 1. 서비스 개요 | 서비스명, 목적, 주요 기능, 사용자, 시스템 구성, DB 구성 등 | Section 1 (프로젝트 개요) |
+| 2. 도메인 지식 | 업무 용어, 핵심 개념, 비즈니스 규칙 | Section 3 (아키텍처 패턴) 보조 참고 |
+| 3. 코드 히스토리 | 현재 표준 패턴, 과거 변경 이력 | Section 3 (아키텍처 패턴) 병합 |
+| 4. 개발 작업 방식 | 환경별 배포, 빌드 절차, 협업 규칙 | Section 4 (Claude 작업 지침) → 필수 패턴 |
+| 5. 자주 하는 실수 / 주의사항 | 흔한 오류 패턴, 함정 | Section 4 (Claude 작업 지침) → 금지 사항 |
+| 6. 고객사 / 운영 특이사항 | 특정 고객사 제약, 운영 주의사항 | Section 1 (프로젝트 개요) 말미 비고 |
 
-아래 파일들을 읽습니다.
+core 프로젝트 경로가 입력된 경우 해당 core CONTEXT 파일(`CLAUDE-TEMPLATE-{core}.md`)도 함께 읽어 참조합니다.
 
-1. **공통 베이스**: `$CLAUDE_CODE_TEMPLATE_PATH/template/CLAUDE-TEMPLATE.md`
-2. **프로젝트 템플릿**: 사용자가 선택한 번호에 해당하는 파일 `$CLAUDE_CODE_TEMPLATE_PATH/template/{파일명}`
-3. **core 템플릿** (3단계에서 1 또는 2를 선택한 경우):
-   - 템플릿 2 선택 → `$CLAUDE_CODE_TEMPLATE_PATH/template/CLAUDE-TEMPLATE-uniworks-pce-core.md`
-   - 템플릿 5 선택 → `$CLAUDE_CODE_TEMPLATE_PATH/template/CLAUDE-TEMPLATE-uniworks-public-core.md`
+CONTEXT 파일의 각 섹션은 CLAUDE.md에 그대로 복사하지 않습니다. 3단계 코드 분석 결과와 종합하여 CLAUDE.md 고정 4섹션 구조에 녹여 작성합니다.
 
 > `CLAUDE_CODE_TEMPLATE_PATH` 환경변수가 없으면 아래 메시지를 출력하고 중단합니다.
 > ```
@@ -84,201 +78,189 @@ core 프로젝트 경로를 입력하세요:
 > .claude/settings.local.json 의 env 항목에 추가해주세요.
 > ```
 
-### 5단계: core 분석 및 처리
+### 3단계: 프로젝트 분석
 
-**3단계에서 3(없음)을 선택한 경우 이 단계를 건너뜁니다.**
+출력 경로를 기준으로 아래를 순서대로 탐색합니다.
 
-#### [3단계 1 선택] 별도 core 프로젝트 분석 및 CLAUDE.md 생성
+#### 3-0. core 프로젝트 분석 (UniWorks 구현 프로젝트 전용)
 
-**5-1. 프로젝트 구조 분석**
+2단계에서 core 경로가 입력된 경우, 구현 프로젝트 분석 전에 core 프로젝트를 먼저 분석합니다.
 
-다음을 순서대로 탐색합니다.
+| 탐색 대상 | 추출 정보 | 활용 위치 |
+|----------|----------|----------|
+| core `pom.xml` | 모듈 구성, 주요 의존성 | Section 1 주요 외부 연동 보완 |
+| `abstract` 클래스 전체 | base class 목록, 제공 메서드 시그니처 | Section 3 베이스 클래스, Section 4 필수 패턴 |
+| `*Service`, `*Util` 공통 클래스 | 공통 유틸 목록 (NamedService, SapApiService, JwtUtil 등) | Section 4 필수/금지 패턴 |
+| core `src/main/java` 패키지 구조 | core가 제공하는 레이어·패키지 범위 | Section 3 레이어 구조 설명 보완 |
 
-1. `{core-경로}/pom.xml` 읽기 → `<modules>` 태그에서 모듈 목록 추출
-2. 각 모듈의 `src/main/java` 하위 디렉터리를 탐색하여 패키지 구조 파악
-3. 핵심 클래스 파일 읽기:
-   - `AbstractJAVAService` 위치 및 `call()` 시그니처
-   - `NamedService` (PCE) 또는 `SapApiService` (Public) 위치 및 공개 메서드
-   - Mapper 인터페이스 경로 (Public 전용)
-   - 주요 인터셉터·예외 클래스
+> 3-0 분석이 완료되면 4단계에서 core 프로젝트 CLAUDE.md를 먼저 생성합니다. core가 멀티 모듈이면 5단계(모듈별 CLAUDE.md 생성)도 core에 대해 먼저 수행합니다.
 
-**5-2. core CLAUDE.md 내용 작성**
+#### 3-1. 기술 스택 파악
 
-4단계에서 읽은 core 템플릿의 **첫 번째 `---` 구분선 이후부터 끝까지** 내용을 추출한 뒤, 분석 결과를 아래 항목에 반영하여 CLAUDE.md 내용을 작성합니다.
+다음 파일을 읽어 기술 스택을 파악합니다.
 
-반영 항목:
-- **모듈명**: pom.xml에서 추출한 실제 모듈명으로 교체
-- **패키지 경로**: 실제 소스에서 확인한 패키지 구조로 교체
-- **공개 API**: 실제 클래스 위치와 메서드 시그니처 기반으로 작성
-- **Mapper XML 경로** (Public 전용): 실제 경로 구조 반영
+| 파일 | 추출 정보 |
+|------|----------|
+| `pom.xml` | 프로젝트명, 언어, 프레임워크 버전, 주요 의존성, 멀티 모듈 여부 |
+| `package.json` | 프로젝트명, 주요 라이브러리, TypeScript 여부 |
+| `application.properties` / `server/*.properties` | DB 벤더, 외부 연동 설정 |
 
-> 분석으로 확인이 어려운 항목은 템플릿 내용을 그대로 사용합니다.
+**적용 rules 결정:**
 
-**5-3. core CLAUDE.md 파일 저장**
+| 기술 스택 | 적용 rules |
+|----------|-----------|
+| Java | `java-style.md` |
+| JavaScript / TypeScript | `js-style.md` |
+| DB 사용 (MyBatis 등) | `sql-style.md` |
+| RealGrid2 의존성 존재 | `realgrid.md` |
 
-core 프로젝트 경로에 이미 `CLAUDE.md`가 존재하는 경우 아래 메시지를 출력하고 확인을 요청합니다.
+#### 3-2. 프로젝트 구조 탐색
 
-```
-{core-경로}/CLAUDE.md 파일이 이미 존재합니다. 덮어쓸까요? (예/아니오)
-```
+`src/main/java`, `src/main/resources`, `src/main/webapp` (Java) 또는 `src/` (React) 하위 주요 디렉터리를 탐색합니다.
+pom.xml에 `<modules>`가 있으면 각 모듈 디렉터리도 탐색합니다.
 
-확인되면 작성한 내용을 `{core-경로}/CLAUDE.md`로 저장합니다.
+#### 3-3. 아키텍처 분석
 
----
+| 탐색 대상 | 확인 방법 |
+|----------|----------|
+| 레이어 구조 | 패키지명(controller, service, mapper 등)과 어노테이션 |
+| 베이스 클래스 | abstract class 및 extends 관계 |
+| 트랜잭션 정책 | @Transactional 어노테이션 사용 여부·레이어 |
+| 예외 처리 방식 | @ControllerAdvice 클래스 위치·응답 분기 로직 |
 
-#### [3단계 2 선택] 현재 프로젝트에 통합된 core 분석
+#### 3-4. 도메인 분석
 
-**5-4. 현재 프로젝트 내 core 코드 탐색**
+코드에서 업무 도메인 정보를 추출합니다. CONTEXT Section 2(도메인 지식)에 내용이 있으면 함께 참조하여 보완합니다.
 
-출력 경로(1단계)를 기준으로 다음을 탐색합니다.
+| 탐색 대상 | 추출 정보 | 활용 위치 |
+|----------|----------|----------|
+| Entity·VO·DTO 클래스명 | 핵심 도메인 객체 목록 | Section 3 레이어 구조 서술에 실제 용어 사용 |
+| Service 메서드명 | 주요 비즈니스 기능 | Section 3 레이어 구조 설명 |
+| Mapper XML 쿼리·테이블명 | 데이터 영역(어떤 업무 데이터를 다루는가) | Section 3 보조 |
+| React 페이지·컴포넌트 디렉터리명 | 화면 단위 및 주요 기능 흐름 | Section 2 프로젝트 구조 보충 |
 
-1. `pom.xml` 읽기 → 모듈 구조 파악 (단일 WAR인지 멀티 모듈인지 확인)
-2. `src/main/java` 하위에서 core 역할 패키지 탐색:
-   - `AbstractJAVAService` 위치 및 `call()` 시그니처
-   - `NamedService` (PCE) 또는 `SapApiService` (Public) 위치 및 공개 메서드
-   - Mapper 인터페이스 경로 (Public 전용)
-   - 주요 인터셉터·예외 클래스
-3. Mapper XML 경로 (Public 전용): postgresql·mariadb 디렉터리 구조 확인
+#### 3-5. 작업 지침 도출
 
-분석 결과는 6단계에서 메인 CLAUDE.md에 병합합니다.
+코드에서 아래 패턴을 탐색하여 발견되면 대응하는 규칙을 생성합니다. CONTEXT Section 4·5에 내용이 있으면 함께 참조하여 보완합니다.
 
-### 6단계: 기타 프로젝트 분석 및 CLAUDE.md 생성
+**필수 패턴:**
 
-**템플릿 2~5를 선택한 경우 이 단계를 건너뜁니다.**
+| 발견 패턴 | 생성 규칙 |
+|----------|----------|
+| `AbstractJAVAService` 존재 | 신규 비즈니스 로직은 `AbstractJAVAService`를 상속하여 `FUNCTION_MODE`로 구현하고, 기존 Service 패턴을 먼저 탐색한 후 동일 방식으로 작성한다 |
+| `NamedService` 존재 | SAP RFC 호출은 `NamedService.call(namedServiceId, importParam)` 패턴을 사용하고, RFC 응답 `OS_RETURN.TYPE = "E"` 확인 후 `NSLogicalException`을 throw한다 |
+| `SapApiService` 존재 | SAP REST API 호출은 `SapApiService.callApi()` 패턴을 사용하고, 엔드포인트·파라미터는 SAP 공식 문서 또는 기존 구현 기준으로 작성한다 |
+| `JwtUtil` 존재 | JWT 토큰 처리는 `JwtUtil`을 사용한다 |
+| `BaseRESTController` 또는 `AbstractRESTController` 존재 | REST API Controller는 {실제 클래스명}을 상속한다 |
+| `server/*.properties` 존재 | 환경별 설정은 `server/*.properties`로 분리한다 |
+| `db.vendor` 속성 존재 | 쿼리 작성 시 해당 환경의 `db.vendor` 값을 먼저 확인한다 |
+| webjars 멀티 모듈 구조 (servercore·clientcore·webjars) | 탐색 순서: 구현 프로젝트 → servercore → clientcore → webjars |
+| `useAxiosApi` 훅 존재 | API 호출은 반드시 `useAxiosApi` 훅을 통한다 |
+| Redux store 존재 | 상태 변경은 Redux slice를 통한다 — 컴포넌트 로컬 상태는 화면 UI 전용 |
+| `webpack.config.js` proxy 설정 존재 | 신규 API 연동 시 `webpack.config.js` 프록시에 해당 엔드포인트 등록 여부를 먼저 확인한다 |
+| `src/types/` 디렉터리 존재 | TypeScript 타입은 `src/types/` 하위 파일에 정의한다 |
+| `rfc_destination/` 디렉터리 존재 | RFC destination 설정은 `rfc_destination/*.properties` 참조 |
+| postgresql·mariadb 양쪽 Mapper XML 디렉터리 존재 | Mapper XML 작성 시 postgresql·mariadb 양쪽 디렉터리 전체 파일을 대조하여 예외 케이스를 먼저 확인한다 |
 
-#### 6-1. 프로젝트 구조 파악
+**금지 사항:**
 
-출력 경로(1단계)를 기준으로 아래를 순서대로 탐색합니다.
+| 발견 패턴 | 생성 규칙 |
+|----------|----------|
+| Java 프로젝트이면서 `DatabaseConfig` / Mapper XML 없음 | 로컬 DB·MyBatis·@Transactional을 사용하지 않는다 — 데이터는 SAP RFC로만 처리 |
+| `NamedService` 존재 + `JCoFunction` 직접 사용 없음 | SAP JCO 호출 시 `JCoFunction`을 직접 사용하지 않는다 |
+| `rfc_destination/` 존재 | RFC 함수명·파라미터명을 임의로 변경하지 않는다 — SAP에서 정의된 이름 그대로 사용 |
+| `server/*.properties` 존재 | 환경별 설정을 코드 내 하드코딩하지 않는다 |
+| `useAxiosApi` 훅 존재 | axios를 직접 import하지 않는다 — `useAxiosApi` 훅만 사용 |
+| TypeScript 프로젝트 | `any` 타입을 임의로 사용하지 않는다 |
+| `.env.*` 파일 존재 | 코드 내 URL·키를 하드코딩하지 않는다 — `.env.*` 파일로 관리 |
+| postgresql·mariadb 양쪽 Mapper XML 존재 | Mapper XML 신규 작성 시 postgresql과 mariadb 양쪽 모두 작성한다 |
 
-1. **빌드 파일 확인** → 기술 스택 판별
-   - `pom.xml` 존재 → Maven (Java)
-   - `build.gradle` 존재 → Gradle (Java/Kotlin)
-   - `package.json` 존재 → Node.js
-   - `requirements.txt` / `pyproject.toml` 존재 → Python
-   - 복수 존재 시 모두 기록
-2. **빌드 파일 읽기** → 프로젝트명·버전·주요 의존성 파악
-3. **디렉터리 구조 탐색** → `src/`, `main/`, `app/`, `lib/` 등 주요 폴더 파악
-4. **핵심 소스 파일 샘플 읽기** → 주요 클래스·모듈·엔트리포인트 파악
-5. **설정 파일 확인** → `application.properties`, `.env`, `config/` 등
+### 4단계: CLAUDE.md 작성
 
-#### 6-2. CLAUDE.md 내용 작성
+**core 경로가 입력된 경우, core 프로젝트 CLAUDE.md를 먼저 생성합니다.** core가 멀티 모듈이면 모듈별 CLAUDE.md도 함께 생성합니다 (5단계 동일 적용). 이후 구현 프로젝트 CLAUDE.md를 생성합니다.
 
-분석 결과를 바탕으로 아래 구조로 CLAUDE.md를 작성합니다.
-공통 베이스(`$CLAUDE_CODE_TEMPLATE_PATH/template/CLAUDE-TEMPLATE.md`)를 읽어 `## Claude 동작 규칙 (공통)` 섹션을 마지막에 병합합니다.
+아래 고정 스키마로 내용을 작성합니다. 확인이 안 된 항목은 `{확인 필요}`로 표시합니다.
 
-```
-# {프로젝트명} — CLAUDE.md
+각 섹션 작성 원칙:
+- **CONTEXT 파일 내용을 그대로 복사하지 않는다.** 코드 분석 결과와 CONTEXT 내용을 종합하여 실제 클래스명·패키지명·파일명 기준으로 구체적으로 서술한다.
+- CONTEXT 섹션이 비어 있으면 코드 분석 결과만으로 작성한다. 코드에서도 확인이 안 된 항목은 `{확인 필요}`로 표시한다.
+
+```markdown
+{core 경로가 입력된 경우에만}
+@import {core-path}/CLAUDE.md
+
+# {서비스명} — CLAUDE.md
 
 ## 1. 프로젝트 개요
-- 서비스명 / 목적 / 기술 스택 (분석 결과 기반)
-- 주요 외부 연동 (확인된 경우)
+
+- **서비스명**: {pom.xml 또는 package.json에서 추출}
+- **설명**: {CONTEXT Section 1 목적 기반으로 한 문장 작성. 8번이면 {확인 필요}}
+- **기술 스택**:
+  - Backend: {분석 결과 / 없으면 항목 생략}
+  - Frontend: {분석 결과 / 없으면 항목 생략}
+  - Database: {분석 결과 / 없으면 '없음 — {대체 통신 방식}'}
+- **주요 외부 연동**: {발견된 연동 / 없으면 항목 생략}
+- **적용 rules**: {결정된 rules 목록}
+{CONTEXT Section 1의 주요 기능·사용자·시스템 구성·DB 구성 등을 추가 항목으로 서술}
+{CONTEXT Section 6(고객사/운영 특이사항)에 내용이 있으면 **비고** 항목으로 추가}
 
 ---
 
 ## 2. 프로젝트 구조
-(탐색한 실제 디렉터리 구조)
+
+{실제 탐색한 디렉터리 트리 — 코드 블록}
+
+{멀티 모듈인 경우 모듈 의존 관계 다이어그램}
 
 ---
 
 ## 3. 아키텍처 패턴
-(확인된 패턴 기술 — 불명확한 경우 생략)
+
+### 레이어 구조
+{4-3 분석 결과를 기반으로, 4-4 도메인 분석에서 추출한 실제 Entity·Service·Controller 클래스명과
+CONTEXT Section 2(도메인 지식)의 업무 용어를 활용하여 각 레이어의 역할을 구체적으로 서술한다}
+
+### 베이스 클래스
+{발견된 경우만 — 없으면 이 항목 생략}
+
+### 트랜잭션 정책
+{분석 결과}
+
+### 예외 처리 방식
+{분석 결과}
+
+### 현재 표준 패턴
+{4-3 코드 분석 결과 + CONTEXT Section 3(코드 히스토리)를 종합하여 현재 프로젝트에서
+실제로 사용되는 구현 패턴을 항목으로 서술한다. CONTEXT만 있고 코드 확인이 안 된 항목은 생략한다}
 
 ---
 
 ## 4. Claude 작업 지침
-(기술 스택 특성에 맞는 주의사항)
+
+### 필수 패턴
+{4-5 코드 패턴 도출 규칙 + CONTEXT Section 4(개발 작업 방식)를 종합하여
+실제 코드에서 확인된 패턴·규칙을 구체적인 클래스명·파일명과 함께 항목으로 작성한다}
+
+### 금지 사항
+{4-5 코드 패턴 도출 규칙 + CONTEXT Section 5(자주 하는 실수/주의사항)를 종합하여
+실제 코드 구조에서 유추되는 금지 패턴을 구체적으로 항목으로 작성한다}
 
 ---
 
-[공통 규칙 섹션]
+{CLAUDE-TEMPLATE.md의 ## Claude 동작 규칙 (공통) 섹션 전체 병합}
 ```
 
-> 분석으로 확인이 어려운 항목은 `{확인 필요}` 플레이스홀더로 표시합니다.
+### 5단계: 하위 모듈 CLAUDE.md 생성
 
-이후 7단계(파일 저장)로 이동합니다.
+pom.xml에 `<modules>`가 있으면 각 모듈을 순서대로 탐색하여 모듈별 CLAUDE.md를 생성합니다.
 
----
+#### 5-1. 모듈별 분석
 
-### 7단계: 메인 CLAUDE.md 내용 추출 및 병합 (템플릿 1~5 전용)
+1. 모듈 `pom.xml` → 모듈명·의존성
+2. `src/main/java` → 패키지 구조·핵심 클래스·공개 API
+3. `src/main/resources` → 설정 파일·Mapper XML 경로
 
-아래 두 부분을 추출합니다.
-
-- **프로젝트 내용**: 프로젝트 템플릿의 **첫 번째 `---` 구분선 이후부터 끝까지** 추출 (파일 상단 "사용 안내" 섹션 제외)
-- **공통 규칙**: `CLAUDE-TEMPLATE.md`에서 `## Claude 동작 규칙 (공통)` 섹션부터 끝까지 추출
-
-**[3단계 1 선택] 별도 core 프로젝트** — 최상단에 @import 추가:
-
-```
-@{core-경로}/CLAUDE.md
-
-[프로젝트 내용]
-
----
-
-[공통 규칙 섹션]
-```
-
-**[3단계 2 선택] 현재 프로젝트에 통합** — core 내용을 메인 CLAUDE.md에 직접 병합:
-
-core 템플릿의 **첫 번째 `---` 구분선 이후** 내용을 5-4 분석 결과로 보완한 뒤, 프로젝트 내용에 추가합니다.
-
-```
-[프로젝트 내용]
-
----
-
-[core 분석 반영 내용 — 프로젝트 구조·공개 API·작업 지침에 통합]
-
----
-
-[공통 규칙 섹션]
-```
-
-**[3단계 3 선택] core 없음** — 기존 방식:
-
-```
-[프로젝트 내용]
-
----
-
-[공통 규칙 섹션]
-```
-
-### 7단계: 루트 CLAUDE.md 저장
-
-출력 경로에 이미 `CLAUDE.md`가 존재하는 경우 아래 메시지를 출력하고 확인을 요청합니다.
-
-```
-{출력 경로}/CLAUDE.md 파일이 이미 존재합니다. 덮어쓸까요? (예/아니오)
-```
-
-확인되면 추출한 내용을 `{출력 디렉터리}/CLAUDE.md`로 저장합니다.
-
-### 8단계: 하위 모듈 CLAUDE.md 생성
-
-**모든 템플릿에 적용됩니다.**
-
-아래 대상 경로에서 각각 `pom.xml`의 `<modules>` 태그를 확인합니다.
-
-- 메인 프로젝트 경로 (출력 경로)
-- core 프로젝트 경로 (3단계 1 선택 시)
-
-`<modules>` 태그가 없으면 이 단계를 건너뜁니다.
-
-#### 8-1. 모듈별 분석
-
-`<modules>`에 나열된 각 모듈 디렉터리를 순서대로 탐색합니다.
-
-1. 모듈의 `pom.xml` 읽기 → 모듈명·의존성 파악
-2. `src/main/java` 하위 패키지 구조 탐색
-3. 핵심 클래스 파악:
-   - Controller, Service, Mapper 등 주요 클래스 위치
-   - 공개 API (다른 모듈에서 참조되는 클래스·인터페이스)
-4. `src/main/resources` 확인 → 설정 파일·Mapper XML·템플릿 경로
-
-#### 8-2. 모듈 CLAUDE.md 내용 작성
-
-각 모듈에 대해 아래 구조로 CLAUDE.md를 작성합니다.
+#### 5-2. 모듈 CLAUDE.md 작성
 
 ```markdown
 # {모듈명} — CLAUDE.md
@@ -286,42 +268,35 @@ core 템플릿의 **첫 번째 `---` 구분선 이후** 내용을 5-4 분석 결
 > 공통 사항은 루트 CLAUDE.md 참고
 
 ## 모듈 역할
-
-(분석 결과 기반 — 한 문장으로 요약)
+{분석 결과 — 한 문장}
 
 ## 폴더 구조
-
-(실제 탐색한 주요 디렉터리만 기술)
+{실제 탐색한 주요 디렉터리}
 
 ## 공개 API
-
-(다른 모듈에서 참조하는 클래스·인터페이스 목록 — 없으면 생략)
+{다른 모듈에서 참조하는 클래스·인터페이스 / 없으면 생략}
 
 ## 모듈 전용 컨벤션
-
-(모듈에서만 적용되는 규칙 — 없으면 생략)
+{모듈 특화 규칙 / 없으면 생략}
 ```
 
-> 루트 CLAUDE.md 내용을 반복하지 않습니다. 모듈에 특화된 내용만 작성합니다.
+> 루트 CLAUDE.md 내용을 반복하지 않습니다.
 
-#### 8-3. 모듈 CLAUDE.md 저장
+### 6단계: 파일 저장
 
-각 모듈 경로에 이미 `CLAUDE.md`가 존재하는 경우 아래 메시지를 출력하고 확인을 요청합니다.
+각 경로에 `CLAUDE.md`가 이미 존재하면 아래 메시지를 출력하고 확인을 요청합니다.
 
 ```
-{모듈-경로}/CLAUDE.md 파일이 이미 존재합니다. 덮어쓸까요? (예/아니오/전체예)
+{경로}/CLAUDE.md 파일이 이미 존재합니다. 덮어쓸까요? (예/아니오/전체예)
 ```
 
-- **전체예**: 이후 모든 모듈에 대해 확인 없이 덮어씁니다.
+- **전체예**: 이후 모든 파일을 확인 없이 덮어씁니다.
 
-### 9단계: 완료 안내
-
-생성된 파일 목록을 출력합니다.
+### 7단계: 완료 안내
 
 ```
 CLAUDE.md 초안이 생성되었습니다:
-{생성된 파일 경로 목록 — 루트 및 각 모듈}
+{생성된 파일 경로 목록 — core 프로젝트가 있으면 core 파일 먼저 나열}
 
-⚠️  이 파일은 초안입니다. 프로젝트 실제 구조와 다른 내용이 있을 수 있습니다.
-프로젝트 인원과 함께 사용하면서 Claude가 틀린 결과를 낼 때마다 관련 내용을 추가·수정하세요.
+⚠️  이 파일은 초안입니다. Claude가 틀린 결과를 낼 때마다 관련 내용을 추가·수정하세요.
 ```
