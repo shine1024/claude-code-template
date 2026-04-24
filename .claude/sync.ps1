@@ -1,4 +1,4 @@
-# sync.ps1
+﻿# sync.ps1
 # claude-code-template 최신 내용을 현재 프로젝트 .claude/ 폴더에 동기화
 
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8

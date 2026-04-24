@@ -1,4 +1,4 @@
-# init.ps1
+﻿# init.ps1
 # claude-code-template의 .claude/ 폴더를 신규 프로젝트에 초기화
 
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
