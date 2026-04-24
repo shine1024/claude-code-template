@@ -1,4 +1,4 @@
-﻿# init.ps1
+# init.ps1
 # claude-code-template의 .claude/ 폴더를 신규 프로젝트에 초기화
 
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
@@ -52,23 +52,12 @@ Copy-Item (Join-Path $PSScriptRoot ".claude\sync.ps1")      $TargetClaude
 
 Write-Host "복사 완료"
 
-# ── 4. CLAUDE_CODE_TEMPLATE_PATH 입력
-Write-Host ""
-Write-Host "========================================================================"
-Write-Host " settings.local.json 환경변수 설정"
-Write-Host "========================================================================"
-Write-Host ""
-Write-Host "init-claude-md / analyze-feedback 스킬  =>  claude-code-template 프로젝트 경로"
-Write-Host "예) C:\projects\claude-code-template"
-$ValTemplatePath = (Read-Host "CLAUDE_CODE_TEMPLATE_PATH") -replace '\\', '/'
-
-# ── 5. settings.local.json 생성
+# ── 4. settings.local.json 생성
 Write-Host ""
 Write-Host "settings.local.json 생성 중..."
 
 $JsonContent = "{
   `"env`": {
-    `"CLAUDE_CODE_TEMPLATE_PATH`": `"$ValTemplatePath`",
     `"SLACK_USER_EMAIL`": `"Slack 알림 훅 — 슬랙 개인 계정 메일주소`",
     `"SESSION_LOG_NAME`": `"session-log 스킬 — 회고 제출 시 기록될 이름`",
     `"SESSION_LOG_SCRIPT_URL`": `"session-log 스킬 — Google Apps Script 배포 URL`",
@@ -88,4 +77,4 @@ Write-Host "다음 단계:"
 Write-Host "1. CLAUDE.md 를 생성하세요: /init-claude-md"
 Write-Host "2. CLAUDE.local.md 를 작성하고 .gitignore 에 추가하세요."
 Write-Host "3. .gitignore 에 .claude/settings.local.json 을 추가하세요."
-Write-Host "4. 나머지 환경변수는 .claude/settings.local.json 주석을 참고하여 직접 입력하세요."
+Write-Host "4. 나머지 환경변수는 .claude/settings.local.json 을 참고하여 직접 입력하세요."
