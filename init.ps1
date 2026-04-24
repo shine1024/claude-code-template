@@ -42,6 +42,7 @@ if (Test-Path $TargetClaude) {
 }
 New-Item $TargetClaude -ItemType Directory | Out-Null
 
+Copy-Item (Join-Path $PSScriptRoot ".claude\guides")        $TargetClaude -Recurse
 Copy-Item (Join-Path $PSScriptRoot ".claude\hooks")         $TargetClaude -Recurse
 Copy-Item (Join-Path $PSScriptRoot ".claude\rules")         $TargetClaude -Recurse
 Copy-Item (Join-Path $PSScriptRoot ".claude\skills")        $TargetClaude -Recurse

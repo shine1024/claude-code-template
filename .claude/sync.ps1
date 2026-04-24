@@ -40,7 +40,7 @@ Write-Host "최신화 완료"
 Write-Host ""
 Write-Host ".claude 폴더 동기화 중..."
 
-foreach ($dir in @("hooks", "rules", "skills")) {
+foreach ($dir in @("guides", "hooks", "rules", "skills")) {
     $target = Join-Path $PSScriptRoot $dir
     if (Test-Path $target) { Remove-Item $target -Recurse -Force }
     Copy-Item (Join-Path $TemplatePath ".claude\$dir") $PSScriptRoot -Recurse
