@@ -7,12 +7,8 @@ const readline = require('readline');
 // 프로젝트별 알림 비활성화: .claude/settings.local.json에 SLACK_NOTIFY_ENABLED=false 설정
 if (process.env.SLACK_NOTIFY_ENABLED === 'false') process.exit(0);
 
-// Bot Token: notify.config.json (팀 공유)
-const configPath = path.join(__dirname, 'notify.config.json');
-if (!fs.existsSync(configPath)) process.exit(0);
-
-const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-const BOT_TOKEN = config.slackBotToken;
+// Bot Token: ~/.claude/settings.json의 SLACK_BOT_TOKEN 환경변수
+const BOT_TOKEN = process.env.SLACK_BOT_TOKEN;
 if (!BOT_TOKEN || BOT_TOKEN.startsWith('xoxb-YOUR')) process.exit(0);
 
 // User Email: Claude Code 전역 설정 (개인 설정 — ~/.claude/settings.json)
