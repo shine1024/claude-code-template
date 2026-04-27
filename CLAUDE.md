@@ -8,6 +8,7 @@ claude-code-template — CLAUDE.md
    파일	역할
    `CLAUDE.md`	Claude Code 프로젝트 지침 (git 커밋)
    `CLAUDE.local.md`	개인 환경 설정 (.gitignore 추가)
+   `CHANGES.md`	변경 이력 — 모든 커밋을 날짜별로 누적 기록
    `init.bat`	신규 프로젝트에 `.claude/` 폴더를 초기화하는 스크립트 (Windows)
    `.claude/sync.bat`	각 프로젝트에서 `.claude/` 설정을 최신화하는 동기화 스크립트 (Windows)
    `template/CLAUDE-TEMPLATE-*.md`	프로젝트별 CLAUDE.md 템플릿
@@ -25,6 +26,7 @@ claude-code-template — CLAUDE.md
 claude-code-template/
 ├── CLAUDE.md                        ← Claude Code 프로젝트 지침 (이 파일)
 ├── CLAUDE.local.md                  ← 개인 설정 (git 제외)
+├── CHANGES.md                       ← 변경 이력 (모든 커밋 누적)
 ├── init.bat                         ← 신규 프로젝트 .claude/ 초기화 스크립트 (Windows)
 ├── template/                        ← 프로젝트별 CLAUDE.md 템플릿
 ├── basics/                          ← Claude Code 일반 교육자료
@@ -37,14 +39,15 @@ claude-code-template/
     └── hooks/                       ← 이벤트 훅
 ```
 ---
-3. 스킬 수정 시 체크리스트
-   `.claude/skills/` 하위 스킬을 수정할 때는 아래 항목을 반드시 함께 확인한다.
+3. 변경 시 체크리스트
+   변경 내용에 따라 아래 항목을 반드시 함께 업데이트한다.
    변경 내용	함께 업데이트할 파일
    `SKILL.md` 실행 절차 변경	`.claude/guides/skills.md`
    컬럼·설정 항목 변경	`.claude/guides/skills.md` + 관련 `scripts/`
    설정 방식 변경 (env, CLAUDE.local.md 등)	`.claude/guides/skills.md` + `README.md`
    훅 스크립트 동작 변경	`.claude/guides/hooks.md`
    훅 설정 방식 변경 (env, config 등)	`.claude/guides/hooks.md` + `README.md`
+   모든 변경 (커밋 단위)	`CHANGES.md` 상단에 항목 추가 (오늘 날짜 그룹). 예외: 오타·서식 등 사소한 수정, 같은 흐름의 후속 커밋(기존 항목에 병합)
 ---
 4. AI 협업 지침
    이 프로젝트의 본질
