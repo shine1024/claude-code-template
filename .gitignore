@@ -6,3 +6,4 @@ CLAUDE.local.md
 
 # 훅 임시 파일
 .claude/hooks/.task_start
+.claude/hooks/.local_md_hash

@@ -4,9 +4,9 @@
 
 ### 1단계: 사전 정보 수집
 아래 값을 확인합니다:
-- **이름**: 환경변수 `$SESSION_LOG_NAME`
+- **이름**: 환경변수 `$SESSION_USER_NAME`
 - **프로젝트명**: `basename $(pwd)` 실행 결과
-- **SCRIPT_URL**: 환경변수 `$SESSION_LOG_SCRIPT_URL`
+- **환경변수**: `GOOGLE_SERVICE_ACCOUNT_KEY_PATH`, `GOOGLE_SHEETS_FEEDBACK_ID`, `GOOGLE_SHEETS_SESSION_LOG_GID` 가 모두 설정되어야 합니다. 미설정 시 `.claude/guides/google-sheets-setup.md` 안내 후 중단합니다.
 
 ### 2단계: 회고 초안 작성
 현재 세션 대화 전체를 분석하여 아래 항목의 초안을 작성합니다:
@@ -14,7 +14,7 @@
 | 항목 | 작성 기준 |
 |------|-----------|
 | 날짜 | 오늘 날짜 (YYYY-MM-DD) |
-| 이름 | `$SESSION_LOG_NAME` 값 |
+| 이름 | `$SESSION_USER_NAME` 값 |
 | 프로젝트명 | `basename $(pwd)` 값 |
 | 요구사항 | 이번 세션에서 사용자가 요청한 작업 요약 |
 | 대화흐름 | 대화 전개 흐름 요약 (요청→오해→재설명→해결 등의 흐름을 간결하게) |
@@ -47,14 +47,13 @@
 사용자가 수정을 요청하면 해당 항목만 수정 후 다시 확인을 요청합니다.
 
 ### 4단계: 제출
-사용자가 확인하면 Bash 도구로 아래 두 명령을 순서대로 실행합니다.
-값 내 줄바꿈은 `\n`으로 구분합니다. 큰따옴표는 사용하지 않습니다.
+사용자가 확인하면 회고 항목을 JSON 으로 만들어 `append-session.js` 의 stdin 으로 전달합니다.
 
 ```bash
 node -e "
 const data = {
   date: '${날짜}',
-  name: process.env.SESSION_LOG_NAME,
+  name: process.env.SESSION_USER_NAME,
   project: '${프로젝트명}',
   requirements: '${요구사항}',
   conversationFlow: '${대화흐름}',
@@ -64,12 +63,10 @@ const data = {
   improvement: '${개선내용}',
   other: '${기타}'
 };
-fetch(process.env.SESSION_LOG_SCRIPT_URL, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(data)
-});
-"
+process.stdout.write(JSON.stringify(data));
+" | node "{SKILL_DIR}/scripts/append-session.js"
 ```
+
+값 내 줄바꿈은 `\n`으로 구분합니다. 큰따옴표는 사용하지 않습니다.
 
 제출이 완료되면 "Google Sheets에 회고가 기록되었습니다." 메시지를 출력합니다.

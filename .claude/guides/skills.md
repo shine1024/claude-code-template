@@ -81,65 +81,17 @@ Claude Code에서 스킬은 `/스킬명`으로 직접 호출하는 커스텀 커
 |------|------|
 | 호출 방법 | 세션 종료 전 `/session-log` 입력 |
 | 설정 위치 | `~/.claude/settings.json` 또는 `.claude/settings.local.json` |
-| 제출 대상 | Google Sheets (Apps Script 경유) |
+| 제출 대상 | Google Sheets (Sheets API 직접 호출) |
 
 **사전 설정** (환경변수로 관리)
 
 ```json
 {
   "env": {
-    "SESSION_LOG_NAME": "[이름]",
-    "SESSION_LOG_SCRIPT_URL": "[Google Apps Script 배포 URL]"
-  }
-}
-```
-
-> 개인 정보이므로 `.claude/settings.local.json` 또는 `~/.claude/settings.json`에 추가합니다.
-
-**실행 절차**
-
-| 단계 | 내용 |
-|------|------|
-| 1 | 환경변수(`SESSION_LOG_NAME`)와 프로젝트명(`basename $(pwd)`) 확인 |
-| 2 | 세션 전체 대화를 분석해 회고 초안 작성 |
-| 3 | 초안 확인 후 수정 또는 제출 |
-
-**Google Sheets 컬럼 구성**
-
-| 컬럼 | 내용 |
-|------|------|
-| `date` | 날짜 |
-| `name` | 이름 |
-| `project` | 프로젝트명 |
-| `requirements` | 요구사항 요약 |
-| `conversationFlow` | 대화 흐름 요약 |
-| `wentWell` | 잘된 점 |
-| `wentWrong` | 잘못된 점 |
-| `rootCause` | 원인 분석 |
-| `improvement` | 개선 내용 |
-| `other` | 기타 |
-
-> Apps Script 초안: `.claude/skills/session-log/scripts/google-apps-script.js`
-
----
-
-### /analyze-feedback — 피드백 분석 및 규칙 개선안 도출
-
-**용도**: Google Sheets 작업세션 데이터를 분석해 CLAUDE.md 규칙 개선안을 보고서로 생성
-
-| 항목 | 내용 |
-|------|------|
-| 호출 방법 | `claude-code-template` 프로젝트에서 `/analyze-feedback` 입력 |
-| 출력 경로 | `reports/feedback-analysis-{YYYY-MM-DD}.md` |
-| 분석 대상 | Google Sheets "2) 작업세션 수집" 시트의 미분석 신규 행 |
-
-**사전 설정** (환경변수로 관리)
-
-```json
-{
-  "env": {
-    "GOOGLE_SERVICE_ACCOUNT_KEY_PATH": "[서비스 계정 JSON 키 파일 경로]",
-    "SHEETS_FEEDBACK_ID": "[Google Spreadsheet ID]"
+    "SESSION_USER_NAME": "[이름]",
+    "GOOGLE_SERVICE_ACCOUNT_KEY_PATH": "[서비스 계정 JSON 키 경로]",
+    "GOOGLE_SHEETS_FEEDBACK_ID": "[Google Spreadsheet ID]",
+    "GOOGLE_SHEETS_SESSION_LOG_GID": "[회고 시트의 gid]"
   }
 }
 ```
@@ -150,12 +102,119 @@ Claude Code에서 스킬은 `/스킬명`으로 직접 호출하는 커스텀 커
 
 | 단계 | 내용 |
 |------|------|
-| 1 | 환경변수 확인 (`GOOGLE_SERVICE_ACCOUNT_KEY_PATH`, `SHEETS_FEEDBACK_ID`) |
-| 2 | 시트 데이터 조회 — "클로드 분석여부" 컬럼이 비어있는 행만 자동 필터링 |
+| 1 | 환경변수와 프로젝트명(`basename $(pwd)`) 확인 |
+| 2 | 세션 전체 대화를 분석해 회고 초안 작성 |
+| 3 | 초안 확인 후 수정 또는 제출 (`scripts/append-session.js`) |
+
+**Google Sheets 컬럼 구성** (1행 설명, 2행 헤더, 3행~ 데이터)
+
+| 열 | 컬럼 | 내용 |
+|----|------|------|
+| A | `date` | 날짜 |
+| B | `name` | 이름 |
+| C | `project` | 프로젝트명 |
+| D | `requirements` | 요구사항 요약 |
+| E | `conversationFlow` | 대화 흐름 요약 |
+| F | `wentWell` | 잘된 점 |
+| G | `wentWrong` | 잘못된 점 |
+| H | `rootCause` | 원인 분석 |
+| I | `improvement` | 개선 내용 |
+| J | `other` | 기타 |
+| K | `클로드 분석여부` | analyze-feedback 처리 후 날짜 기입 |
+
+---
+
+### /share-rules — 개인 규칙을 팀 시트에 업로드
+
+**용도**: 각자 `CLAUDE.local.md` 의 "공유 가능" 섹션 규칙을 추출해 Google Sheets `3) 개인 규칙 후보` 시트에 업로드. 미리보기 → 확인 후에만 전송.
+
+| 항목 | 내용 |
+|------|------|
+| 호출 방법 | 프로젝트 루트에서 `/share-rules` 입력 |
+| 추출 대상 | `CLAUDE.local.md` 내 `## 공유 가능` 섹션 (다음 `##` 헤딩 직전까지) |
+| 제외 대상 | `## 비공유` 섹션 및 헤딩 외 본문 |
+| 업로드 대상 | Google Sheets `3) 개인 규칙 후보` (시트는 사전에 만들어 `GOOGLE_SHEETS_PERSONAL_RULES_GID` 등록) |
+
+**CLAUDE.local.md 섹션 컨벤션**
+
+```markdown
+## 공유 가능
+- 팀에 공유 가능한 일반화된 규칙 (한 줄에 한 규칙)
+- 여러 줄 규칙은 빈 줄로 블록 구분
+
+## 비공유
+- 개인 환경 경로, 사번, 사내 URL 등 (절대 업로드 안 됨)
+```
+
+**사전 설정** (analyze-feedback 과 같은 환경변수 재사용)
+
+```json
+{
+  "env": {
+    "GOOGLE_SERVICE_ACCOUNT_KEY_PATH": "[서비스 계정 JSON 키 파일 경로]",
+    "GOOGLE_SHEETS_FEEDBACK_ID": "[Google Spreadsheet ID]",
+    "GOOGLE_SHEETS_PERSONAL_RULES_GID": "[개인 규칙 시트의 gid]",
+    "SESSION_USER_NAME": "[작성자 이름]"
+  }
+}
+```
+
+**실행 절차**
+
+| 단계 | 내용 |
+|------|------|
+| 1 | 환경변수 확인 |
+| 2 | `extract-shareable.js` 로 `## 공유 가능` 섹션 추출 (빈 줄 단위 블록) |
+| 3 | 추출 결과 미리보기 + 사용자 확인 |
+| 4 | 확인 시 `upload-rules.js` stdin 으로 JSON 전달, 개인 규칙 후보 시트에 append |
+
+**Google Sheets 컬럼 구성** — 개인 규칙 후보 시트 (1행 설명, 2행 헤더, 3행~ 데이터)
+
+| 열 | 컬럼 | 내용 |
+|----|------|------|
+| A | `date` | 업로드 날짜 |
+| B | `name` | 작성자 (`SESSION_USER_NAME`) |
+| C | `project` | 프로젝트명 |
+| D | `rule` | 규칙 본문 (한 블록) |
+| E | `클로드 분석여부` | analyze-feedback 처리 후 날짜 기입 |
+
+---
+
+### /analyze-feedback — 피드백 분석 및 규칙 개선안 도출
+
+**용도**: Google Sheets 의 회고 데이터(`2) 작업세션 수집`)와 개인 규칙 후보(`3) 개인 규칙 후보`)를 함께 분석해 CLAUDE.md 규칙 개선안을 보고서로 생성
+
+| 항목 | 내용 |
+|------|------|
+| 호출 방법 | `claude-code-template` 프로젝트에서 `/analyze-feedback` 입력 |
+| 출력 경로 | `reports/feedback-analysis-{YYYY-MM-DD}.md` |
+| 분석 대상 | `2) 작업세션 수집` + `3) 개인 규칙 후보` 시트의 미분석 신규 행 |
+
+**사전 설정** (환경변수로 관리)
+
+```json
+{
+  "env": {
+    "GOOGLE_SERVICE_ACCOUNT_KEY_PATH": "[서비스 계정 JSON 키 파일 경로]",
+    "GOOGLE_SHEETS_FEEDBACK_ID": "[Google Spreadsheet ID]",
+    "GOOGLE_SHEETS_SESSION_LOG_GID": "[회고 시트의 gid]",
+    "GOOGLE_SHEETS_PERSONAL_RULES_GID": "[개인 규칙 시트의 gid]"
+  }
+}
+```
+
+> Google Sheets 연동 설정 방법: [`.claude/guides/google-sheets-setup.md`](google-sheets-setup.md)
+
+**실행 절차**
+
+| 단계 | 내용 |
+|------|------|
+| 1 | 환경변수 확인 |
+| 2 | 두 시트 데이터 조회 — "클로드 분석여부" 컬럼이 비어있는 행만 자동 필터링 (`fetch-sheet.js`, `fetch-personal-rules.js`) |
 | 3 | 신규 행에 해당하는 프로젝트 템플릿 파일 읽기 |
-| 4 | 규칙 누락·미적용·신규 패턴·성공 패턴 분석 |
+| 4 | 규칙 누락·미적용·신규 패턴·성공 패턴 분석 + 개인 규칙 후보 승격 검토(작성자 수, 회고 매칭) |
 | 5 | `reports/feedback-analysis-{날짜}.md` 보고서 생성 |
-| 6 | 사용자 확인 후 시트 "클로드 분석여부" 컬럼에 날짜 기입 |
+| 6 | 사용자 확인 후 두 시트의 "클로드 분석여부" 컬럼에 날짜 기입 (`mark-analyzed.js`, `mark-personal-rules-analyzed.js`) |
 
 **분류 태그**
 
