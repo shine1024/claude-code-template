@@ -8,8 +8,8 @@ claude-code-template — CLAUDE.md
    파일	역할
    `CLAUDE.md`	Claude Code 프로젝트 지침 (git 커밋)
    `CLAUDE.local.md`	개인 환경 설정 (.gitignore 추가)
-   `init.bat` / `init.ps1`	신규 프로젝트에 `.claude/` 폴더를 초기화하는 스크립트 (Windows)
-   `.claude/sync.bat` / `sync.ps1`	각 프로젝트에서 `.claude/` 설정을 최신화하는 동기화 스크립트 (Windows)
+   `init.bat`	신규 프로젝트에 `.claude/` 폴더를 초기화하는 스크립트 (Windows)
+   `.claude/sync.bat`	각 프로젝트에서 `.claude/` 설정을 최신화하는 동기화 스크립트 (Windows)
    `template/CLAUDE-TEMPLATE-*.md`	프로젝트별 CLAUDE.md 템플릿
    `basics/`	Claude Code 일반 교육자료
    `reports/`	피드백 분석 보고서 (git exclude — 로컬 전용)
@@ -25,12 +25,12 @@ claude-code-template — CLAUDE.md
 claude-code-template/
 ├── CLAUDE.md                        ← Claude Code 프로젝트 지침 (이 파일)
 ├── CLAUDE.local.md                  ← 개인 설정 (git 제외)
-├── init.bat / init.ps1              ← 신규 프로젝트 .claude/ 초기화 스크립트 (Windows)
+├── init.bat                         ← 신규 프로젝트 .claude/ 초기화 스크립트 (Windows)
 ├── template/                        ← 프로젝트별 CLAUDE.md 템플릿
 ├── basics/                          ← Claude Code 일반 교육자료
 ├── reports/                         ← 피드백 분석 보고서 (git exclude — 로컬 전용)
 └── .claude/
-    ├── sync.bat / sync.ps1          ← 팀 설정 동기화 스크립트 (Windows)
+    ├── sync.bat                     ← 팀 설정 동기화 스크립트 (Windows)
     ├── guides/                      ← 기능별 가이드 문서
     ├── rules/                       ← 관심사별 규칙 (세션 시작 시 자동 로드)
     ├── skills/                      ← 커스텀 슬래시 커맨드
