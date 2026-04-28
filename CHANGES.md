@@ -5,6 +5,13 @@
 
 ---
 
+## 2026-04-29 (3)
+
+- [문서] `README.md` — `sync.bat` 섹션 제거, `/sync-template` 스킬 안내로 교체, `.claude/state/` 디렉토리 반영
+- [문서] `CLAUDE.md` — `sync.bat` 잔존 참조 제거, `state/` 구조 반영, 커밋 전 README·CHANGES 확인 규칙 추가
+
+---
+
 ## 2026-04-29 (2)
 
 - [수정] `init.bat` — LF→CRLF 변환 및 `Get-Content -Encoding UTF8` 누락 수정 (한글 깨짐으로 실행 불가 버그)

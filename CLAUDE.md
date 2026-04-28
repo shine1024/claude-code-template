@@ -10,7 +10,7 @@ claude-code-template — CLAUDE.md
    `CLAUDE.local.md`	개인 환경 설정 (.gitignore 추가)
    `CHANGES.md`	변경 이력 — 모든 커밋을 날짜별로 누적 기록
    `init.bat`	신규 프로젝트에 `.claude/` 폴더를 초기화하는 스크립트 (Windows)
-   `.claude/sync.bat`	각 프로젝트에서 `.claude/` 설정을 최신화하는 동기화 스크립트 (Windows)
+   `/sync-template`	각 프로젝트에서 `.claude/` 설정을 최신화하는 스킬
    `template/CLAUDE-TEMPLATE-*.md`	프로젝트별 CLAUDE.md 템플릿
    `basics/`	Claude Code 일반 교육자료
    `.claude/guides/hooks.md`	훅 기능 가이드
@@ -30,11 +30,11 @@ claude-code-template/
 ├── template/                        ← 프로젝트별 CLAUDE.md 템플릿
 ├── basics/                          ← Claude Code 일반 교육자료
 └── .claude/
-    ├── sync.bat                     ← 팀 설정 동기화 스크립트 (Windows)
     ├── guides/                      ← 기능별 가이드 문서
     ├── rules/                       ← 관심사별 규칙 (세션 시작 시 자동 로드)
     ├── skills/                      ← 커스텀 슬래시 커맨드
-    └── hooks/                       ← 이벤트 훅
+    ├── hooks/                       ← 이벤트 훅
+    └── state/                       ← 머신 생성 상태 파일 (git 제외)
 ```
 ---
 3. 변경 시 체크리스트
@@ -46,6 +46,7 @@ claude-code-template/
    훅 스크립트 동작 변경	`.claude/guides/hooks.md`
    훅 설정 방식 변경 (env, config 등)	`.claude/guides/hooks.md` + `README.md`
    모든 변경 (커밋 단위)	`CHANGES.md` 상단에 항목 추가 (오늘 날짜 그룹). 예외: 오타·서식 등 사소한 수정, 같은 흐름의 후속 커밋(기존 항목에 병합)
+   커밋·푸시 직전 (필수)	`README.md`와 `CHANGES.md`를 반드시 열어 내용이 현재 상태와 일치하는지 확인한다. 불일치 발견 시 커밋보다 문서 수정을 먼저 완료한다.
 ---
 4. AI 협업 지침
    이 프로젝트의 본질
