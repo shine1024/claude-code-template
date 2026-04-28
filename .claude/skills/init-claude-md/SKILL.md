@@ -59,7 +59,7 @@ CONTEXT 파일의 `## 2. 분석 순서` 섹션을 읽어 그 순서대로 모듈
 
 ### 2단계: CONTEXT 파일 읽기
 
-**8번(기타)이 아닌 경우:** `$CLAUDE_CODE_TEMPLATE_PATH/template/{파일명}`을 읽어 아래 내용을 추출합니다.
+**8번(기타)이 아닌 경우:** `.claude/template/{파일명}`을 읽어 아래 내용을 추출합니다.
 
 **`## 1. 서비스 개요`** 에서 아래 필드를 추출합니다.
 
@@ -74,10 +74,10 @@ CONTEXT 파일의 `## 2. 분석 순서` 섹션을 읽어 그 순서대로 모듈
 
 CONTEXT 파일의 각 섹션은 CLAUDE.md에 그대로 복사하지 않습니다. 3단계 코드 분석 결과와 종합하여 CLAUDE.md 고정 4섹션 구조에 녹여 작성합니다.
 
-> `CLAUDE_CODE_TEMPLATE_PATH` 환경변수가 없으면 아래 메시지를 출력하고 중단합니다.
+> `.claude/template/{파일명}`이 없으면 아래 메시지를 출력하고 중단합니다.
 > ```
-> ❌ CLAUDE_CODE_TEMPLATE_PATH 환경변수가 설정되어 있지 않습니다.
-> .claude/settings.local.json 의 env 항목에 추가해주세요.
+> ❌ .claude/template/ 폴더를 찾을 수 없습니다.
+> init.bat을 실행하여 프로젝트를 초기화한 뒤 다시 시도하세요.
 > ```
 
 ### 3단계: 프로젝트 분석

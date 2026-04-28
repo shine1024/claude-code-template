@@ -5,6 +5,14 @@
 
 ---
 
+## 2026-04-29 (4)
+
+- [기능] `init.bat` — `template/` → `.claude/template/` 복사 추가 (init-claude-md 로컬 참조용)
+- [수정] `init-claude-md` — `CLAUDE_CODE_TEMPLATE_PATH` 제거, `.claude/template/` 직접 참조로 변경
+- [문서] `README.md` — `/init-claude-md` 실행 위치를 대상 프로젝트로 정정
+
+---
+
 ## 2026-04-29 (3)
 
 - [문서] `README.md` — `sync.bat` 섹션 제거, `/sync-template` 스킬 안내로 교체, `.claude/state/` 디렉토리 반영

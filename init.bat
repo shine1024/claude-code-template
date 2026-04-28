@@ -51,6 +51,7 @@ Copy-Item (Join-Path $ScriptDir ".claude\hooks")         $TargetClaude -Recurse
 Copy-Item (Join-Path $ScriptDir ".claude\rules")         $TargetClaude -Recurse
 Copy-Item (Join-Path $ScriptDir ".claude\skills")        $TargetClaude -Recurse
 Copy-Item (Join-Path $ScriptDir ".claude\settings.json") $TargetClaude
+Copy-Item (Join-Path $ScriptDir "template")              $TargetClaude -Recurse
 
 Write-Host "복사 완료"
 
