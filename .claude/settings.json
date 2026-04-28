@@ -17,6 +17,10 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/slack-notify/task-start.sh"
+          },
+          {
+            "type": "command",
+            "command": ".claude/hooks/check-update/check-update.bat"
           }
         ]
       }

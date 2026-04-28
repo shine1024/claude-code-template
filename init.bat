@@ -1,4 +1,4 @@
-﻿@echo off
+@echo off
 chcp 65001 > nul
 set "SCRIPT_DIR=%~dp0"
 set "SCRIPT_FILE=%~f0"
@@ -50,16 +50,22 @@ Copy-Item (Join-Path $ScriptDir ".claude\hooks")         $TargetClaude -Recurse
 Copy-Item (Join-Path $ScriptDir ".claude\rules")         $TargetClaude -Recurse
 Copy-Item (Join-Path $ScriptDir ".claude\skills")        $TargetClaude -Recurse
 Copy-Item (Join-Path $ScriptDir ".claude\settings.json") $TargetClaude
-Copy-Item (Join-Path $ScriptDir ".claude\sync.bat")      $TargetClaude
 
 Write-Host "복사 완료"
 
-# ── 4. settings.local.json 생성
+# ── 4. SYNC_HASH 기록
+$Hash = git -C $ScriptDir rev-parse HEAD 2>$null
+if ($Hash) {
+    Set-Content (Join-Path $TargetClaude "SYNC_HASH") $Hash.Trim()
+}
+
+# ── 5. settings.local.json 생성
 Write-Host ""
 Write-Host "settings.local.json 생성 중..."
 
 $JsonContent = "{
   `"env`": {
+    `"TEMPLATE_REPO_URL`": `"sync-template 스킬 — claude-code-template 저장소 URL (비워두면 업데이트 체크 비활성)`",
     `"SLACK_BOT_TOKEN`": `"Slack 알림 훅 — Bot Token (xoxb-...)`",
     `"SLACK_USER_EMAIL`": `"Slack 알림 훅 — 슬랙 개인 계정 메일주소`",
     `"SESSION_USER_NAME`": `"session-log·share-rules — 작성자 이름`",
@@ -83,7 +89,7 @@ $JsonPath = Join-Path $TargetClaude "settings.local.json"
 
 Write-Host "settings.local.json 생성 완료"
 
-# ── 5. CLAUDE.local.md 생성
+# ── 6. CLAUDE.local.md 생성
 Write-Host ""
 Write-Host "CLAUDE.local.md 생성 중..."
 
@@ -101,6 +107,6 @@ Write-Host "초기화 완료!"
 Write-Host ""
 Write-Host "다음 단계:"
 Write-Host "1. CLAUDE.md 를 생성하세요: /init-claude-md"
-Write-Host "2. .gitignore 에 CLAUDE.local.md 와 .claude/settings.local.json 을 추가하세요."
-Write-Host "3. CLAUDE.local.md 의 규칙 작성 모드를 필요 시 조정하세요."
-Write-Host "4. 나머지 환경변수는 .claude/settings.local.json 을 참고하여 직접 입력하세요."
+Write-Host "2. .gitignore 에 CLAUDE.local.md, .claude/settings.local.json, .claude/SYNC_HASH 를 추가하세요."
+Write-Host "3. .claude/settings.local.json 의 TEMPLATE_REPO_URL 을 입력하면 자동 업데이트 알림이 활성화됩니다."
+Write-Host "4. CLAUDE.local.md 의 규칙 작성 모드를 필요 시 조정하세요."

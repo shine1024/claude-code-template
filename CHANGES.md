@@ -5,6 +5,17 @@
 
 ---
 
+## 2026-04-29
+
+- [기능] 자동 업데이트 알림 도입 — Claude 실행 시 공통 템플릿 업데이트 여부를 자동 체크 (`check-update` 훅)
+- [기능] `/sync-template` 스킬 신설 — `sync.bat` 대체, Claude가 직접 저장소 clone·파일 복사·`SYNC_HASH` 갱신 수행
+- [기능] `TEMPLATE_REPO_URL` 환경변수 도입 — 비어 있으면 업데이트 체크 비활성 (팀 opt-out 지원)
+- [리팩터] `sync.bat` 제거 — `/sync-template` 스킬로 대체
+- [설정] `.gitignore`에 `.claude/SYNC_HASH` 추가
+- [설정] `init.bat` — `SYNC_HASH` 초기 기록 추가, `settings.local.json`에 `TEMPLATE_REPO_URL` 항목 추가
+
+---
+
 ## 2026-04-28 (3)
 
 - [리팩터] `reports/` 폴더 제거 — `analyze-report`는 각 프로젝트 루트에서 실행하는 구조이므로 claude-code-template에 불필요
