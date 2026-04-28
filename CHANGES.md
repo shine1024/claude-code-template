@@ -5,6 +5,12 @@
 
 ---
 
+## 2026-04-29 (6)
+
+- [수정] `init.bat`·`sync-template` — `.claude/lib/` 복사 누락 추가
+
+---
+
 ## 2026-04-29 (5)
 
 - [수정] `check-update` 훅 — lock을 날짜 단위에서 Claude Code 프로세스(세션) 단위로 변경, 세션 시작 시 1회 체크

@@ -48,6 +48,7 @@ New-Item (Join-Path $TargetClaude "state") -ItemType Directory | Out-Null
 
 Copy-Item (Join-Path $ScriptDir ".claude\guides")        $TargetClaude -Recurse
 Copy-Item (Join-Path $ScriptDir ".claude\hooks")         $TargetClaude -Recurse
+Copy-Item (Join-Path $ScriptDir ".claude\lib")           $TargetClaude -Recurse
 Copy-Item (Join-Path $ScriptDir ".claude\rules")         $TargetClaude -Recurse
 Copy-Item (Join-Path $ScriptDir ".claude\skills")        $TargetClaude -Recurse
 Copy-Item (Join-Path $ScriptDir ".claude\settings.json") $TargetClaude

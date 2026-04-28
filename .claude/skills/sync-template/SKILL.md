@@ -45,13 +45,14 @@ clone 실패 시 아래 메시지를 출력하고 종료합니다.
 |-----------|------|
 | `.claude/guides/` | 기능 가이드 문서 |
 | `.claude/hooks/` | 이벤트 훅 스크립트 |
+| `.claude/lib/` | 스킬 공통 라이브러리 |
 | `.claude/rules/` | 공통 규칙 파일 |
 | `.claude/skills/` | 커스텀 스킬 |
 | `.claude/settings.json` | 공통 설정 |
 
 ```powershell
 $TargetClaude = ".claude"
-foreach ($dir in @("guides", "hooks", "rules", "skills")) {
+foreach ($dir in @("guides", "hooks", "lib", "rules", "skills")) {
     $target = Join-Path $TargetClaude $dir
     if (Test-Path $target) { Remove-Item $target -Recurse -Force }
     Copy-Item (Join-Path $TempDir ".claude\$dir") $TargetClaude -Recurse
@@ -88,6 +89,7 @@ Remove-Item $TempDir -Recurse -Force
 동기화 완료! 다음 항목이 최신화되었습니다.
 - guides/
 - hooks/
+- lib/
 - rules/
 - skills/
 - settings.json
