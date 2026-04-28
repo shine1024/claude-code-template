@@ -4,10 +4,17 @@
 $repoUrl = $env:TEMPLATE_REPO_URL
 if (-not $repoUrl) { exit 0 }
 
-# 하루 1회 체크 (프로젝트 경로별 lock 파일)
-$today = Get-Date -Format "yyyyMMdd"
+# 세션 1회 체크 (Claude Code 프로세스를 세션 키로 사용)
 $cwdHash = [System.Math]::Abs((Get-Location).Path.GetHashCode()).ToString()
-$lockFile = Join-Path $env:TEMP "claude-update-check-${cwdHash}-${today}"
+try {
+    # powershell($PID) ← cmd.exe(bat) ← Claude Code
+    $parent = Get-Process -Id (Get-Process -Id $PID -ErrorAction Stop).Parent.Id -ErrorAction Stop
+    $gp     = Get-Process -Id $parent.Parent.Id -ErrorAction Stop
+    $sessionKey = "$($gp.Id)_$($gp.StartTime.ToString('yyyyMMddHHmmss'))"
+} catch {
+    $sessionKey = Get-Date -Format "yyyyMMddHH"  # 추적 실패 시 1시간 단위 fallback
+}
+$lockFile = Join-Path $env:TEMP "claude-update-check-${cwdHash}-${sessionKey}"
 if (Test-Path $lockFile) { exit 0 }
 
 # 로컬 SYNC_HASH 읽기

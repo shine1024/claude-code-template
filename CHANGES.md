@@ -5,6 +5,12 @@
 
 ---
 
+## 2026-04-29 (5)
+
+- [수정] `check-update` 훅 — lock을 날짜 단위에서 Claude Code 프로세스(세션) 단위로 변경, 세션 시작 시 1회 체크
+
+---
+
 ## 2026-04-29 (4)
 
 - [기능] `init.bat` — `template/` → `.claude/template/` 복사 추가 (init-claude-md 로컬 참조용)
