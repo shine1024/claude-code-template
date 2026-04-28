@@ -5,7 +5,7 @@
 
 ---
 
-## 2026-04-28 (6)
+## 2026-04-28 (16)
 
 - [수정] `check-update` 훅 — 이벤트를 `UserPromptSubmit` → `SessionStart`로 이동 (매 프롬프트마다 체크 → 세션 시작 시 1회로 단순화)
   - `.claude/settings.json`: `SessionStart` 블록 신설, `UserPromptSubmit`에는 `task-start.sh`만 잔존
@@ -14,7 +14,7 @@
 
 ---
 
-## 2026-04-28 (5)
+## 2026-04-28 (15)
 
 - [수정] `issue-update` 스킬 — Redmine 제목에서 `#일감번호` 제거(`[분류] 요약`만 유지), 진척도 100%·작업시간 자동 등록 추가
   - 제목 형식 `#1234 [수정] …` → `[수정] …` (Redmine UI에 일감번호가 별도 표시되어 중복 표기 방지). 커밋 메시지에는 `#일감번호` 그대로 유지
@@ -25,7 +25,7 @@
 
 ---
 
-## 2026-04-28 (4)
+## 2026-04-28 (14)
 
 - [리팩터] `check-update` 훅 — PowerShell → Node.js 재작성, Slack DM 알림 추가, mojibake 해소
   - `.claude/hooks/lib/slack.js` 신규 — Slack DM 공용 모듈 (`lookupUserByEmail`/`sendDm`/`sendDmByEmail`)
@@ -36,43 +36,43 @@
 
 ---
 
-## 2026-04-28 (3)
+## 2026-04-28 (13)
 
 - [리팩터] `issue-new`·`issue-update` 단순화 — `issue-new`는 `임시 - YYYY-MM-DD HH:MM:SS`로 즉시 채번, `issue-update`는 직전 커밋 분석으로 `#번호 [분류] 요약` 제목 자동 반영. 분류는 `[개편]`/`[신규]`/`[수정]` 3종. 자유 형식 입력·prefix 템플릿·진척도/상태 등 부가 기능 제거
 
 ---
 
-## 2026-04-28 (2)
+## 2026-04-28 (12)
 
 - [리팩터] 스킬명 변경 — `redmine-issue-creator` → `issue-new`, `redmine-issue-updater` → `issue-update` (호출 명령어 단순화)
 
 ---
 
-## 2026-04-28
+## 2026-04-28 (11)
 
 - [수정] `check-update` 훅 — `.bat` 제거, `settings.json`에서 PowerShell 직접 호출로 변경 (bash 환경에서 .bat 실행 불가 문제 해결)
 
 ---
 
-## 2026-04-29 (7)
+## 2026-04-28 (10)
 
 - [리팩터] `init.bat`·`sync-template` — 폴더 목록 하드코딩 제거, `.claude/` 하위 폴더 자동 포함 (`state/` 제외)
 
 ---
 
-## 2026-04-29 (6)
+## 2026-04-28 (9)
 
 - [수정] `init.bat`·`sync-template` — `.claude/lib/` 복사 누락 추가
 
 ---
 
-## 2026-04-29 (5)
+## 2026-04-28 (8)
 
 - [수정] `check-update` 훅 — lock을 날짜 단위에서 Claude Code 프로세스(세션) 단위로 변경, 세션 시작 시 1회 체크
 
 ---
 
-## 2026-04-29 (4)
+## 2026-04-28 (7)
 
 - [기능] `init.bat` — `template/` → `.claude/template/` 복사 추가 (init-claude-md 로컬 참조용)
 - [수정] `init-claude-md` — `CLAUDE_CODE_TEMPLATE_PATH` 제거, `.claude/template/` 직접 참조로 변경
@@ -80,14 +80,14 @@
 
 ---
 
-## 2026-04-29 (3)
+## 2026-04-28 (6)
 
 - [문서] `README.md` — `sync.bat` 섹션 제거, `/sync-template` 스킬 안내로 교체, `.claude/state/` 디렉토리 반영
 - [문서] `CLAUDE.md` — `sync.bat` 잔존 참조 제거, `state/` 구조 반영, 커밋 전 README·CHANGES 확인 규칙 추가
 
 ---
 
-## 2026-04-29 (2)
+## 2026-04-28 (5)
 
 - [수정] `init.bat` — LF→CRLF 변환 및 `Get-Content -Encoding UTF8` 누락 수정 (한글 깨짐으로 실행 불가 버그)
 - [기능] `.claude/state/` 폴더 신설 — 머신 생성 상태 파일 분리 (`SYNC_HASH` 이동)
@@ -95,7 +95,7 @@
 
 ---
 
-## 2026-04-29
+## 2026-04-28 (4)
 
 - [기능] 자동 업데이트 알림 도입 — Claude 실행 시 공통 템플릿 업데이트 여부를 자동 체크 (`check-update` 훅)
 - [기능] `/sync-template` 스킬 신설 — `sync.bat` 대체, Claude가 직접 저장소 clone·파일 복사·`SYNC_HASH` 갱신 수행
