@@ -1,7 +1,7 @@
-const https    = require('https');
 const fs       = require('fs');
 const path     = require('path');
 const readline = require('readline');
+const slack    = require('../lib/slack.js');
 
 // ── 설정 로드 ──────────────────────────────────────────────────────────────
 // 프로젝트별 알림 비활성화: .claude/settings.local.json에 SLACK_NOTIFY_ENABLED=false 설정
@@ -80,67 +80,7 @@ rl.on('close', () => {
         }
     }
 
-    // 이메일로 User ID 조회 후 DM 전송
-    lookupUserByEmail(BOT_TOKEN, USER_EMAIL, (userId) => {
-        if (userId) sendSlackDM(BOT_TOKEN, userId, text);
+    slack.sendDmByEmail(BOT_TOKEN, USER_EMAIL, text, err => {
+        if (err) process.stderr.write(`[slack-notify] ${err.message}\n`);
     });
 });
-
-// ── users.lookupByEmail — 이메일 → User ID 조회 ────────────────────────────
-function lookupUserByEmail(token, email, callback) {
-    const req = https.request({
-        hostname: 'slack.com',
-        path    : `/api/users.lookupByEmail?email=${encodeURIComponent(email)}`,
-        method  : 'GET',
-        headers : {
-            'Authorization': `Bearer ${token}`,
-        },
-    }, res => {
-        let body = '';
-        res.on('data', chunk => { body += chunk; });
-        res.on('end', () => {
-            try {
-                const result = JSON.parse(body);
-                if (result.ok) {
-                    callback(result.user.id);
-                } else {
-                    process.stderr.write(`[slack-notify] 이메일 조회 실패: ${result.error}\n`);
-                    callback(null);
-                }
-            } catch {
-                callback(null);
-            }
-        });
-    });
-    req.on('error', () => callback(null));
-    req.end();
-}
-
-// ── Slack Bot API (chat.postMessage) ───────────────────────────────────────
-function sendSlackDM(token, channel, text) {
-    const payload = JSON.stringify({ channel, text });
-    const req = https.request({
-        hostname: 'slack.com',
-        path    : '/api/chat.postMessage',
-        method  : 'POST',
-        headers : {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type' : 'application/json; charset=utf-8',
-            'Content-Length': Buffer.byteLength(payload),
-        },
-    }, res => {
-        let body = '';
-        res.on('data', chunk => { body += chunk; });
-        res.on('end', () => {
-            try {
-                const result = JSON.parse(body);
-                if (!result.ok) {
-                    process.stderr.write(`[slack-notify] 전송 실패: ${result.error}\n`);
-                }
-            } catch {}
-        });
-    });
-    req.on('error', () => {});
-    req.write(payload);
-    req.end();
-}

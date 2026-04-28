@@ -20,7 +20,7 @@
           },
           {
             "type": "command",
-            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File .claude/hooks/check-update/check-update.ps1"
+            "command": "node .claude/hooks/check-update/check-update.js"
           }
         ]
       }

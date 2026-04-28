@@ -5,6 +5,17 @@
 
 ---
 
+## 2026-04-28 (4)
+
+- [리팩터] `check-update` 훅 — PowerShell → Node.js 재작성, Slack DM 알림 추가, mojibake 해소
+  - `.claude/hooks/lib/slack.js` 신규 — Slack DM 공용 모듈 (`lookupUserByEmail`/`sendDm`/`sendDmByEmail`)
+  - `.claude/hooks/check-update/check-update.js` 신규, `check-update.ps1` 삭제
+  - `slack-notify/notify.js` — 내부 Slack 함수 제거, `lib/slack.js` 사용
+  - 콘솔 알림은 stderr+stdout 이중 출력으로 가시성 확보, Slack DM은 `SLACK_BOT_TOKEN`+`SLACK_USER_EMAIL` 설정 시 자동 전송
+  - 세션 키는 `process.ppid` 우선, 실패 시 시간 단위 fallback
+
+---
+
 ## 2026-04-28 (3)
 
 - [리팩터] `issue-new`·`issue-update` 단순화 — `issue-new`는 `임시 - YYYY-MM-DD HH:MM:SS`로 즉시 채번, `issue-update`는 직전 커밋 분석으로 `#번호 [분류] 요약` 제목 자동 반영. 분류는 `[개편]`/`[신규]`/`[수정]` 3종. 자유 형식 입력·prefix 템플릿·진척도/상태 등 부가 기능 제거
