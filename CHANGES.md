@@ -5,6 +5,12 @@
 
 ---
 
+## 2026-04-28
+
+- [수정] `check-update` 훅 — `.bat` 제거, `settings.json`에서 PowerShell 직접 호출로 변경 (bash 환경에서 .bat 실행 불가 문제 해결)
+
+---
+
 ## 2026-04-29 (7)
 
 - [리팩터] `init.bat`·`sync-template` — 폴더 목록 하드코딩 제거, `.claude/` 하위 폴더 자동 포함 (`state/` 제외)
