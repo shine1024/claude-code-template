@@ -2,7 +2,7 @@
 chcp 65001 > nul
 set "SCRIPT_DIR=%~dp0"
 set "SCRIPT_FILE=%~f0"
-powershell -NoProfile -ExecutionPolicy Bypass -Command "& { $f = $env:SCRIPT_FILE; $s = (Get-Content $f -Raw) -replace '(?s)[\s\S]*?# ---PS_START---\r?\n', ''; $env:SCRIPT_DIR = $env:SCRIPT_DIR.TrimEnd('\'); Invoke-Expression $s }"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "& { $f = $env:SCRIPT_FILE; $s = (Get-Content $f -Raw -Encoding UTF8) -replace '(?s)[\s\S]*?# ---PS_START---\r?\n', ''; $env:SCRIPT_DIR = $env:SCRIPT_DIR.TrimEnd('\'); Invoke-Expression $s }"
 pause
 exit /b
 
@@ -44,6 +44,7 @@ if (Test-Path $TargetClaude) {
     Remove-Item $TargetClaude -Recurse -Force
 }
 New-Item $TargetClaude -ItemType Directory | Out-Null
+New-Item (Join-Path $TargetClaude "state") -ItemType Directory | Out-Null
 
 Copy-Item (Join-Path $ScriptDir ".claude\guides")        $TargetClaude -Recurse
 Copy-Item (Join-Path $ScriptDir ".claude\hooks")         $TargetClaude -Recurse
@@ -56,7 +57,7 @@ Write-Host "복사 완료"
 # ── 4. SYNC_HASH 기록
 $Hash = git -C $ScriptDir rev-parse HEAD 2>$null
 if ($Hash) {
-    Set-Content (Join-Path $TargetClaude "SYNC_HASH") $Hash.Trim()
+    Set-Content (Join-Path $TargetClaude "state\SYNC_HASH") $Hash.Trim()
 }
 
 # ── 5. settings.local.json 생성
@@ -102,11 +103,27 @@ if (Test-Path $LocalMdPath) {
     Write-Host "CLAUDE.local.md 생성 완료"
 }
 
+# ── 7. .gitignore 업데이트
+Write-Host ""
+Write-Host ".gitignore 업데이트 중..."
+
+$GitIgnorePath = Join-Path $TargetPath ".gitignore"
+$RequiredEntries = @("CLAUDE.local.md", ".claude/settings.local.json", ".claude/state/")
+$ExistingContent = if (Test-Path $GitIgnorePath) { Get-Content $GitIgnorePath -Raw -Encoding UTF8 } else { "" }
+$ToAdd = $RequiredEntries | Where-Object { $ExistingContent -notmatch [regex]::Escape($_) }
+
+if ($ToAdd) {
+    $AddContent = "`r`n# Claude Code`r`n" + ($ToAdd -join "`r`n") + "`r`n"
+    [System.IO.File]::AppendAllText($GitIgnorePath, $AddContent, [System.Text.Encoding]::UTF8)
+    Write-Host ".gitignore 추가: $($ToAdd -join ', ')"
+} else {
+    Write-Host "[건너뜀] .gitignore 항목이 이미 모두 존재합니다."
+}
+
 Write-Host ""
 Write-Host "초기화 완료!"
 Write-Host ""
 Write-Host "다음 단계:"
 Write-Host "1. CLAUDE.md 를 생성하세요: /init-claude-md"
-Write-Host "2. .gitignore 에 CLAUDE.local.md, .claude/settings.local.json, .claude/SYNC_HASH 를 추가하세요."
-Write-Host "3. .claude/settings.local.json 의 TEMPLATE_REPO_URL 을 입력하면 자동 업데이트 알림이 활성화됩니다."
-Write-Host "4. CLAUDE.local.md 의 규칙 작성 모드를 필요 시 조정하세요."
+Write-Host "2. .claude/settings.local.json 의 TEMPLATE_REPO_URL 을 입력하면 자동 업데이트 알림이 활성화됩니다."
+Write-Host "3. CLAUDE.local.md 의 규칙 작성 모드를 필요 시 조정하세요."

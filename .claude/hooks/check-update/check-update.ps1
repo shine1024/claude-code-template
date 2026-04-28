@@ -11,7 +11,7 @@ $lockFile = Join-Path $env:TEMP "claude-update-check-${cwdHash}-${today}"
 if (Test-Path $lockFile) { exit 0 }
 
 # 로컬 SYNC_HASH 읽기
-$hashFile = ".claude/SYNC_HASH"
+$hashFile = ".claude/state/SYNC_HASH"
 if (-not (Test-Path $hashFile)) { exit 0 }
 $localHash = (Get-Content $hashFile -Raw).Trim()
 

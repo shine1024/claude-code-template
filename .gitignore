@@ -4,8 +4,8 @@ CLAUDE.local.md
 # 로컬 Claude Code 설정 (자동 생성)
 .claude/settings.local.json
 
-# 동기화 상태 파일
-.claude/SYNC_HASH
+# 로컬 전용 상태 파일
+.claude/state/
 
 # 훅 임시 파일
 .claude/hooks/.task_start

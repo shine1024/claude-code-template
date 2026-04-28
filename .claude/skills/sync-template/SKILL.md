@@ -63,11 +63,11 @@ Copy-Item (Join-Path $TempDir ".claude\settings.json") $TargetClaude -Force
 
 ## 4단계: SYNC_HASH 갱신
 
-clone한 저장소의 HEAD commit hash를 `.claude/SYNC_HASH` 에 저장합니다.
+clone한 저장소의 HEAD commit hash를 `.claude/state/SYNC_HASH` 에 저장합니다.
 
 ```powershell
 $hash = git -C $TempDir rev-parse HEAD
-Set-Content ".claude/SYNC_HASH" $hash.Trim()
+Set-Content ".claude/state/SYNC_HASH" $hash.Trim()
 ```
 
 ---

@@ -5,6 +5,14 @@
 
 ---
 
+## 2026-04-29 (2)
+
+- [수정] `init.bat` — LF→CRLF 변환 및 `Get-Content -Encoding UTF8` 누락 수정 (한글 깨짐으로 실행 불가 버그)
+- [기능] `.claude/state/` 폴더 신설 — 머신 생성 상태 파일 분리 (`SYNC_HASH` 이동)
+- [기능] `init.bat` — 초기화 시 `.gitignore` 필수 항목 자동 추가
+
+---
+
 ## 2026-04-29
 
 - [기능] 자동 업데이트 알림 도입 — Claude 실행 시 공통 템플릿 업데이트 여부를 자동 체크 (`check-update` 훅)
