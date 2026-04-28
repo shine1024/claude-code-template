@@ -13,7 +13,6 @@ claude-code-template — CLAUDE.md
    `.claude/sync.bat`	각 프로젝트에서 `.claude/` 설정을 최신화하는 동기화 스크립트 (Windows)
    `template/CLAUDE-TEMPLATE-*.md`	프로젝트별 CLAUDE.md 템플릿
    `basics/`	Claude Code 일반 교육자료
-   `reports/`	피드백 분석 보고서 (git exclude — 로컬 전용)
    `.claude/guides/hooks.md`	훅 기능 가이드
    `.claude/guides/skills.md`	스킬 기능 가이드
    `.claude/guides/google-sheets-setup.md`	Google Sheets 연동 설정 가이드
@@ -30,7 +29,6 @@ claude-code-template/
 ├── init.bat                         ← 신규 프로젝트 .claude/ 초기화 스크립트 (Windows)
 ├── template/                        ← 프로젝트별 CLAUDE.md 템플릿
 ├── basics/                          ← Claude Code 일반 교육자료
-├── reports/                         ← 피드백 분석 보고서 (git exclude — 로컬 전용)
 └── .claude/
     ├── sync.bat                     ← 팀 설정 동기화 스크립트 (Windows)
     ├── guides/                      ← 기능별 가이드 문서

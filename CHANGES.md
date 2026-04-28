@@ -5,6 +5,10 @@
 
 ---
 
+## 2026-04-28 (3)
+
+- [리팩터] `reports/` 폴더 제거 — `analyze-report`는 각 프로젝트 루트에서 실행하는 구조이므로 claude-code-template에 불필요
+
 ## 2026-04-28 (2)
 
 - [기능] `RULE_MODE` 도입 — 세션 중 발견한 규칙을 `CLAUDE.md`(direct)·`CLAUDE.local.md`(local) 중 어디에 기록할지 제어. `CLAUDE.md`가 팀 기본값, `CLAUDE.local.md`가 개인 오버라이드
