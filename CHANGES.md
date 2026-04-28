@@ -5,6 +5,12 @@
 
 ---
 
+## 2026-04-28 (3)
+
+- [리팩터] `issue-new`·`issue-update` 단순화 — `issue-new`는 `임시 - YYYY-MM-DD HH:MM:SS`로 즉시 채번, `issue-update`는 직전 커밋 분석으로 `#번호 [분류] 요약` 제목 자동 반영. 분류는 `[개편]`/`[신규]`/`[수정]` 3종. 자유 형식 입력·prefix 템플릿·진척도/상태 등 부가 기능 제거
+
+---
+
 ## 2026-04-28 (2)
 
 - [리팩터] 스킬명 변경 — `redmine-issue-creator` → `issue-new`, `redmine-issue-updater` → `issue-update` (호출 명령어 단순화)
