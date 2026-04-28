@@ -5,6 +5,12 @@
 
 ---
 
+## 2026-04-29 (7)
+
+- [리팩터] `init.bat`·`sync-template` — 폴더 목록 하드코딩 제거, `.claude/` 하위 폴더 자동 포함 (`state/` 제외)
+
+---
+
 ## 2026-04-29 (6)
 
 - [수정] `init.bat`·`sync-template` — `.claude/lib/` 복사 누락 추가

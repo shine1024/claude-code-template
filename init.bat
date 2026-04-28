@@ -46,11 +46,10 @@ if (Test-Path $TargetClaude) {
 New-Item $TargetClaude -ItemType Directory | Out-Null
 New-Item (Join-Path $TargetClaude "state") -ItemType Directory | Out-Null
 
-Copy-Item (Join-Path $ScriptDir ".claude\guides")        $TargetClaude -Recurse
-Copy-Item (Join-Path $ScriptDir ".claude\hooks")         $TargetClaude -Recurse
-Copy-Item (Join-Path $ScriptDir ".claude\lib")           $TargetClaude -Recurse
-Copy-Item (Join-Path $ScriptDir ".claude\rules")         $TargetClaude -Recurse
-Copy-Item (Join-Path $ScriptDir ".claude\skills")        $TargetClaude -Recurse
+$exclude = @("state")
+Get-ChildItem (Join-Path $ScriptDir ".claude") -Directory |
+    Where-Object { $exclude -notcontains $_.Name } |
+    ForEach-Object { Copy-Item $_.FullName $TargetClaude -Recurse }
 Copy-Item (Join-Path $ScriptDir ".claude\settings.json") $TargetClaude
 Copy-Item (Join-Path $ScriptDir "template")              $TargetClaude -Recurse
 
