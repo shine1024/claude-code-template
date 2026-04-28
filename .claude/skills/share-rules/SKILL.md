@@ -6,7 +6,7 @@ description: CLAUDE.local.md 의 "공유 가능" 섹션 규칙을 추출하여 G
 ## 목적
 
 각자의 `CLAUDE.local.md` 에 쌓인 개인 규칙 중 **공유 가능 섹션**만 안전하게 추출하여
-Google Sheets 의 개인 규칙 후보 풀에 적재합니다. 이후 `/analyze-feedback` 이 session-log 와 함께 분석해 전역 `CLAUDE.md` 승격 후보를 도출합니다.
+Google Sheets 의 개인 규칙 후보 풀에 적재합니다. 이후 `/analyze-report` 가 session-log 와 함께 분석해 전역 `CLAUDE.md` 승격 후보를 도출합니다.
 
 ---
 
@@ -43,6 +43,7 @@ Google Sheets 의 개인 규칙 후보 풀에 적재합니다. 이후 `/analyze-
 | `GOOGLE_SERVICE_ACCOUNT_KEY_PATH` | Google 서비스 계정 키 경로 |
 | `GOOGLE_SHEETS_FEEDBACK_ID` | 대상 Spreadsheet ID |
 | `GOOGLE_SHEETS_PERSONAL_RULES_GID` | 개인 규칙 후보 시트의 gid (시트 URL `?gid=...` 값) |
+| `PROJECT_NAME` | 프로젝트명 (시트의 `project` 컬럼에 기록) |
 | `SESSION_USER_NAME` | 작성자 이름 |
 
 미설정 시 `.claude/guides/google-sheets-setup.md` 안내 후 중단합니다.
@@ -108,9 +109,9 @@ N건의 규칙을 "3) 개인 규칙 후보" 시트에 업로드했습니다.
 |------|------|
 | A `date` | 업로드 날짜 (YYYY-MM-DD) |
 | B `name` | 작성자 (`$SESSION_USER_NAME`) |
-| C `project` | 프로젝트명 (`basename $(pwd)`) |
+| C `project` | 프로젝트명 (`$PROJECT_NAME`) |
 | D `rule` | 규칙 본문 (한 블록) |
-| E `클로드 분석여부` | analyze-feedback 처리 후 날짜 기입 (비어 있을 때만 분석 대상) |
+| E `클로드 분석여부` | analyze-report 처리 후 날짜 기입 (비어 있을 때만 분석 대상) |
 
 > 시트는 사전에 만들어 두고 `GOOGLE_SHEETS_PERSONAL_RULES_GID` 에 gid 를 등록해야 합니다.
 > 1행: 자유 설명, 2행: 헤더(`date`, `name`, `project`, `rule`, `클로드 분석여부`), 3행~: 데이터.

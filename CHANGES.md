@@ -5,6 +5,14 @@
 
 ---
 
+## 2026-04-28
+
+- [리팩터] `analyze-feedback` → `analyze-report` 로 rename — 각 프로젝트 루트에서 실행되는 모델로 재정의
+- [기능] analyze-report — cwd의 `CLAUDE.md`/`CLAUDE.local.md` (하위 모듈 포함) 글로브 수집해 비교 분석. 보고서에 "적용 위치(추정)" 컬럼 추가
+- [기능] analyze-report — 출력 경로 `reports/analyze-report/{YYYY-MM-DD}-analyze-report.md` 로 변경 (프로젝트별 섹션 분기 제거)
+- [기능] 환경변수 `PROJECT_NAME` 도입 — `session-log`·`share-rules`·`analyze-report` 모두 디렉토리명 대신 설정값 사용 (디렉토리 변경에 영향 없음). `slack-notify` 훅도 `PROJECT_NAME` 우선 + basename 폴백으로 적용
+- [문서] `guides/skills.md`·`guides/google-sheets-setup.md` 갱신 — 새 스킬명·환경변수 반영, 프로젝트별 시트 분리 안내 추가
+
 ## 2026-04-27
 
 - [기능] Google Sheets 연동 통합 — Apps Script 제거하고 Sheets API 직접 호출로 단일화 (`session-log`·`share-rules`·`analyze-feedback`)

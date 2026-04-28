@@ -10,11 +10,11 @@
  *   GOOGLE_SERVICE_ACCOUNT_KEY_PATH
  *   GOOGLE_SHEETS_FEEDBACK_ID
  *   GOOGLE_SHEETS_PERSONAL_RULES_GID
+ *   PROJECT_NAME
  *   SESSION_USER_NAME
  */
 
 const fs = require('fs');
-const path = require('path');
 const sheets = require('../../../lib/sheets');
 
 function readStdin() {
@@ -27,10 +27,11 @@ function readStdin() {
 }
 
 async function main() {
-	sheets.requireEnv('GOOGLE_SERVICE_ACCOUNT_KEY_PATH', 'GOOGLE_SHEETS_FEEDBACK_ID', 'GOOGLE_SHEETS_PERSONAL_RULES_GID');
+	sheets.requireEnv('GOOGLE_SERVICE_ACCOUNT_KEY_PATH', 'GOOGLE_SHEETS_FEEDBACK_ID', 'GOOGLE_SHEETS_PERSONAL_RULES_GID', 'PROJECT_NAME');
 	const sheetId = process.env.GOOGLE_SHEETS_FEEDBACK_ID;
 	const gid = process.env.GOOGLE_SHEETS_PERSONAL_RULES_GID;
 	const name = process.env.SESSION_USER_NAME || '';
+	const project = process.env.PROJECT_NAME;
 
 	let raw;
 	const fileFlagIdx = process.argv.indexOf('--file');
@@ -53,7 +54,6 @@ async function main() {
 	}
 
 	const today = new Date().toISOString().slice(0, 10);
-	const project = path.basename(process.cwd());
 	const valueRows = rules.map(r => [today, name, project, r.rule || '', '']);
 
 	const key = sheets.loadServiceAccountKey();

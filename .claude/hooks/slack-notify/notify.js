@@ -28,7 +28,7 @@ rl.on('close', () => {
     let inputData = null;
     try { if (raw.trim()) inputData = JSON.parse(raw); } catch {}
 
-    const projectName = path.basename(process.cwd());
+    const projectName = process.env.PROJECT_NAME || path.basename(process.cwd());
     const now = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false });
 
     let text;

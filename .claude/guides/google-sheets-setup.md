@@ -10,7 +10,7 @@
 
 - `/session-log` 으로 세션 회고를 시트에 자동 기록
 - `/share-rules` 로 개인 규칙 후보를 개인 규칙 시트에 적재
-- `/analyze-feedback` 으로 두 시트를 함께 분석하여 CLAUDE.md 개선안 도출
+- `/analyze-report` 으로 두 시트를 함께 분석하여 CLAUDE.md 개선안 도출
 
 시트를 외부에 공개하지 않고, Google Cloud 서비스 계정을 통해 안전하게 인증합니다.
 
@@ -84,6 +84,8 @@ JSON 키 파일을 안전한 경로에 저장하고, `.claude/settings.local.jso
 ```json
 {
   "env": {
+    "PROJECT_NAME": "{프로젝트명}",
+    "SESSION_USER_NAME": "{작성자 이름}",
     "GOOGLE_SERVICE_ACCOUNT_KEY_PATH": "C:/Users/{username}/.claude/google-sa-key.json",
     "GOOGLE_SHEETS_FEEDBACK_ID": "{Spreadsheet ID}",
     "GOOGLE_SHEETS_SESSION_LOG_GID": "{회고 시트의 gid}",
@@ -91,6 +93,9 @@ JSON 키 파일을 안전한 경로에 저장하고, `.claude/settings.local.jso
   }
 }
 ```
+
+> `PROJECT_NAME` 은 시트의 `project` 컬럼과 보고서 헤더에 기록되는 값입니다. 디렉토리명과 무관하게 팀 합의된 식별자(예: `uniflow`, `uniworks-pce`) 를 고정값으로 둡니다.
+> 프로젝트마다 별도의 스프레드시트를 두는 것을 권장합니다 — 각자 `GOOGLE_SHEETS_FEEDBACK_ID` 값만 다르게 설정하면 됩니다.
 
 ### Spreadsheet ID 확인 방법
 

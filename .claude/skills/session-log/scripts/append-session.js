@@ -9,6 +9,8 @@
  *   GOOGLE_SERVICE_ACCOUNT_KEY_PATH
  *   GOOGLE_SHEETS_FEEDBACK_ID
  *   GOOGLE_SHEETS_SESSION_LOG_GID
+ *   PROJECT_NAME
+ *   SESSION_USER_NAME
  */
 
 const sheets = require('../../../lib/sheets');
@@ -36,7 +38,7 @@ function readStdin() {
 }
 
 async function main() {
-	sheets.requireEnv('GOOGLE_SERVICE_ACCOUNT_KEY_PATH', 'GOOGLE_SHEETS_FEEDBACK_ID', 'GOOGLE_SHEETS_SESSION_LOG_GID');
+	sheets.requireEnv('GOOGLE_SERVICE_ACCOUNT_KEY_PATH', 'GOOGLE_SHEETS_FEEDBACK_ID', 'GOOGLE_SHEETS_SESSION_LOG_GID', 'PROJECT_NAME');
 	const sheetId = process.env.GOOGLE_SHEETS_FEEDBACK_ID;
 	const gid = process.env.GOOGLE_SHEETS_SESSION_LOG_GID;
 

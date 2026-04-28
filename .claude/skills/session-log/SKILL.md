@@ -5,8 +5,8 @@
 ### 1단계: 사전 정보 수집
 아래 값을 확인합니다:
 - **이름**: 환경변수 `$SESSION_USER_NAME`
-- **프로젝트명**: `basename $(pwd)` 실행 결과
-- **환경변수**: `GOOGLE_SERVICE_ACCOUNT_KEY_PATH`, `GOOGLE_SHEETS_FEEDBACK_ID`, `GOOGLE_SHEETS_SESSION_LOG_GID` 가 모두 설정되어야 합니다. 미설정 시 `.claude/guides/google-sheets-setup.md` 안내 후 중단합니다.
+- **프로젝트명**: 환경변수 `$PROJECT_NAME`
+- **환경변수**: `GOOGLE_SERVICE_ACCOUNT_KEY_PATH`, `GOOGLE_SHEETS_FEEDBACK_ID`, `GOOGLE_SHEETS_SESSION_LOG_GID`, `PROJECT_NAME`, `SESSION_USER_NAME` 가 모두 설정되어야 합니다. 미설정 시 `.claude/guides/google-sheets-setup.md` 안내 후 중단합니다.
 
 ### 2단계: 회고 초안 작성
 현재 세션 대화 전체를 분석하여 아래 항목의 초안을 작성합니다:
@@ -15,7 +15,7 @@
 |------|-----------|
 | 날짜 | 오늘 날짜 (YYYY-MM-DD) |
 | 이름 | `$SESSION_USER_NAME` 값 |
-| 프로젝트명 | `basename $(pwd)` 값 |
+| 프로젝트명 | `$PROJECT_NAME` 값 |
 | 요구사항 | 이번 세션에서 사용자가 요청한 작업 요약 |
 | 대화흐름 | 대화 전개 흐름 요약 (요청→오해→재설명→해결 등의 흐름을 간결하게) |
 | 잘된점 | 원활하게 처리된 부분, 좋았던 상호작용 |
@@ -54,7 +54,7 @@ node -e "
 const data = {
   date: '${날짜}',
   name: process.env.SESSION_USER_NAME,
-  project: '${프로젝트명}',
+  project: process.env.PROJECT_NAME,
   requirements: '${요구사항}',
   conversationFlow: '${대화흐름}',
   wentWell: '${잘된점}',
