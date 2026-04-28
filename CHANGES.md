@@ -5,6 +5,15 @@
 
 ---
 
+## 2026-04-28 (6)
+
+- [수정] `check-update` 훅 — 이벤트를 `UserPromptSubmit` → `SessionStart`로 이동 (매 프롬프트마다 체크 → 세션 시작 시 1회로 단순화)
+  - `.claude/settings.json`: `SessionStart` 블록 신설, `UserPromptSubmit`에는 `task-start.sh`만 잔존
+  - `.claude/guides/hooks.md`: 지원 이벤트 표에 `SessionStart` 추가, check-update 표기·등록 예시 갱신
+  - `check-update.js`는 stdin 미사용이므로 스크립트 변경 없음
+
+---
+
 ## 2026-04-28 (5)
 
 - [수정] `issue-update` 스킬 — Redmine 제목에서 `#일감번호` 제거(`[분류] 요약`만 유지), 진척도 100%·작업시간 자동 등록 추가

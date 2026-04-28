@@ -10,6 +10,17 @@
     "deny": []
   },
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/check-update/check-update.js"
+          }
+        ]
+      }
+    ],
     "UserPromptSubmit": [
       {
         "matcher": "",
@@ -17,10 +28,6 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/slack-notify/task-start.sh"
-          },
-          {
-            "type": "command",
-            "command": "node .claude/hooks/check-update/check-update.js"
           }
         ]
       }
