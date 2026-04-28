@@ -82,11 +82,25 @@ $JsonPath = Join-Path $TargetClaude "settings.local.json"
 [System.IO.File]::WriteAllText($JsonPath, $JsonContent, [System.Text.Encoding]::UTF8)
 
 Write-Host "settings.local.json 생성 완료"
+
+# ── 5. CLAUDE.local.md 생성
+Write-Host ""
+Write-Host "CLAUDE.local.md 생성 중..."
+
+$LocalMdPath = Join-Path $TargetPath "CLAUDE.local.md"
+if (Test-Path $LocalMdPath) {
+    Write-Host "[건너뜀] CLAUDE.local.md 가 이미 존재합니다."
+} else {
+    $LocalMdContent = "# 개인 설정 (CLAUDE.local.md)`r`n`r`n## 규칙 작성 모드`r`n`r`n# 팀 기본값(CLAUDE.md)과 다르게 설정하려면 아래 주석 중 하나를 해제하세요.`r`n# RULE_MODE: direct   <- CLAUDE.md에 바로 반영`r`n# RULE_MODE: local    <- CLAUDE.local.md에 먼저 기록`r`n`r`n## 공유 가능`r`n`r`n## 비공유`r`n"
+    [System.IO.File]::WriteAllText($LocalMdPath, $LocalMdContent, [System.Text.Encoding]::UTF8)
+    Write-Host "CLAUDE.local.md 생성 완료"
+}
+
 Write-Host ""
 Write-Host "초기화 완료!"
 Write-Host ""
 Write-Host "다음 단계:"
 Write-Host "1. CLAUDE.md 를 생성하세요: /init-claude-md"
-Write-Host "2. CLAUDE.local.md 를 작성하고 .gitignore 에 추가하세요."
-Write-Host "3. .gitignore 에 .claude/settings.local.json 을 추가하세요."
+Write-Host "2. .gitignore 에 CLAUDE.local.md 와 .claude/settings.local.json 을 추가하세요."
+Write-Host "3. CLAUDE.local.md 의 규칙 작성 모드를 필요 시 조정하세요."
 Write-Host "4. 나머지 환경변수는 .claude/settings.local.json 을 참고하여 직접 입력하세요."

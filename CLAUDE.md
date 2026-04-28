@@ -90,7 +90,11 @@ Claude의 역할
 Windows 스크립트를 Linux/Mac 문법으로 변경하지 않는다
 요청 범위를 벗어난 변경은 먼저 제안하고 확인 후 진행한다
 ---
-5. 커밋 컨벤션
+5. 규칙 작성 모드 (팀 기본값)
+   RULE_MODE: local
+   개인이 CLAUDE.local.md에서 오버라이드할 수 있다. 자세한 동작은 `.claude/rules/rule-writing-policy.md` 참고.
+---
+6. 커밋 컨벤션
    형식: `[카테고리] 대상 — 변경 내용`
 ```
 [기능]   새로운 템플릿 또는 기능 추가

@@ -14,6 +14,25 @@
 | `sql-style.md` | SQL 코딩 컨벤션 | DB 사용 프로젝트 필수 |
 | `realgrid.md` | RealGrid2 API 탐색 규칙 | RealGrid2 사용 프로젝트 선택 |
 | `workflow.md` | 커밋 메시지 규칙, 브랜치 전략 | 선택 |
+| `rule-writing-policy.md` | 규칙 작성 위치·방식 정책 | 필수 |
+
+---
+
+## 규칙 작성 모드 (CLAUDE.local.md 설정)
+
+각 개발자는 `CLAUDE.local.md`에 아래 설정을 추가하여 규칙 작성 방식을 선택한다.
+
+```markdown
+## 규칙 작성 모드
+
+RULE_MODE: local     # 기본값 — CLAUDE.local.md에 먼저 기록, /share-rules로 팀 공유
+# RULE_MODE: direct  # CLAUDE.md에 바로 반영 (확인 후 작성)
+```
+
+| 모드 | 동작 | 적합한 경우 |
+|------|------|------------|
+| `local` | CLAUDE.local.md에 공유/비공유 구분하여 자동 추가 | 개인 발견 → 선별 공유 |
+| `direct` | CLAUDE.md 추가 내용 제안 → 확인 후 작성 | 팀 전체가 즉시 공유 |
 
 ---
 

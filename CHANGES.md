@@ -5,6 +5,13 @@
 
 ---
 
+## 2026-04-28 (2)
+
+- [기능] `RULE_MODE` 도입 — 세션 중 발견한 규칙을 `CLAUDE.md`(direct)·`CLAUDE.local.md`(local) 중 어디에 기록할지 제어. `CLAUDE.md`가 팀 기본값, `CLAUDE.local.md`가 개인 오버라이드
+- [기능] `.claude/rules/rule-writing-policy.md` 신설 — 모드별 동작·공유/비공유 판단 기준 정의
+- [기능] `init.bat` — `CLAUDE.local.md` 기본 템플릿 자동 생성 (이미 존재하면 건너뜀)
+- [문서] `README.md`·`CLAUDE.md`·`template/CLAUDE-TEMPLATE.md` — `RULE_MODE` 설정 방법 및 우선순위 안내 추가
+
 ## 2026-04-28
 
 - [리팩터] `analyze-feedback` → `analyze-report` 로 rename — 각 프로젝트 루트에서 실행되는 모델로 재정의
