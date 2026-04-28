@@ -5,6 +5,12 @@
 
 ---
 
+## 2026-04-28 (2)
+
+- [리팩터] 스킬명 변경 — `redmine-issue-creator` → `issue-new`, `redmine-issue-updater` → `issue-update` (호출 명령어 단순화)
+
+---
+
 ## 2026-04-28
 
 - [수정] `check-update` 훅 — `.bat` 제거, `settings.json`에서 PowerShell 직접 호출로 변경 (bash 환경에서 .bat 실행 불가 문제 해결)

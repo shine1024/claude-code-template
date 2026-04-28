@@ -1,5 +1,5 @@
 ---
-name: redmine-issue-creator
+name: issue-new
 description: 개발자가 자유 형식으로 설명한 내용을 바탕으로 Redmine 일감을 자동 생성합니다. "레드마인에 일감 만들어줘", "이슈 등록해줘", "작업 추가해줘", "버그 등록해줘" 등의 요청에 반드시 이 스킬을 사용하세요. Redmine REST API를 통해 필드를 추출하고 일감을 생성합니다.
 ---
 
