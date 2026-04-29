@@ -109,7 +109,7 @@ Write-Host ""
 Write-Host ".gitignore 업데이트 중..."
 
 $GitIgnorePath = Join-Path $TargetPath ".gitignore"
-$RequiredEntries = @("CLAUDE.local.md", ".claude/settings.local.json", ".claude/state/")
+$RequiredEntries = @("CLAUDE.local.md", ".claude/settings.local.json", ".claude/state/", ".claude/hooks/.task_start")
 $ExistingContent = if (Test-Path $GitIgnorePath) { Get-Content $GitIgnorePath -Raw -Encoding UTF8 } else { "" }
 $ToAdd = $RequiredEntries | Where-Object { $ExistingContent -notmatch [regex]::Escape($_) }
 

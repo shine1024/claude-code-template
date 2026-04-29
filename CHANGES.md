@@ -5,6 +5,12 @@
 
 ---
 
+## 2026-04-29 (2)
+
+- [수정] `init.bat` — 신규 프로젝트 `.gitignore`에 `.claude/hooks/.task_start` 항목 추가 (slack-notify 훅이 생성하는 작업 시작 시각 기록 파일, 머신 로컬 전용이므로 git 제외 필요)
+
+---
+
 ## 2026-04-29 (1)
 
 - [기능] `issue-new`·`issue-update` — 작업 브랜치 자동 채번 흐름 도입 + 임시 제목 형식 변경
