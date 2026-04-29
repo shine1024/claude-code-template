@@ -5,6 +5,17 @@
 
 ---
 
+## 2026-04-29 (3)
+
+- [수정] `.claude/state/`를 git 추적 대상으로 전환 — SYNC_HASH가 프로젝트 단위로 공유되어야 팀원 간 템플릿 버전이 일치함
+  - `.gitignore`: `.claude/state/` 항목 제거
+  - `init.bat`: `$RequiredEntries`에서 `.claude/state/` 제거
+  - `README.md`·`CLAUDE.md`: state/ 설명을 "git 제외" → "git 추적, 프로젝트 단위로 공유"로 갱신
+  - 흐름: A가 `/sync-template` → SYNC_HASH가 변경됨 → A가 `.claude/`와 함께 커밋·푸시 → B는 `git pull`만 하면 파일·해시가 자동 일치 → B가 별도 `/sync-template` 실행할 필요 없음. check-update 훅도 정확히 동작
+  - **마이그레이션 안내** — 기존 프로젝트의 `.gitignore`에 `.claude/state/` 또는 `.claude/state/*` 항목이 남아 있으면 수동으로 제거하고, SYNC_HASH를 `git add` 해야 함
+
+---
+
 ## 2026-04-29 (2)
 
 - [수정] `init.bat` — 신규 프로젝트 `.gitignore`에 `.claude/hooks/.task_start` 항목 추가 (slack-notify 훅이 생성하는 작업 시작 시각 기록 파일, 머신 로컬 전용이므로 git 제외 필요)
