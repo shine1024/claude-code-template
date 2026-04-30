@@ -1,34 +1,31 @@
 ---
 name: issue-new
-description: Redmine에 임시 제목으로 일감을 즉시 생성하고 작업 브랜치(`ing__issue__NNNN`)까지 자동으로 만들어 체크아웃합니다. "이슈 만들어줘", "일감 생성", "/issue-new" 등의 요청에 사용하세요. 작업 시작 전 번호 채번이 목적이며, 제목은 자동으로 "[임시] YYYY-MM-DD HH:MM:SS" 형식으로 생성됩니다. 정식 제목은 커밋 후 /issue-update로 반영됩니다.
+description: Redmine에 임시 제목으로 일감을 즉시 생성합니다. 기본은 `ing__issue__NNNN` 작업 브랜치까지 자동 생성·체크아웃하며, `BRANCH_STRATEGY=never` 설정 시 브랜치 없이 일감번호만 캐시 파일에 저장합니다. "이슈 만들어줘", "일감 생성", "/issue-new" 등의 요청에 사용하세요. 작업 시작 전 번호 채번이 목적이며, 제목은 자동으로 "[임시] YYYY-MM-DD HH:MM:SS" 형식으로 생성됩니다. 정식 제목은 작업 후 /commit-push 또는 /issue-update로 반영됩니다.
 ---
 
 # Redmine 일감 즉시 생성 + 작업 브랜치 채번
 
-작업 시작 시 일감 번호와 작업 브랜치를 한 번에 확보하는 스킬. 제목은 임시값으로 자동 생성되며, 작업 완료·커밋 후 `/issue-update`로 정식 제목·분류가 반영된다.
+작업 시작 시 일감 번호를 확보하는 스킬. 제목은 임시값으로 자동 생성되며, 작업 완료·커밋 후 `/commit-push` (또는 `/issue-update`) 로 정식 제목·분류가 반영된다.
 
 전체 흐름:
 
 ```
 /issue-new
    └─ Redmine에 임시 일감 #NNNN 생성
-   └─ ing__issue__NNNN 브랜치 자동 생성·체크아웃 (현재 HEAD에서 분기)
+   └─ BRANCH_STRATEGY=always(기본): ing__issue__NNNN 브랜치 자동 생성·체크아웃
+   └─ BRANCH_STRATEGY=never: 브랜치 생성 스킵, .claude/cache/current_issue 에 NNNN 저장
 
 [작업]
 
-[커밋]
-   └─ 현재 브랜치명에서 NNNN 추출
+/commit-push
+   └─ 브랜치명 또는 .claude/cache/current_issue 에서 NNNN 추출
    └─ 커밋 메시지: "#NNNN [분류] 요약" (분류: [개편] / [신규] / [수정])
+   └─ Redmine 일감 PUT (제목·진척도·시간) 까지 한 번의 확인으로 일괄 처리
 
-git push
-
-/issue-update
-   └─ 직전 커밋에서 #NNNN, [분류], 요약 추출
-   └─ Redmine 제목 = "[분류] 요약" (커밋과 100% 일치)
-   └─ 진척도 100% + 소요시간 등록
+(또는 외부에서 푸시한 후 /issue-update 단독 호출도 가능)
 ```
 
-브랜치명이 일감번호를 들고 있어 세션이 바뀌어도 번호를 잃어버리지 않는다.
+브랜치명 또는 캐시 파일이 일감번호를 보존해 세션이 바뀌어도 번호를 잃어버리지 않는다.
 
 ---
 
@@ -51,6 +48,17 @@ git push
   }
 }
 ```
+
+### 브랜치 전략 설정 (선택)
+
+| 환경변수 | 값 | 동작 |
+|----------|-----|------|
+| `BRANCH_STRATEGY` | `always` (기본) | 일감 생성 후 `ing__issue__NNNN` 브랜치 자동 생성·체크아웃 |
+| `BRANCH_STRATEGY` | `never` | 브랜치 생성을 스킵 — 현재 브랜치에서 그대로 작업 (1인 구축 프로젝트용) |
+| `BASE_BRANCH` | (미설정, 기본) | 현재 HEAD에서 분기 |
+| `BASE_BRANCH` | `main` / `dev` 등 | 해당 브랜치로 체크아웃 → `git pull` → 거기서 분기 (운영 프로젝트의 dev 베이스 분기 등) |
+
+`BRANCH_STRATEGY`가 `never`인 경우 `BASE_BRANCH`는 무시됩니다.
 
 ---
 
@@ -92,7 +100,9 @@ curl -s -H "X-Redmine-API-Key: {api_key}" "{url}/enumerations/issue_priorities.j
 
 ## 3단계: 작업트리 사전 점검
 
-API 호출(=일감 채번) 전에 작업트리 상태를 확인해 고아 일감이 생기지 않도록 한다.
+`BRANCH_STRATEGY=never`인 경우 이 단계를 **스킵**합니다 (브랜치를 만들지 않으므로 미커밋 변경분과 무관).
+
+`BRANCH_STRATEGY=always`(기본)인 경우, API 호출(=일감 채번) 전에 작업트리 상태를 확인해 고아 일감이 생기지 않도록 한다.
 
 ```bash
 git status --porcelain
@@ -170,25 +180,54 @@ curl -s -X POST \
 
 ---
 
-## 6단계: 브랜치 자동 생성
+## 6단계: 브랜치 자동 생성 / 일감번호 캐싱
 
-API 성공 직후 현재 HEAD에서 분기하여 작업 브랜치를 만들고 체크아웃합니다.
+### 6-A. `BRANCH_STRATEGY=never` 인 경우
+
+브랜치는 만들지 않고, 일감번호만 영속화합니다. 다음 `/commit-push` 가 브랜치명에서 번호를 추출하지 못하므로 캐시 파일이 폴백 역할을 합니다.
+
+```bash
+mkdir -p .claude/cache
+echo "{NNNN}" > .claude/cache/current_issue
+```
+
+- 동일 파일이 이미 있으면 덮어씁니다 (한 번에 하나의 일감만 진행 가정)
+- 파일은 `.gitignore` 에 의해 git 추적 대상이 아닙니다 (개인 작업 컨텍스트)
+
+### 6-B. `BRANCH_STRATEGY=always` (기본) 인 경우
+
+API 성공 직후 작업 브랜치를 만들고 체크아웃합니다.
+
+#### `BASE_BRANCH` 가 설정된 경우
+
+```bash
+git checkout {BASE_BRANCH}
+git pull --ff-only
+git checkout -b ing__issue__{NNNN}
+```
+
+- `git pull --ff-only` 실패 시 사용자에게 알리고 분기는 진행하지 않음 (강제 머지·리셋 금지)
+- `BASE_BRANCH`로 체크아웃 실패 시 메시지 출력 후 일감 번호와 함께 수동 처리 안내
+
+#### `BASE_BRANCH` 가 미설정인 경우 (기본)
 
 ```bash
 git checkout -b ing__issue__{NNNN}
 ```
 
 - 분기 베이스: 현재 HEAD (사용자가 위치한 브랜치 그대로)
+
+#### 공통
+
 - 동일 이름 브랜치가 이미 있으면 `git checkout ing__issue__{NNNN}`으로 전환만 (생성 실패 시 fallback)
 - 3단계에서 stash를 선택했다면 체크아웃 후 안내: `복원하려면 git stash pop 을 실행하세요.` (자동 pop은 하지 않음 — 충돌 위험)
-
-체크아웃 실패 시: Redmine 일감은 이미 생성된 상태이므로 사용자에게 일감 번호와 함께 수동 체크아웃을 안내합니다.
+- 체크아웃 실패 시: Redmine 일감은 이미 생성된 상태이므로 사용자에게 일감 번호와 함께 수동 체크아웃을 안내합니다.
 
 ---
 
 ## 7단계: 결과 출력
 
-### 성공
+### 성공 — `BRANCH_STRATEGY=always`
 
 ```
 ✅ 임시 일감이 생성되었습니다.
@@ -198,15 +237,30 @@ git checkout -b ing__issue__{NNNN}
 - 작업 브랜치: ing__issue__1234 (현재 체크아웃됨)
 
 다음 작업 가이드:
-- 이 브랜치의 커밋은 다음 형식을 따릅니다 → "#1234 [분류] 요약"
+- 작업 완료 후 /commit-push 로 커밋 메시지 + Redmine 일감 갱신을 한 번에 처리합니다.
+  - 커밋 형식: "#1234 [분류] 요약"
   - 분류: [개편] (구조·아키텍처·UI 큰 변경) / [신규] (새 기능·새 파일) / [수정] (오류·로직 수정)
-- 작업 완료 후 커밋·푸시한 뒤 /issue-update 로 정식 제목·진척도·소요시간을 일괄 반영하세요.
 ```
 
 stash를 진행한 경우 끝부분에 한 줄 추가:
 
 ```
 - 이전 작업트리 변경분은 stash 되었습니다 → 복원: git stash pop
+```
+
+### 성공 — `BRANCH_STRATEGY=never`
+
+```
+✅ 임시 일감이 생성되었습니다.
+- 일감 번호: #1234
+- 제목: [임시] 2026-04-28 14:30:25
+- URL: {redmine_url}/issues/1234
+- 일감번호 캐시: .claude/cache/current_issue (현재 브랜치 그대로 작업)
+
+다음 작업 가이드:
+- 작업 완료 후 /commit-push 로 커밋 메시지 + Redmine 일감 갱신을 한 번에 처리합니다.
+  - 커밋 형식: "#1234 [분류] 요약"
+  - 분류: [개편] (구조·아키텍처·UI 큰 변경) / [신규] (새 기능·새 파일) / [수정] (오류·로직 수정)
 ```
 
 ### 실패
