@@ -5,6 +5,18 @@
 
 ---
 
+## 2026-04-30 (4)
+
+- [기능] `.claude/rules/` — 외부 4개 레포 분석 결과 반영, 영역별 규칙 보강
+  - 신규: `security.md` (시크릿·입력 검증·SQL 인젝션·XSS·에러 응답·인시던트 대응)
+  - 신규: `performance.md` (DB 접근·반복·캐싱·외부 호출·측정 우선)
+  - 신규: `documentation.md` (SKILL.md frontmatter·본문 섹션 표준)
+  - 보완: `java-style.md` — `## 코드 작성`(함수·파일 크기, 매직넘버, 외부 입력 검증), `## 예외 처리` 섹션 추가
+  - 보완: `js-style.md` — boolean 변수·함수 prefix(`is`/`has`/`can`) 추가, `## 코드 작성`·`## 예외 처리` 섹션 추가
+  - SQL 인젝션 항목은 `security.md`로 일원화 → `sql-style.md`는 변경 없음
+
+---
+
 ## 2026-04-30 (3)
 
 - [기능] `apply-report` 스킬 추가 — `/analyze-report` 보고서의 규칙 후보를 선택적으로 CLAUDE.md / `.claude/rules/` 에 반영
