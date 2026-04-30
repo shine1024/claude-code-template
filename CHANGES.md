@@ -5,6 +5,21 @@
 
 ---
 
+## 2026-04-30 (3)
+
+- [기능] `issue-new`·`commit-push`·`issue-update` — 작업 워크플로우 통합 정비
+  - `/issue-new`: `BRANCH_STRATEGY` (`always` 기본 / `never`), `BASE_BRANCH` 환경변수 도입
+    - `always` + `BASE_BRANCH` 설정 시: 해당 브랜치 체크아웃 → `git pull --ff-only` → `ing__issue__NNNN` 분기 (운영 프로젝트의 dev 베이스 흐름)
+    - `never` 모드: 브랜치 생성을 스킵하고 `.claude/cache/current_issue` 에 일감번호 저장 (1인 구축 프로젝트 — main 직접 작업)
+  - `/commit-push` 신규 — 변경 분석 → 커밋 메시지(`#NNNN [분류] 요약` subject + 선택 body) + Redmine 변경분(제목·진척도·상태·소요시간) 통합 미리보기 → 사용자 확인 1회 → `git add` → `git commit` → `git push` → Redmine PUT → 시간 등록 일괄 처리
+    - 커밋 subject 만 Redmine 제목에 반영 (body 는 커밋 전용 — 추가 코멘트 영역)
+    - 단계별 부분 실패 시 어디까지 성공했는지 명시하고 후속 조치 안내
+  - `init.bat`: `.claude/cache/` 디렉터리 생성 + `.gitignore` 필수 항목에 추가 — 일감번호 캐시 등 개인 작업 컨텍스트 격리
+  - `.gitignore` (이 프로젝트): `.claude/cache/` 항목 추가
+  - `CLAUDE.md`: 파일 역할표·프로젝트 구조에 워크플로우 스킬 묶음과 `cache/` 디렉터리 반영
+
+---
+
 ## 2026-04-30 (2)
 
 - [수정] `analyze-report` — 규칙 후보에 `규칙 타입` 분류 도입 (워크플로우/코딩/탐색/지식/사용자-가이드)

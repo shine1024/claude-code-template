@@ -11,6 +11,7 @@ claude-code-template — CLAUDE.md
    `CHANGES.md`	변경 이력 — 모든 커밋을 날짜별로 누적 기록
    `init.bat`	신규 프로젝트에 `.claude/` 폴더를 초기화하는 스크립트 (Windows)
    `/sync-template`	각 프로젝트에서 `.claude/` 설정을 최신화하는 스킬
+   `/issue-new` · `/commit-push` · `/issue-update`	Redmine 일감 + 작업 브랜치 + 커밋·푸시 통합 워크플로우 (env: `BRANCH_STRATEGY`, `BASE_BRANCH`)
    `template/CLAUDE-TEMPLATE-*.md`	프로젝트별 CLAUDE.md 템플릿
    `basics/`	Claude Code 일반 교육자료
    `.claude/guides/hooks.md`	훅 기능 가이드
@@ -34,7 +35,8 @@ claude-code-template/
     ├── rules/                       ← 관심사별 규칙 (세션 시작 시 자동 로드)
     ├── skills/                      ← 커스텀 슬래시 커맨드
     ├── hooks/                       ← 이벤트 훅
-    └── state/                       ← 동기화 상태 파일 (SYNC_HASH 등 — git 추적, 프로젝트 단위로 공유)
+    ├── state/                       ← 동기화 상태 파일 (SYNC_HASH 등 — git 추적, 프로젝트 단위로 공유)
+    └── cache/                       ← 개인 작업 캐시 (current_issue 등 — git 제외)
 ```
 ---
 3. 변경 시 체크리스트

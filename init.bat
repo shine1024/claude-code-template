@@ -45,8 +45,9 @@ if (Test-Path $TargetClaude) {
 }
 New-Item $TargetClaude -ItemType Directory | Out-Null
 New-Item (Join-Path $TargetClaude "state") -ItemType Directory | Out-Null
+New-Item (Join-Path $TargetClaude "cache") -ItemType Directory | Out-Null
 
-$exclude = @("state")
+$exclude = @("state", "cache")
 Get-ChildItem (Join-Path $ScriptDir ".claude") -Directory |
     Where-Object { $exclude -notcontains $_.Name } |
     ForEach-Object { Copy-Item $_.FullName $TargetClaude -Recurse }
@@ -109,7 +110,7 @@ Write-Host ""
 Write-Host ".gitignore 업데이트 중..."
 
 $GitIgnorePath = Join-Path $TargetPath ".gitignore"
-$RequiredEntries = @("CLAUDE.local.md", ".claude/settings.local.json", ".claude/hooks/.task_start")
+$RequiredEntries = @("CLAUDE.local.md", ".claude/settings.local.json", ".claude/hooks/.task_start", ".claude/cache/")
 $ExistingContent = if (Test-Path $GitIgnorePath) { Get-Content $GitIgnorePath -Raw -Encoding UTF8 } else { "" }
 $ToAdd = $RequiredEntries | Where-Object { $ExistingContent -notmatch [regex]::Escape($_) }
 
