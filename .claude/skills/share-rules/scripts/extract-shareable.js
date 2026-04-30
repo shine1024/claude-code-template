@@ -1,6 +1,13 @@
 /**
- * CLAUDE.local.md 의 "## 공유 가능" 섹션 본문을 추출하여
- * 빈 줄 기준으로 분할된 규칙 블록 JSON 배열을 출력합니다.
+ * CLAUDE.local.md 의 "## 공유 가능" 섹션을 추출하여 규칙 블록 JSON 배열을 출력합니다.
+ *
+ * 규칙 포맷: 각 규칙은 ### 헤딩으로 시작하고 본문을 바로 아래에 작성한다.
+ *   ### 규칙 제목
+ *   규칙 본문
+ *
+ * 처리 규칙:
+ *   - 빈 줄로 분할 후 ### 헤딩 블록에 이어지는 내용을 하나로 병합
+ *   - HTML 주석(<!-- ... -->), --- 구분자는 제외
  *
  * Usage: node extract-shareable.js
  * Output: [{ rule: "..." }, ...]
@@ -26,19 +33,31 @@ function main() {
 	for (const line of lines) {
 		const heading = line.match(/^##\s+(.+?)\s*$/);
 		if (heading) {
+			if (inSection) break;
 			inSection = heading[1].trim() === '공유 가능';
 			continue;
 		}
 		if (inSection) sectionLines.push(line);
 	}
 
-	const blocks = sectionLines
+	const rawBlocks = sectionLines
 		.join('\n')
 		.split(/\n\s*\n/)
 		.map(b => b.replace(/^\s+|\s+$/g, ''))
-		.filter(Boolean);
+		.filter(b => b && b !== '---' && !b.startsWith('<!--'));
 
-	const rules = blocks.map(rule => ({ rule }));
+	const merged = [];
+	for (const block of rawBlocks) {
+		if (/^#{1,6}\s/.test(block)) {
+			merged.push(block);
+		} else if (merged.length > 0) {
+			merged[merged.length - 1] += '\n' + block;
+		} else {
+			merged.push(block);
+		}
+	}
+
+	const rules = merged.map(rule => ({ rule }));
 	console.log(JSON.stringify(rules, null, 2));
 }
 

@@ -5,6 +5,16 @@
 
 ---
 
+## 2026-04-30
+
+- [수정] `share-rules` — 공유 규칙 포맷(`### 헤딩` 필수) 정의 및 `extract-shareable.js` 개선
+  - `extract-shareable.js`: 부제목과 내용이 별개 행으로 업로드되던 버그 수정 — `###` 헤딩 블록에 이어지는 내용을 하나로 병합
+  - `extract-shareable.js`: HTML 주석(`<!--`), `---` 구분자 필터링 추가; 섹션 종료 시 `break`로 즉시 탈출
+  - `rule-writing-policy.md`: `## 공유 가능` 작성 포맷 섹션 추가 — `###` 헤딩 필수 명시, Claude 자동 기록 시 형식 준수 유도
+  - `init.bat`: 신규 프로젝트의 `CLAUDE.local.md` 템플릿에 형식 예시 HTML 주석 삽입
+
+---
+
 ## 2026-04-29 (3)
 
 - [수정] `.claude/state/`를 git 추적 대상으로 전환 — SYNC_HASH가 프로젝트 단위로 공유되어야 팀원 간 템플릿 버전이 일치함

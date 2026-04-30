@@ -99,7 +99,7 @@ $LocalMdPath = Join-Path $TargetPath "CLAUDE.local.md"
 if (Test-Path $LocalMdPath) {
     Write-Host "[건너뜀] CLAUDE.local.md 가 이미 존재합니다."
 } else {
-    $LocalMdContent = "# 개인 설정 (CLAUDE.local.md)`r`n`r`n## 규칙 작성 모드`r`n`r`n# 팀 기본값(CLAUDE.md)과 다르게 설정하려면 아래 주석 중 하나를 해제하세요.`r`n# RULE_MODE: direct   <- CLAUDE.md에 바로 반영`r`n# RULE_MODE: local    <- CLAUDE.local.md에 먼저 기록`r`n`r`n## 공유 가능`r`n`r`n## 비공유`r`n"
+    $LocalMdContent = "# 개인 설정 (CLAUDE.local.md)`r`n`r`n## 규칙 작성 모드`r`n`r`n# 팀 기본값(CLAUDE.md)과 다르게 설정하려면 아래 주석 중 하나를 해제하세요.`r`n# RULE_MODE: direct   <- CLAUDE.md에 바로 반영`r`n# RULE_MODE: local    <- CLAUDE.local.md에 먼저 기록`r`n`r`n## 공유 가능`r`n`r`n<!-- 각 규칙은 ### 헤딩으로 시작하세요.`r`n### 규칙 제목`r`n규칙 본문`r`n-->`r`n`r`n## 비공유`r`n"
     [System.IO.File]::WriteAllText($LocalMdPath, $LocalMdContent, [System.Text.Encoding]::UTF8)
     Write-Host "CLAUDE.local.md 생성 완료"
 }
