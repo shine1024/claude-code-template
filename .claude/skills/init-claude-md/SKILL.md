@@ -122,6 +122,7 @@ CONTEXT 파일의 각 섹션은 CLAUDE.md에 그대로 복사하지 않습니다
 
 | 기술 스택 | 적용 rules |
 |----------|-----------|
+| (공통 — 모든 프로젝트 무조건 포함) | `coding-behavior.md` |
 | Java | `java-style.md` |
 | JavaScript / TypeScript | `js-style.md` |
 | DB 사용 (MyBatis 등) | `sql-style.md` |

@@ -5,6 +5,14 @@
 
 ---
 
+## 2026-05-04 (1)
+
+- [기능] `.claude/rules/coding-behavior.md` 신규 — Andrej Karpathy 의 LLM 코딩 관찰에서 도출한 4원칙(Think Before Coding / Simplicity First / Surgical Changes / Goal-Driven Execution) 을 행동 규범으로 명문화. 모든 프로젝트에 무조건 적용
+  - `init-claude-md/SKILL.md`: 3-1 적용 rules 표에 "공통 — 모든 프로젝트" 행 추가 → 생성되는 CLAUDE.md 의 "적용 rules" 항목에 항상 포함
+  - `template/CLAUDE-TEMPLATE.md`: 공통 rules/ 파일 표 최상단에 `coding-behavior.md` (모든 프로젝트 필수) 추가
+
+---
+
 ## 2026-04-30 (5)
 
 - [기능] `issue-new`·`commit-push`·`issue-update` — 작업 워크플로우 통합 정비

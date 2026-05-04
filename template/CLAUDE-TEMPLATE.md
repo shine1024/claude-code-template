@@ -9,6 +9,7 @@
 
 | 파일 | 용도 | 비고 |
 |------|------|------|
+| `coding-behavior.md` | LLM 코딩 행동 규범(Karpathy 4원칙) | 모든 프로젝트 필수 |
 | `java-style.md` | Java 코딩 컨벤션 | Java 프로젝트 필수 |
 | `js-style.md` | JavaScript 코딩 컨벤션 | 프론트엔드 포함 프로젝트 필수 |
 | `sql-style.md` | SQL 코딩 컨벤션 | DB 사용 프로젝트 필수 |
