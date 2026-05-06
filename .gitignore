@@ -6,7 +6,6 @@ CLAUDE.local.md
 
 # 훅 임시 파일
 .claude/hooks/.task_start
-.claude/hooks/.local_md_hash
 
 # 일감번호 캐시 (commit-push / issue-new — 개인 작업 컨텍스트)
 .claude/cache/
