@@ -5,12 +5,6 @@
 
 ---
 
-## 2026-05-06 (4)
-
-- [수정] `sync-template/SKILL.md` — 템플릿 clone 시 `core.autocrlf=false` 적용 (기존 `true` 가 LF→CRLF 자동 변환을 유발해, sync 후 실제 변경이 없는데도 모든 텍스트 파일이 변경된 것처럼 표시되던 현상 해결)
-
----
-
 ## 2026-05-06 (3)
 
 - [설정] `.gitignore` · `.claude/hooks/` — 폐기된 `.local_md_hash` 잔재 제거 (예전 `UserPromptSubmit` 훅에서 `CLAUDE.local.md` 해시를 기록하던 기능의 흔적 — 더 이상 만들지 않으므로 ignore 항목·잔존 파일 함께 정리)

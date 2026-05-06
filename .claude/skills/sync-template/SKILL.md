@@ -26,7 +26,7 @@ TEMPLATE_REPO_URL이 설정되어 있지 않습니다.
 
 ```powershell
 $TempDir = Join-Path $env:TEMP "claude-sync-$(Get-Random)"
-git clone --depth 1 -c core.autocrlf=false $env:TEMPLATE_REPO_URL $TempDir
+git clone --depth 1 $env:TEMPLATE_REPO_URL $TempDir
 ```
 
 clone 실패 시 아래 메시지를 출력하고 종료한다.
