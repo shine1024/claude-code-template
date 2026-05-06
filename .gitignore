@@ -10,3 +10,6 @@ CLAUDE.local.md
 
 # 일감번호 캐시 (commit-push / issue-new — 개인 작업 컨텍스트)
 .claude/cache/
+
+# 분석 데이터
+reports

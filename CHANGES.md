@@ -5,6 +5,12 @@
 
 ---
 
+## 2026-05-06 (2)
+
+- [설정] `.gitignore` — `reports` 항목 추가 (분석 데이터 로컬 전용 — `reports/analyze-report/` 등)
+
+---
+
 ## 2026-05-06 (1)
 
 - [수정] `.claude/skills/*/SKILL.md` — `documentation.md` 규칙 준수로 9개 스킬 정비
