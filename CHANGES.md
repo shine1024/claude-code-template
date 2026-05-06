@@ -5,6 +5,16 @@
 
 ---
 
+## 2026-05-06 (1)
+
+- [수정] `.claude/skills/*/SKILL.md` — `documentation.md` 규칙 준수로 9개 스킬 정비
+  - frontmatter 보완: `session-log`·`init-claude-md` 에 `name`·`description`·트리거 키워드 추가
+  - 이모지 → 텍스트 표식: `✅`/`⚠️`/`❌`/`⏭️`/`📌` → `[성공]`/`[주의]`/`[실패]`/`[건너뜀]`/`[안내]` (issue-new·issue-update·commit-push·init-claude-md)
+  - 어미 통일: 본문 instruction 어미를 `~한다` 로 정렬 (코드블록 내 사용자 대면 출력 메시지는 정중체 유지)
+  - `사용 시점` 섹션 추가: `session-log`·`init-claude-md`
+
+---
+
 ## 2026-05-04 (1)
 
 - [기능] `.claude/rules/coding-behavior.md` 신규 — Andrej Karpathy 의 LLM 코딩 관찰에서 도출한 4원칙(Think Before Coding / Simplicity First / Surgical Changes / Goal-Driven Execution) 을 행동 규범으로 명문화. 모든 프로젝트에 무조건 적용

@@ -1,18 +1,18 @@
 ---
 name: share-rules
-description: CLAUDE.local.md 의 "공유 가능" 섹션 규칙을 추출하여 Google Sheets 의 "3) 개인 규칙 후보" 시트에 업로드합니다. "규칙 공유", "팀 규칙 올려줘", "/share-rules" 등의 요청에 사용하세요. 미리보기로 사용자 확인을 받은 후에만 업로드합니다.
+description: CLAUDE.local.md 의 "공유 가능" 섹션 규칙을 추출하여 Google Sheets 의 "3) 개인 규칙 후보" 시트에 업로드한다. "규칙 공유", "팀 규칙 올려줘", "/share-rules" 등의 요청에 사용한다. 미리보기로 사용자 확인을 받은 후에만 업로드한다.
 ---
 
 ## 목적
 
 각자의 `CLAUDE.local.md` 에 쌓인 개인 규칙 중 **공유 가능 섹션**만 안전하게 추출하여
-Google Sheets 의 개인 규칙 후보 풀에 적재합니다. 이후 `/analyze-report` 가 session-log 와 함께 분석해 전역 `CLAUDE.md` 승격 후보를 도출합니다.
+Google Sheets 의 개인 규칙 후보 풀에 적재한다. 이후 `/analyze-report` 가 session-log 와 함께 분석해 전역 `CLAUDE.md` 승격 후보를 도출한다.
 
 ---
 
 ## CLAUDE.local.md 섹션 컨벤션
 
-`CLAUDE.local.md` 는 두 섹션으로 나누어 관리합니다.
+`CLAUDE.local.md` 는 두 섹션으로 나누어 관리한다.
 
 ```markdown
 ## 공유 가능
@@ -46,7 +46,7 @@ Google Sheets 의 개인 규칙 후보 풀에 적재합니다. 이후 `/analyze-
 | `PROJECT_NAME` | 프로젝트명 (시트의 `project` 컬럼에 기록) |
 | `SESSION_USER_NAME` | 작성자 이름 |
 
-미설정 시 `.claude/guides/google-sheets-setup.md` 안내 후 중단합니다.
+미설정 시 `.claude/guides/google-sheets-setup.md` 안내 후 중단한다.
 
 ---
 
@@ -56,9 +56,9 @@ Google Sheets 의 개인 규칙 후보 풀에 적재합니다. 이후 `/analyze-
 node "{SKILL_DIR}/scripts/extract-shareable.js"
 ```
 
-출력은 JSON 배열입니다. 각 요소는 한 개 규칙(빈 줄 단위로 구분된 블록)입니다.
+출력은 JSON 배열이다. 각 요소는 한 개 규칙(빈 줄 단위로 구분된 블록)이다.
 
-추출된 규칙이 0건이면 아래 메시지를 출력하고 종료합니다.
+추출된 규칙이 0건이면 아래 메시지를 출력하고 종료한다.
 
 ```
 공유 가능 섹션이 비어 있습니다. CLAUDE.local.md 에 "## 공유 가능" 섹션을 작성한 뒤 다시 시도하세요.
@@ -68,7 +68,7 @@ node "{SKILL_DIR}/scripts/extract-shareable.js"
 
 ## 3단계: 미리보기
 
-추출된 규칙을 사용자에게 표 형식으로 보여주고 업로드 여부를 확인합니다.
+추출된 규칙을 사용자에게 표 형식으로 보여주고 업로드 여부를 확인한다.
 
 ```
 다음 N건의 규칙을 "3) 개인 규칙 후보" 시트에 업로드합니다.
@@ -81,21 +81,21 @@ node "{SKILL_DIR}/scripts/extract-shareable.js"
 업로드할까요? (예/아니오)
 ```
 
-사용자가 "아니오" 또는 수정 요청 시 업로드하지 않고 종료합니다.
+사용자가 "아니오" 또는 수정 요청 시 업로드하지 않고 종료한다.
 
 ---
 
 ## 4단계: 업로드
 
-사용자가 확인하면 아래 스크립트로 적재합니다.
+사용자가 확인하면 아래 스크립트로 적재한다.
 
 ```bash
 node "{SKILL_DIR}/scripts/upload-rules.js"
 ```
 
-스크립트는 stdin 으로 JSON 배열을 받습니다. 각 규칙은 별도 행으로 append 됩니다.
+스크립트는 stdin 으로 JSON 배열을 받는다. 각 규칙은 별도 행으로 append 된다.
 
-성공 시 다음 메시지를 출력합니다.
+성공 시 다음 메시지를 출력한다.
 
 ```
 N건의 규칙을 "3) 개인 규칙 후보" 시트에 업로드했습니다.
@@ -113,5 +113,5 @@ N건의 규칙을 "3) 개인 규칙 후보" 시트에 업로드했습니다.
 | D `rule` | 규칙 본문 (한 블록) |
 | E `클로드 분석여부` | analyze-report 처리 후 날짜 기입 (비어 있을 때만 분석 대상) |
 
-> 시트는 사전에 만들어 두고 `GOOGLE_SHEETS_PERSONAL_RULES_GID` 에 gid 를 등록해야 합니다.
+> 시트는 사전에 만들어 두고 `GOOGLE_SHEETS_PERSONAL_RULES_GID` 에 gid 를 등록해야 한다.
 > 1행: 자유 설명, 2행: 헤더(`date`, `name`, `project`, `rule`, `클로드 분석여부`), 3행~: 데이터.
