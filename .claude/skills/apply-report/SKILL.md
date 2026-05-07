@@ -126,6 +126,25 @@ node "{SKILL_DIR}/scripts/parse-report.js" [YYYY-MM-DD]
 
 ---
 
+## 5.5단계: `rules-index.json` 갱신
+
+`.claude/rules/*.md` 를 신규 생성하거나 기존 파일에 내용을 추가한 경우, 해당 파일들을 `update-index.js` 에 전달해 `rules-index.json` 을 갱신한다.
+
+```bash
+node "{SKILL_DIR}/scripts/update-index.js" .claude/rules/<file1>.md [.claude/rules/<file2>.md ...]
+```
+
+**동작**
+- 인덱스 위치: `.claude/state/rules-index.json` (`/sync-template` 시 보존되는 디렉토리)
+- 인덱스 파일이 없으면 빈 구조로 새로 생성한다
+- 신규 파일: `added_at`·`last_validated_at` 모두 오늘로 entry 추가
+- 기존 entry: `last_validated_at` 만 오늘로 갱신 (재발견된 규칙은 다시 신선해진 것으로 간주)
+- 입력 중 `.claude/rules/*.md` 가 아닌 경로(예: `CLAUDE.md`)는 자동으로 건너뛴다 — 그대로 전달해도 무방
+
+이 단계는 선택 항목 중 `.claude/rules/` 에 닿지 않은 변경만 있을 때 생략 가능. 단, 파일이 신규 생성됐다면 반드시 호출한다.
+
+---
+
 ## 6단계: CLAUDE.local.md 정리
 
 적용된 규칙과 매칭되는 `## 공유 가능` 블록을 찾아 사용자 확인 후 제거한다.

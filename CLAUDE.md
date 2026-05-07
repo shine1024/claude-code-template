@@ -35,7 +35,7 @@ claude-code-template/
     ├── rules/                       ← 관심사별 규칙 (세션 시작 시 자동 로드)
     ├── skills/                      ← 커스텀 슬래시 커맨드
     ├── hooks/                       ← 이벤트 훅
-    ├── state/                       ← 동기화 상태 파일 (SYNC_HASH 등 — git 추적, 프로젝트 단위로 공유)
+    ├── state/                       ← 동기화·검증 상태 파일 (SYNC_HASH, rules-index.json 등 — git 추적, 프로젝트 단위로 공유)
     └── cache/                       ← 개인 작업 캐시 (current_issue 등 — git 제외)
 ```
 ---

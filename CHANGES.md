@@ -5,6 +5,20 @@
 
 ---
 
+## 2026-05-07 (3)
+
+- [기능] `validate-rules`·`apply-validate-report` 스킬 신규 — 누적된 `.claude/rules/*.md` 의 유효성 재검증 라운드
+  - `validate-rules`: `rules-index.json` 의 임계값(추가 후 60일 미검증 / 마지막 검증 후 180일 / 일반 모드 최대 10건)을 넘긴 후보를 추출해 LLM 으로 3기준(전제 성립·대상 코드 존재·다른 규칙과 모순 없음) 판정 → `reports/validate-rules/{날짜}-validate-report.md` 보고서 생성. `--force` 모드는 임계값 무시
+  - `apply-validate-report`: 보고서의 체크박스(`[x]`) 항목만 반영 — 삭제(파일·섹션 제거) / 병합 / 충돌(자동 처리 안 함, 사용자 수동) / 유지(체크 무관 last_validated_at 갱신)
+  - 인덱스 위치: `.claude/state/rules-index.json` — `/sync-template` 시 `state/` 가 제외 디렉토리이므로 검증 이력이 sync 로 휘발되지 않음
+  - 시드 스크립트 `validate-rules/scripts/seed-index.js`: 최초 1회 git log 첫 커밋 날짜로 `added_at`·`last_validated_at` 시드
+  - 보고서·인덱스 파싱은 LLM 가 아닌 Node.js 스크립트로 수행 (apply-report 패턴 재사용)
+- [수정] `apply-report` 5.5단계 추가 — 적용한 `.claude/rules/*.md` 를 `update-index.js` 에 전달해 `rules-index.json` 자동 갱신 (신규 → entry 추가, 기존 → `last_validated_at` 갱신)
+- [문서] `.claude/guides/skills.md` — 신규 2개 스킬 섹션 + apply-report 5.5단계 행 추가
+- [문서] `CLAUDE.md`·`README.md` — `.claude/state/` 설명에 `rules-index.json` 추가
+
+---
+
 ## 2026-05-07 (2)
 
 - [기능] `slack-notify` 훅 — 권한 허가 요청(Notification·`permission_prompt`) 알림 추가
