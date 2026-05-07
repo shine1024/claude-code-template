@@ -5,6 +5,26 @@
 
 ---
 
+## 2026-05-07 (1)
+
+- [문서] `basics/` — 교육자료 3종 신설 및 정비 (기초·심화·사용법)
+  - 파일명 정리: `클로드코드_사용가이드_입문.md` → `01_claude-code_기초.md`, `심화` → `02_claude-code_심화.md`
+  - `01_claude-code_기초.md` — 전반 개정 (워크플로우·30분 첫 작업 실습·트러블슈팅·성장 사다리 등)
+  - `02_claude-code_심화.md` — Plan Mode·Skills·Plugin·MCP 전 영역 재정비
+    - IDE 연동·헤드리스 모드 섹션 제거
+    - Subagent 축약 후 Worktree 섹션 신설 (§6 "병렬 작업 패턴: Subagent · Worktree")
+    - Hooks 예시 Windows 우선 + macOS 보조 + 공식 가이드 링크
+    - 자동 메모리 섹션 축소 (개인 누적 도구로 위치 명시)
+    - §10 35분 심화 실습 추가 (rules 분리·권한 차단·첫 Skill·Stop Hook)
+  - `03_claude-code-template_사용법.md` — 신규 작성
+    - 도입 배경, 초기화 + 4단계 사이클(사용·수집·분석·개선)
+    - 신규 적용 절차, 일감·커밋 워크플로우
+    - `/sync-template` 을 "공통 설정 단일 출처" 메커니즘으로 정립
+    - 회고·개선 사이클에 "다른 프로젝트로 전파(템플릿 환원)" 절차 포함
+- [문서] `README.md` — basics 3종 안내·빠른 색인 정비, "시범운영" 표현 제거하여 §5 새 프레이밍과 동기화
+
+---
+
 ## 2026-05-06 (3)
 
 - [설정] `.gitignore` · `.claude/hooks/` — 폐기된 `.local_md_hash` 잔재 제거 (예전 `UserPromptSubmit` 훅에서 `CLAUDE.local.md` 해시를 기록하던 기능의 흔적 — 더 이상 만들지 않으므로 ignore 항목·잔존 파일 함께 정리)
