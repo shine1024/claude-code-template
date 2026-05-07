@@ -55,7 +55,7 @@ rl.on('close', () => {
                     : `${seconds}초`;
         }
 
-        text = `[Claude Code] 사용자 확인이 필요합니다 💬\n프로젝트: ${projectName}\n시작: ${startFormatted} | 현재: ${now} | 소요: ${elapsed}`;
+        text = `[Claude Code] 권한 허가 요청 🔐\n프로젝트: ${projectName}\n요청: ${inputData.message}\n시작: ${startFormatted} | 현재: ${now} | 소요: ${elapsed}`;
     } else {
         // ── Stop 이벤트 ─────────────────────────────────────────────────────
         if (fs.existsSync(START_FILE)) {

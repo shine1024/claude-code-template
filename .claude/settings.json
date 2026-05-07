@@ -32,6 +32,17 @@
         ]
       }
     ],
+    "Notification": [
+      {
+        "matcher": "permission_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/slack-notify/notify.js"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "matcher": "",

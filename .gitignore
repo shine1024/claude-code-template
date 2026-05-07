@@ -7,7 +7,7 @@ CLAUDE.local.md
 # 훅 임시 파일
 .claude/hooks/.task_start
 
-# 일감번호 캐시 (commit-push / issue-new — 개인 작업 컨텍스트)
+# 개인 작업 캐시 (일감번호·슬랙 유저 ID 등 — 로컬 전용)
 .claude/cache/
 
 # 분석 데이터

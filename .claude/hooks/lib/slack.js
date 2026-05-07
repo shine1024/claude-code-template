@@ -1,4 +1,29 @@
 const https = require('https');
+const fs    = require('fs');
+const path  = require('path');
+
+const CACHE_FILE = path.join(process.cwd(), '.claude/cache/.slack_user_id.json');
+
+// ── 캐시 읽기/쓰기 ─────────────────────────────────────────────────────────
+function readCache(email) {
+    try {
+        const raw    = fs.readFileSync(CACHE_FILE, 'utf8');
+        const cached = JSON.parse(raw);
+        if (cached.email === email && cached.userId) return cached.userId;
+    } catch {}
+    return null;
+}
+
+function writeCache(email, userId) {
+    try {
+        fs.mkdirSync(path.dirname(CACHE_FILE), { recursive: true });
+        fs.writeFileSync(CACHE_FILE, JSON.stringify({ email, userId }));
+    } catch {}
+}
+
+function clearCache() {
+    try { fs.unlinkSync(CACHE_FILE); } catch {}
+}
 
 // ── users.lookupByEmail — 이메일 → User ID 조회 ────────────────────────────
 function lookupUserByEmail(token, email, callback) {
@@ -63,15 +88,33 @@ function sendDm(token, userId, text, callback) {
     req.end();
 }
 
-// ── 이메일 → User ID 조회 후 DM 전송 ───────────────────────────────────────
+// ── 이메일 → User ID 조회 후 DM 전송 (User ID 캐싱) ────────────────────────
 function sendDmByEmail(token, email, text, callback) {
     const cb = callback || (() => {});
+
+    const send = userId => {
+        sendDm(token, userId, text, (err, result) => {
+            // 캐시된 userId가 무효해진 경우 (계정 변경·삭제 등) 캐시 제거
+            if (err && /user_not_found|channel_not_found/.test(err.message)) {
+                clearCache();
+            }
+            cb(err, result);
+        });
+    };
+
+    const cachedId = readCache(email);
+    if (cachedId) {
+        send(cachedId);
+        return;
+    }
+
     lookupUserByEmail(token, email, (err, userId) => {
         if (err || !userId) {
             cb(err || new Error('User ID를 찾을 수 없습니다'), null);
             return;
         }
-        sendDm(token, userId, text, cb);
+        writeCache(email, userId);
+        send(userId);
     });
 }
 

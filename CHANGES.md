@@ -5,6 +5,16 @@
 
 ---
 
+## 2026-05-07 (2)
+
+- [기능] `slack-notify` 훅 — 권한 허가 요청(Notification·`permission_prompt`) 알림 추가
+  - `settings.json`에 `Notification` 훅 등록 (matcher: `permission_prompt`) — Stop 훅과 동일한 `notify.js` 재사용
+  - `notify.js`: Notification 분기 메시지를 `[Claude Code] 권한 허가 요청 🔐 / 프로젝트 / 요청: <message> / 시작·현재·소요`로 변경
+  - `lib/slack.js`: `sendDmByEmail`에 User ID 캐시 도입 (`.claude/cache/.slack_user_id.json`) — lookup 왕복 1회 생략, 이메일 변경·`user_not_found`/`channel_not_found` 시 자동 무효화
+  - `.gitignore`: `.claude/cache/` 항목 주석 일반화 (일감번호 외에 슬랙 유저 ID 캐시도 포함됨)
+
+---
+
 ## 2026-05-07 (1)
 
 - [기능] `issue-new`·`commit-push` — 일감 생성 시 제목·설명 입력 흐름 추가 (사용자 편의성 우선)
