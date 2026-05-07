@@ -253,6 +253,7 @@ Claude Code에서 스킬은 `/스킬명`으로 직접 호출하는 커스텀 커
 | 3 | 미리보기 표 출력 → 사용자 선택 (예: `1,3,5` / `all` / `취소`) |
 | 4 | 멱등성 체크 — 적용 위치 파일에 이미 동일 내용 있으면 건너뜀 |
 | 5 | `Edit` 로 각 항목을 적용 위치 파일에 추가 |
+| 5.5 | `update-index.js` 로 `.claude/state/rules-index.json` 갱신 (신규 → entry 추가, 기존 → `last_validated_at` 갱신) |
 | 6 | `find-local-matches.js` 로 CLAUDE.local.md `## 공유 가능` 블록 매칭 → 사용자 확인 → `clean-local-rules.js` 로 제거 |
 | 7 | `CHANGES.md` 상단에 오늘 날짜 항목 추가 |
 | 8 | 적용 결과 요약 출력 (`git diff` 안내, 자동 커밋 없음) |
@@ -272,3 +273,80 @@ Claude Code에서 스킬은 `/스킬명`으로 직접 호출하는 커스텀 커
 - 자동 커밋·푸시 안 함 — 변경 후 `git diff` 로 사용자가 직접 확인·커밋
 - `## 비공유` 섹션은 어떤 단계에서도 건드리지 않음
 - 약 강도(`약`) 후보는 기본 제외 (1명 단독 제안)
+
+---
+
+### /validate-rules — 누적된 규칙의 유효성 재검증
+
+**용도**: `.claude/rules/*.md` 의 규칙 중 시간이 지나 사문화·중복·모순 가능성이 있는 후보를 추출해 LLM 으로 판정하고 보고서를 생성. 실제 변경은 `/apply-validate-report` 에서 수행.
+
+| 항목 | 내용 |
+|------|------|
+| 호출 방법 | 프로젝트 루트에서 `/validate-rules` (또는 `--force` 로 임계값 무시) |
+| 출력 경로 | `reports/validate-rules/{YYYY-MM-DD}-validate-report.md` |
+| 후보 기준 | `rules-index.json` 의 `added_at` 후 60일 미검증 / `last_validated_at` 후 180일 / 일반 모드 최대 10건 |
+| 컨텍스트 절약 | `list-candidates.js` 로 후보 추출 (LLM 가 모든 entry 를 직접 훑지 않음) |
+
+**유효성 판단 3기준**
+
+| 번호 | 기준 | 깨지는 예 |
+|---|---|---|
+| 1 | 전제(언어·DB·프레임워크 등)가 현재 코드베이스에 성립 | "PostgreSQL 식별자" / CLAUDE.md "MariaDB 단일" |
+| 2 | 규칙이 닿는 코드가 실제로 존재 | "Velocity 작성 시 X" / Velocity 파일 0개 |
+| 3 | 다른 규칙·CLAUDE.md 와 모순 없음 | A "탭" / B "스페이스" |
+
+→ 모두 충족: 유지 / 1·2 깨짐: 삭제 / 3 깨짐(중복): 병합 / 3 깨짐(모순): 충돌 보고
+
+**실행 절차**
+
+| 단계 | 내용 |
+|------|------|
+| 1 | `rules-index.json` 존재 확인 (없으면 시드 안내 후 종료) |
+| 2 | `list-candidates.js [--force]` 로 후보 추출 |
+| 3 | 후보 본문 + 모든 규칙 + CLAUDE.md + 최근 30일 커밋 메시지 수집 |
+| 4 | LLM 이 3기준으로 판정 (출력 형식 강제) |
+| 5 | `reports/validate-rules/{YYYY-MM-DD}-validate-report.md` 작성 (체크박스 형식) |
+| 6 | 결과 요약 + `/apply-validate-report` 안내 |
+
+**시드 (최초 1회)**
+
+`rules-index.json` 이 없는 프로젝트에서는 다음 명령으로 1회 시드한다.
+
+```bash
+node .claude/skills/validate-rules/scripts/seed-index.js
+```
+
+각 규칙 파일의 git log 첫 커밋 날짜를 `added_at`·`last_validated_at` 으로 사용. 이미 존재하면 종료(`--force` 로 덮어쓰기).
+
+---
+
+### /apply-validate-report — 검증 보고서를 프로젝트에 반영
+
+**용도**: `/validate-rules` 가 만든 보고서의 체크된 항목만 `.claude/rules/` 와 `rules-index.json` 에 반영. 삭제·병합·유지는 자동 처리, 충돌은 사용자 수동.
+
+| 항목 | 내용 |
+|------|------|
+| 호출 방법 | 프로젝트 루트에서 `/apply-validate-report [YYYY-MM-DD]` |
+| 적용 대상 | 보고서의 `## 삭제 후보`·`## 병합 후보` 의 체크(`[x]`) 항목 |
+| 자동 갱신 | `## 유지` ID + 체크되지 않은 후보 ID → `last_validated_at` 갱신 |
+| 자동 처리 안 함 | `## 충돌 보고` — 사용자에게 안내만 |
+| 컨텍스트 절약 | `parse-validate-report.js` 가 체크박스를 파싱해 LLM 이 보고서를 재해석하지 않음 |
+
+**실행 절차**
+
+| 단계 | 내용 |
+|------|------|
+| 1 | `parse-validate-report.js` 로 보고서 파싱 |
+| 2 | 미리보기 표 → 사용자 yes/no |
+| 3 | 삭제: 규칙 파일 섹션 또는 파일 자체 제거 |
+| 4 | 병합: 보고서의 "병합 방향" 따라 한 곳으로 통합 |
+| 5 | `apply-index-changes.js` 로 `rules-index.json` 일괄 갱신 (touch + remove) |
+| 6 | 충돌 항목은 사용자에게 보고서 직접 검토 안내 |
+| 7 | `CHANGES.md` 갱신 |
+| 8 | 결과 요약 (`git diff` 안내, 자동 커밋 없음) |
+
+**주의 사항**
+
+- 자동 커밋·푸시 안 함
+- 충돌은 자동 병합 금지 — 잘못 합치면 더 큰 문제
+- 병합 방향이 보고서에 명시되지 않으면 임의로 정하지 않고 사용자에게 확인
