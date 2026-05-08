@@ -5,6 +5,17 @@
 
 ---
 
+## 2026-05-08
+
+- [기능] `deploy-static` 훅 신규 — 세션 중 수정된 정적 리소스(`.hbs`·`.js`·`.css`)를 작업 종료 시 배포 경로로 자동 복사
+  - `track.js` (`PostToolUse`, matcher `Edit|Write|MultiEdit`): `tool_input.file_path` 추출 → 확장자 화이트리스트 + `SRC_ROOT` 하위 검사 → `.claude/cache/modified_files.log` 에 누적 (출력 없음)
+  - `deploy.js` (`Stop`): 로그를 dedup 후 `SRC_ROOT` 기준 상대경로로 `DEPLOY_ROOT` 에 복사 (디렉토리 자동 생성), 로그 삭제. 성공 시 stderr 한 줄 요약
+  - 활성화는 각 프로젝트의 `.claude/settings.local.json`에서 `SRC_ROOT`·`DEPLOY_ROOT` 지정 + 훅 등록 (opt-in). 미설정 시 두 훅 모두 즉시 종료
+  - 토큰 비용 최소화: stdout 출력 없음, stderr 만 사용 (LLM 컨텍스트 비차감)
+- [문서] `.claude/guides/hooks.md` — `deploy-static` 섹션 + 환경변수 표(`SRC_ROOT`·`DEPLOY_ROOT`) 추가
+
+---
+
 ## 2026-05-07 (4)
 
 - [기능] `validate-rules`·`apply-validate-report` 스킬 신규 — 누적된 `.claude/rules/*.md` 의 유효성 재검증 라운드
