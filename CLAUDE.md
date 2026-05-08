@@ -20,6 +20,7 @@ claude-code-template — CLAUDE.md
    `.claude/rules/*.md`	관심사별 규칙 — 세션 시작 시 자동 로드
    `.claude/skills/`	커스텀 슬래시 커맨드
    `.claude/hooks/`	이벤트 훅 스크립트
+   `tests/`	통합 테스트 (claude-code-sandbox 자식 세션 활용 — 사전 검증용, sync 대상 아님)
 ---
 2. 프로젝트 구조
 ```
@@ -30,6 +31,7 @@ claude-code-template/
 ├── init.bat                         ← 신규 프로젝트 .claude/ 초기화 스크립트 (Windows)
 ├── template/                        ← 프로젝트별 CLAUDE.md 템플릿
 ├── basics/                          ← Claude Code 일반 교육자료
+├── tests/                           ← 통합 테스트 (사전 검증용, claude-code-sandbox 자식 세션 활용)
 └── .claude/
     ├── guides/                      ← 기능별 가이드 문서
     ├── rules/                       ← 관심사별 규칙 (세션 시작 시 자동 로드)

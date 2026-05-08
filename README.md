@@ -71,6 +71,7 @@ claude-code-template/
 ├── init.bat                 ← 신규 프로젝트 초기화 스크립트 (Windows)
 ├── CLAUDE.md                ← 이 리포 자체의 프로젝트 지침
 ├── CHANGES.md               ← 변경 이력
+├── tests/                   ← 통합 테스트 (사전 검증용)
 └── .claude/
     ├── guides/              ← 기능별 상세 가이드 (hooks·skills·google-sheets-setup)
     ├── rules/               ← 관심사별 규칙 (세션 시작 시 자동 로드)

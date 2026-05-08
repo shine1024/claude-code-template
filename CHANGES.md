@@ -13,10 +13,11 @@
   - 활성화는 각 프로젝트의 `.claude/settings.local.json`에서 `SRC_ROOT`·`DEPLOY_ROOT` 지정 + 훅 등록 (opt-in). 미설정 시 두 훅 모두 즉시 종료
   - 토큰 비용 최소화: stdout 출력 없음, stderr 만 사용 (LLM 컨텍스트 비차감)
 - [문서] `.claude/guides/hooks.md` — `deploy-static` 섹션 + 환경변수 표(`SRC_ROOT`·`DEPLOY_ROOT`) 추가
-
----
-
-## 2026-05-07 (4)
+- [기능] `tests/` 통합 테스트 인프라 신규 — `claude-code-sandbox` 자식 claude 세션으로 사전 검증
+  - `tests/run.js`: 시나리오 디렉토리 자동 인식 → sandbox baseline(`git rev-parse HEAD`) 기록 → setup(reset+clean+DEPLOY_ROOT clear) → 자식 `claude -p --dangerously-skip-permissions` 호출 → `verify.js` 실행 → teardown(같은 reset). 자식 호출은 `bash -c` + 환경변수로 wrap (Windows + Node `spawnSync` 의 `.cmd` 호출 이슈 회피)
+  - 첫 시나리오 `deploy-static`: 4개 파일 수정 → 화이트리스트·필터·DEPLOY_ROOT 복사·log 정리까지 8개 항목 PASS/FAIL 자동 판정. 검증 결과 8/8 PASS, 멱등성 확인
+  - sandbox 보호: working tree clean 검사 → dirty 면 거부, 매 사이클 baseline 으로 reset → 자식이 commit/파일 변경 등 무엇을 해도 폐기. push 격리는 미포함(sandbox origin 더미 전제)
+- [문서] `CLAUDE.md`·`README.md` — 프로젝트 구조에 `tests/` 추가
 
 - [기능] `validate-rules`·`apply-validate-report` 스킬 신규 — 누적된 `.claude/rules/*.md` 의 유효성 재검증 라운드
   - `validate-rules`: `rules-index.json` 의 임계값(추가 후 60일 미검증 / 마지막 검증 후 180일 / 일반 모드 최대 10건)을 넘긴 후보를 추출해 LLM 으로 3기준(전제 성립·대상 코드 존재·다른 규칙과 모순 없음) 판정 → `reports/validate-rules/{날짜}-validate-report.md` 보고서 생성. `--force` 모드는 임계값 무시
