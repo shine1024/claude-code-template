@@ -49,8 +49,9 @@ claude-code-template/
    설정 방식 변경 (env, CLAUDE.local.md 등)	`.claude/guides/skills.md` + `README.md`
    훅 스크립트 동작 변경	`.claude/guides/hooks.md`
    훅 설정 방식 변경 (env, config 등)	`.claude/guides/hooks.md` + `README.md`
+   사용자 절차·워크플로우·디렉토리 구조 변경 (초기화·스킬 흐름·RULE_MODE·일감/회고/분석 사이클 등)	`basics/03_claude-code-template_사용법.md`
    모든 변경 (커밋 단위)	`CHANGES.md` 상단에 항목 추가 (오늘 날짜 그룹). 예외: 오타·서식 등 사소한 수정, 같은 흐름의 후속 커밋(기존 항목에 병합)
-   커밋·푸시 직전 (필수)	`README.md`와 `CHANGES.md`를 반드시 열어 내용이 현재 상태와 일치하는지 확인한다. 불일치 발견 시 커밋보다 문서 수정을 먼저 완료한다.
+   커밋·푸시 직전 (필수)	`README.md`·`CHANGES.md`·`basics/03_claude-code-template_사용법.md`를 반드시 열어 내용이 현재 상태와 일치하는지 확인한다. 불일치 발견 시 커밋보다 문서 수정을 먼저 완료한다.
 ---
 4. AI 협업 지침
    이 프로젝트의 본질
