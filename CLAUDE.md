@@ -22,6 +22,12 @@ claude-code-template — CLAUDE.md
    `.claude/hooks/`	이벤트 훅 스크립트
    `tests/`	통합 테스트 (claude-code-sandbox 자식 세션 활용 — 사전 검증용, sync 대상 아님)
 ---
+1.1. 워크플로우 특이사항
+   이 저장소는 Redmine 일감 기반 워크플로우를 **사용하지 않는다** (템플릿 개발 저장소이므로).
+   `/commit-push` 호출 시 일감번호 추출·일감 갱신·시간 등록 단계를 모두 건너뛰고,
+   커밋 subject 도 `#NNNN` 없이 `[분류] 요약` 형식으로 작성한다.
+   `/issue-new`, `/issue-update` 는 호출하지 않는다.
+---
 2. 프로젝트 구조
 ```
 claude-code-template/
