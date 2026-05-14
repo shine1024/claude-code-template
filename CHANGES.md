@@ -5,6 +5,15 @@
 
 ---
 
+## 2026-05-14
+
+- [수정] `java-style.md`·`js-style.md` — 코드 스타일 룰 보강
+  - `## 포맷` 최대 줄 길이: 100자 → **150자**
+  - `## 메서드/함수 시그니처·호출 개행` 섹션 신규 — 매개변수 한도(최대 4개), 개행 트리거 3종(파라미터 4개 이상 / Builder·fluent chain / 다필드 선언), 개행 시 leading comma + 닫는 `)` 새 줄(SQL 스타일과 일관), 단순 호출·선언은 150자 넘어도 한 줄 유지·길면 인자를 상수·변수로 추출
+  - 예시: Java 단순 호출 한 줄(`xpath.evaluate(redirectXPath, ...)`) + 4개 이상 파라미터 개행(`excelDownload(...)`) / JS 단순 호출 한 줄(`fetch(orderDetailUrl, ...)`)
+
+---
+
 ## 2026-05-11
 
 - [문서] `CLAUDE.md` — 변경 체크리스트에 `basics/03_claude-code-template_사용법.md` 추가 (사용자 절차·워크플로우·디렉토리 구조 변경 시 함께 갱신 / 커밋·푸시 직전 필수 확인 대상)
