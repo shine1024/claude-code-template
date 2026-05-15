@@ -7,6 +7,12 @@
 
 ## 2026-05-14
 
+- [기능] `sync-template` — 원격 HEAD 해시 사전 비교 + CHANGES.md 신규 항목 Slack DM
+  - 1단계 후 `git ls-remote $TEMPLATE_REPO_URL HEAD` 로 원격 해시만 먼저 조회 → 로컬 `.claude/state/SYNC_HASH` 와 같으면 clone·복사를 모두 건너뛰고 즉시 종료
+  - 다를 때만 full clone (기존 `--depth 1` 제거 — `oldHash..HEAD` diff 조회를 위해 필요)
+  - 복사·해시 갱신 후 `git diff $oldHash..HEAD -- CHANGES.md` 의 `+` 라인만 추출(헤더 `+++` 제외) 하여 본인 Slack DM 전송 (`SLACK_BOT_TOKEN`·`SLACK_USER_EMAIL` 설정 시, `SLACK_NOTIFY_ENABLED=false` 면 비활성)
+  - 신규: `.claude/skills/sync-template/scripts/notify.js` — 기존 `.claude/hooks/lib/slack.js` 의 `sendDmByEmail` 재사용. stdin 으로 `{projectName, oldHash, newHash, changes}` JSON 수신, 빈 줄·`---` 구분선 필터 + 최대 60줄 표시 + 초과 시 "외 N줄 생략". `## YYYY-MM-DD` → `*YYYY-MM-DD*` (Slack mrkdwn 굵게) + 날짜 그룹 사이 빈 줄, `**굵게**` → `*굵게*`, `- ` → `• ` 변환. 초기 동기화·CHANGES.md 무변경 케이스 분기
+  - 문서: `basics/03_사용법.md` §5 동작 표에 "변경 없으면 skip" 및 Slack DM 행 추가
 - [수정] `java-style.md`·`js-style.md` — 코드 스타일 룰 보강
   - `## 포맷` 최대 줄 길이: 100자 → **150자**
   - `## 메서드/함수 시그니처·호출 개행` 섹션 신규 — 매개변수 한도(최대 4개), 개행 트리거 3종(파라미터 4개 이상 / Builder·fluent chain / 다필드 선언), 개행 시 leading comma + 닫는 `)` 새 줄(SQL 스타일과 일관), 단순 호출·선언은 150자 넘어도 한 줄 유지·길면 인자를 상수·변수로 추출
