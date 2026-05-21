@@ -31,7 +31,7 @@ init.bat <대상프로젝트경로>     # .claude/ 폴더 복사 + settings.loca
 
 대상 프로젝트에서 `claude` 실행 후 `/init-claude-md` 로 `CLAUDE.md` 자동 생성.
 
-> 상세: [③ 사용법 §3](./basics/03_claude-code-template_사용법.md#3-신규-프로젝트-적용-절차)
+> 상세: [③ 사용법 §3](./basics/03_claude-code-template_사용법.md#3-신규-프로젝트-적용)
 
 ### 일감·커밋 워크플로우
 
@@ -41,7 +41,7 @@ init.bat <대상프로젝트경로>     # .claude/ 폴더 복사 + settings.loca
 | `/commit-push` | 작업 완료 — 커밋·푸시·일감 갱신 |
 | `/issue-update` | 일감만 정식 제목으로 갱신 |
 
-> 상세: [③ 사용법 §4](./basics/03_claude-code-template_사용법.md#4-일감커밋-워크플로우)
+> 상세: [③ 사용법 §5](./basics/03_claude-code-template_사용법.md#5-부가-기능)
 
 ### 템플릿 동기화
 
@@ -49,7 +49,7 @@ init.bat <대상프로젝트경로>     # .claude/ 폴더 복사 + settings.loca
 /sync-template      # 최신 .claude/ 설정을 현재 프로젝트로 끌어오기
 ```
 
-> 상세: [③ 사용법 §5](./basics/03_claude-code-template_사용법.md#5-템플릿-동기화-sync-template)
+> 상세: [③ 사용법 §5](./basics/03_claude-code-template_사용법.md#5-부가-기능)
 
 ### 회고·개선 사이클
 
@@ -58,7 +58,7 @@ init.bat <대상프로젝트경로>     # .claude/ 폴더 복사 + settings.loca
 세션 회고          개인 규칙 공유      패턴 분석             규칙 반영
 ```
 
-> 상세: [③ 사용법 §7](./basics/03_claude-code-template_사용법.md#7-회고개선-사이클)
+> 상세: [③ 사용법 §4](./basics/03_claude-code-template_사용법.md#4-반복-사이클)
 
 ---
 
