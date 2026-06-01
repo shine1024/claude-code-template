@@ -69,6 +69,7 @@
     ├── hooks/                      ← 이벤트 훅 (sync 대상)
     ├── rules/                      ← 관심사별 규칙 (sync 대상, 세션 시작 시 자동 로드)
     ├── skills/                     ← 슬래시 커맨드 (sync 대상)
+    ├── viewer/                     ← claude-viewer 정적 페이지 (런타임 산출물은 .gitignore)
     └── state/SYNC_HASH             ← 마지막 sync 시점의 template 해시 (git 추적)
 ```
 
@@ -217,6 +218,15 @@ Redmine 일감 기반으로 작업하는 팀을 위한 통합 워크플로우입
 - `SessionStart` 훅이 업데이트가 있으면 자동으로 알림
 
 > 사전 조건: `.claude/settings.local.json` 에 `TEMPLATE_REPO_URL` 등록. 상세: [`.claude/hooks/check-update/`](../.claude/hooks/check-update/)
+
+### `claude-viewer` — 브라우저 응답 뷰어
+
+Claude 응답을 콘솔 대신 브라우저(`http://localhost:19988/response.html`)에서 책 페이지 UI로 봅니다.
+
+- `UserPromptSubmit` 훅이 대기 마커(`viewer/.waiting`)를 만들고, `Stop` 훅이 transcript 를 파싱해 `viewer/response.md` 에 응답 + 도구 호출을 시간순으로 기록합니다
+- 페이지는 2초 폴링으로 자동 갱신 — 마크다운 렌더링, `+`/`-` diff 컬러링, 응답 대기 중 상단 progress bar
+- 의존성은 Python stdlib 만 (marked.js 는 CDN). Anthropic API 송신 없음, HTTP 서버는 `127.0.0.1:19988` 만 listen
+- 포트 점유 시 충돌. `stop_hook.py` 의 `PORT` 상수에서 변경 가능
 
 ### RULE_MODE — 규칙 작성 모드
 

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>응답 결과</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #faf9f5;
+      --surface:   #ffffff;
+      --border:    #e8e3d8;
+      --spine:     #d4ccba;
+      --text:      #2b2926;
+      --muted:     #8b8578;
+      --accent:    #d97757;
+      --accent-fg: #ffffff;
+      --accent-hi: #c4593b;
+      --link:      #b85a3f;
+      --code-bg:   #f3efe6;
+      --pre-bg:    #2b2926;
+      --pre-fg:    #f0eee6;
+      --radius:    8px;
+      --shadow:    0 4px 24px rgba(43,41,38,0.08), 0 1px 4px rgba(43,41,38,0.05);
+    }
+
+    body {
+      background: var(--bg);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 12px 10px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    .toolbar {
+      width: 100%;
+      max-width: 1600px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding: 0 4px;
+    }
+    .toolbar-title {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--accent);
+    }
+    .toolbar-page {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .reader {
+      display: flex;
+      align-items: stretch;
+      gap: 12px;
+      width: 100%;
+      max-width: 1600px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .nav-btn {
+      flex-shrink: 0;
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      background: var(--accent);
+      color: var(--accent-fg);
+      font-size: 25px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s, box-shadow 0.15s;
+      box-shadow: 0 4px 12px rgba(217,119,87,0.30);
+      user-select: none;
+    }
+    .nav-btn:hover:not(:disabled) { background: var(--accent-hi); border-color: var(--accent-hi); transform: scale(1.08); box-shadow: 0 6px 20px rgba(196,89,59,0.40); }
+    .nav-btn:disabled { opacity: 0.2; cursor: default; box-shadow: none; transform: none; }
+    #btn-prev, #btn-next { align-self: center; }
+
+    .book {
+      flex: 1;
+      display: flex;
+      height: 100%;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      min-height: 0;
+    }
+
+    .page {
+      flex: 1;
+      background: var(--surface);
+      position: relative;
+      height: 100%;
+      min-height: 0;
+      overflow: hidden;
+    }
+    .page-left { border-right: 1px solid var(--spine); }
+
+    .page-scroll {
+      position: absolute;
+      inset: 0;
+      padding: 36px 44px 40px;
+      overflow-y: auto;
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--text);
+    }
+
+    .page-num {
+      position: absolute;
+      bottom: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .page-left  .page-num { left: 12px; }
+    .page-right .page-num { right: 12px; }
+
+    .page h1 { font-size: 1.5em; font-weight: 700; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid var(--accent); letter-spacing: -0.02em; color: var(--text); }
+    .page h2 { font-size: 1.2em; font-weight: 600; margin: 28px 0 10px; letter-spacing: -0.01em; color: var(--text); }
+    .page h3 { font-size: 1.05em; font-weight: 600; margin: 20px 0 8px; color: var(--text); }
+    .page p  { margin-bottom: 14px; }
+    .page ul, .page ol { margin: 8px 0 14px 20px; }
+    .page li { margin-bottom: 6px; }
+    .page strong { font-weight: 700; }
+    .page em     { font-style: italic; color: var(--muted); }
+    .page a      { color: var(--link); text-decoration: none; }
+    .page a:hover { text-decoration: underline; }
+    .page code { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.85em; background: var(--code-bg); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--accent-hi); }
+    .page pre { background: var(--pre-bg); color: var(--pre-fg); padding: 16px 18px; border-radius: 6px; overflow-x: auto; margin: 14px 0; font-size: 0.84em; line-height: 1.6; }
+    .page pre code { background: none; border: none; padding: 0; color: inherit; font-size: inherit; }
+    /* diff 블록 — 추가/삭제 라인 컬러링 */
+    .page pre.diff-block { padding: 12px 0; }
+    .page pre.diff-block code { display: block; }
+    .page .diff-line {
+      display: block;
+      padding: 0 18px;
+      white-space: pre;
+      color: var(--pre-fg);
+    }
+    .page .diff-line.diff-add {
+      background: rgba(110, 231, 183, 0.14);
+      color: #86efac;
+    }
+    .page .diff-line.diff-del {
+      background: rgba(252, 165, 165, 0.14);
+      color: #fca5a5;
+    }
+    .page .diff-line.diff-ctx { opacity: 0.7; }
+    .page blockquote { border-left: 3px solid var(--accent); padding-left: 16px; color: var(--muted); margin: 14px 0; }
+    .page table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 0.9em; }
+    .page th { background: var(--code-bg); font-weight: 600; padding: 8px 12px; border: 1px solid var(--border); text-align: left; color: var(--text); }
+    .page td { padding: 7px 12px; border: 1px solid var(--border); }
+    .page hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+    .hint { margin-top: 14px; font-size: 12px; font-weight: 500; color: var(--accent); letter-spacing: 0.04em; }
+
+    /* ── 대기 중 프로그레스 (상단 indeterminate 바) ── */
+    .progress-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      overflow: hidden;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+    body.waiting .progress-bar { opacity: 1; }
+    .progress-bar::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      height: 100%;
+      width: 30%;
+      background: var(--accent);
+      animation: progress-slide 1.2s ease-in-out infinite;
+    }
+    @keyframes progress-slide {
+      0%   { left: -30%; }
+      100% { left: 100%; }
+    }
+    .book { transition: opacity 0.25s, filter 0.25s; }
+    body.waiting .book {
+      opacity: 0.35;
+      filter: blur(1.5px);
+      pointer-events: none;
+    }
+    body.waiting .nav-btn { opacity: 0.3; pointer-events: none; }
+
+    @media (max-width: 768px) {
+      body { padding: 10px 8px 8px; }
+      .page-right { display: none; }
+      .page-left  { border-right: none; }
+      .page-scroll { padding: 24px 22px 32px; font-size: 13px; }
+      .nav-btn { width: 40px; height: 40px; font-size: 19px; align-self: center; }
+      .reader { gap: 6px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+
+<div class="toolbar">
+  <span class="toolbar-title">응답 결과</span>
+  <span class="toolbar-page" id="page-indicator"></span>
+</div>
+<div class="reader">
+  <button class="nav-btn" id="btn-prev" onclick="prevSpread()" title="이전 (←)">&#8249;</button>
+  <div class="book">
+    <div class="page page-left">
+      <div class="page-scroll" id="page-left-scroll"></div>
+      <div class="page-num" id="page-left-num"></div>
+    </div>
+    <div class="page page-right">
+      <div class="page-scroll" id="page-right-scroll"></div>
+      <div class="page-num" id="page-right-num"></div>
+    </div>
+  </div>
+  <button class="nav-btn" id="btn-next" onclick="nextSpread()" title="다음 (→)">&#8250;</button>
+</div>
+<div class="hint">← → 키로도 이동</div>
+
+<script>
+  let pages = [], currentSpread = 0, lastMd = null;
+  const isMobile = () => window.innerWidth <= 768;
+
+  marked.setOptions({ breaks: true });
+
+  // ── 페이지 분할 ────────────────────────────────────────────
+  function hasContent(s) {
+    return s.replace(/^[\s\-\*\_]+$/gm, '').trim().length > 0;
+  }
+  function splitIntoPages(md) {
+    const sections = md.split(/(?=^#{1,2} )/m).filter(hasContent);
+    if (sections.length > 1) return sections;
+    const paras = md.split(/\n\n+/).filter(p => p.trim());
+    if (paras.length <= 4) return [md];
+    const result = [];
+    for (let i = 0; i < paras.length; i += 4)
+      result.push(paras.slice(i, i + 4).join('\n\n'));
+    return result;
+  }
+
+  // ── 렌더링 ────────────────────────────────────────────────
+  function perSpread() { return isMobile() ? 1 : 2; }
+
+  function highlightDiffs(rootEl) {
+    rootEl.querySelectorAll('pre code.language-diff').forEach(code => {
+      const text = code.textContent.replace(/\n$/, '');
+      const lines = text.split('\n');
+      code.innerHTML = lines.map(line => {
+        const cls = line.startsWith('+') ? 'diff-line diff-add'
+                  : line.startsWith('-') ? 'diff-line diff-del'
+                  : 'diff-line diff-ctx';
+        const safe = line.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return `<span class="${cls}">${safe || '&nbsp;'}</span>`;
+      }).join('');
+      code.parentElement.classList.add('diff-block');
+    });
+  }
+
+  function renderSpread() {
+    const n = perSpread(), li = currentSpread * n, ri = li + 1, total = pages.length;
+    const leftScroll  = document.getElementById('page-left-scroll');
+    const leftNum     = document.getElementById('page-left-num');
+    const rightScroll = document.getElementById('page-right-scroll');
+    const rightNum    = document.getElementById('page-right-num');
+
+    leftScroll.innerHTML = pages[li] ? marked.parse(pages[li]) : '';
+    leftScroll.scrollTop = 0;
+    leftNum.textContent  = pages[li] ? (li + 1) : '';
+    highlightDiffs(leftScroll);
+
+    if (!isMobile()) {
+      rightScroll.innerHTML = pages[ri] ? marked.parse(pages[ri]) : '';
+      rightScroll.scrollTop = 0;
+      rightNum.textContent  = pages[ri] ? (ri + 1) : '';
+      highlightDiffs(rightScroll);
+    } else {
+      rightNum.textContent = '';
+    }
+
+    const cur = n > 1 && pages[ri] ? `${li + 1}-${Math.min(ri + 1, total)}` : `${li + 1}`;
+    document.getElementById('page-indicator').textContent = total ? `${cur} / ${total}` : '';
+
+    document.getElementById('btn-prev').disabled = currentSpread === 0;
+    document.getElementById('btn-next').disabled = (currentSpread + 1) * n >= total;
+  }
+
+  function loadMd(md) {
+    pages = splitIntoPages(md);
+    currentSpread = 0;
+    renderSpread();
+  }
+
+  function prevSpread() { if (currentSpread > 0) { currentSpread--; renderSpread(); } }
+  function nextSpread() { if ((currentSpread + 1) * perSpread() < pages.length) { currentSpread++; renderSpread(); } }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft')  prevSpread();
+    if (e.key === 'ArrowRight') nextSpread();
+  });
+  window.addEventListener('resize', renderSpread);
+
+  // ── 폴링 ─────────────────────────────────────────────────
+  async function fetchMd(file) {
+    const res = await fetch(`${file}?t=` + Date.now());
+    if (!res.ok) return null;
+    // 서버가 charset 헤더를 안 보내면 브라우저가 다른 인코딩으로 추측할 수 있어
+    // arrayBuffer + TextDecoder('utf-8') 로 명시 디코딩
+    const buf = await res.arrayBuffer();
+    return new TextDecoder('utf-8').decode(buf);
+  }
+
+  async function checkWaiting() {
+    try {
+      const res = await fetch(`.waiting?t=${Date.now()}`, { method: 'HEAD' });
+      return res.ok;
+    } catch (_) { return false; }
+  }
+
+  function setWaiting(on) {
+    document.body.classList.toggle('waiting', !!on);
+  }
+
+  async function poll() {
+    try {
+      const [latest, waiting] = await Promise.all([
+        fetchMd('response.md'),
+        checkWaiting(),
+      ]);
+      setWaiting(waiting);
+      if (latest && latest !== lastMd) {
+        lastMd = latest;
+        loadMd(latest);
+      }
+    } catch (_) {}
+  }
+
+  poll();
+  setInterval(poll, 2000);
+</script>
+</body>
+</html>

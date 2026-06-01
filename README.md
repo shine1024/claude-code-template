@@ -60,6 +60,12 @@ init.bat <대상프로젝트경로>     # .claude/ 폴더 복사 + settings.loca
 
 > 상세: [③ 사용법 §4](./basics/03_claude-code-template_사용법.md#4-반복-사이클)
 
+### 응답 뷰어 (claude-viewer)
+
+Claude 응답을 콘솔 대신 브라우저(`http://localhost:19988/response.html`)에서 책 페이지 UI로 봅니다. `UserPromptSubmit`·`Stop` 훅이 자동으로 동작하므로 별도 실행 불필요 — `init.bat` 적용 후 바로 사용 가능합니다.
+
+> 상세: [③ 사용법 §5](./basics/03_claude-code-template_사용법.md#5-부가-기능)
+
 ---
 
 ## 디렉토리
@@ -77,6 +83,7 @@ claude-code-template/
     ├── rules/               ← 관심사별 규칙 (세션 시작 시 자동 로드)
     ├── skills/              ← 슬래시 커맨드 정의
     ├── hooks/               ← 이벤트 훅 스크립트
+    ├── viewer/              ← claude-viewer 정적 페이지 (브라우저 응답 뷰어)
     └── state/               ← 동기화 상태 (SYNC_HASH 등)
 ```
 

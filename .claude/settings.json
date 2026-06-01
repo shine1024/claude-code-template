@@ -28,6 +28,10 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/slack-notify/task-start.sh"
+          },
+          {
+            "type": "command",
+            "command": "python .claude/hooks/claude-viewer/prompt_hook.py"
           }
         ]
       }
@@ -50,6 +54,10 @@
           {
             "type": "command",
             "command": "node .claude/hooks/slack-notify/notify.js"
+          },
+          {
+            "type": "command",
+            "command": "python .claude/hooks/claude-viewer/stop_hook.py"
           }
         ]
       }

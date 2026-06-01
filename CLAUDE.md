@@ -25,6 +25,7 @@
 | `.claude/rules/*.md` | 관심사별 규칙 — 세션 시작 시 자동 로드 |
 | `.claude/skills/` | 커스텀 슬래시 커맨드 |
 | `.claude/hooks/` | 이벤트 훅 스크립트 |
+| `.claude/viewer/` | Claude 응답을 브라우저에서 실시간으로 보는 자체 뷰어 (`http://localhost:19988/response.html`) |
 | `tests/` | 통합 테스트 (claude-code-sandbox 자식 세션 활용 — 사전 검증용, sync 대상 아님) |
 
 ---
@@ -54,6 +55,7 @@ claude-code-template/
     ├── rules/                       ← 관심사별 규칙 (세션 시작 시 자동 로드)
     ├── skills/                      ← 커스텀 슬래시 커맨드
     ├── hooks/                       ← 이벤트 훅
+    ├── viewer/                      ← claude-viewer 정적 페이지 (response.md·.waiting 은 런타임 생성, git 제외)
     ├── state/                       ← 동기화·검증 상태 파일 (SYNC_HASH, rules-index.json 등 — git 추적, 프로젝트 단위로 공유)
     └── cache/                       ← 개인 작업 캐시 (current_issue 등 — git 제외)
 ```

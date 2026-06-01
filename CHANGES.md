@@ -5,6 +5,20 @@
 
 ---
 
+## 2026-06-01
+
+- [기능] `claude-viewer` — Claude 응답을 브라우저에서 실시간으로 보는 자체 뷰어 도입 (`http://localhost:19988/response.html`)
+  - 신규 훅: `.claude/hooks/claude-viewer/prompt_hook.py` (UserPromptSubmit 시 `viewer/.waiting` 마커 생성) · `stop_hook.py` (Stop 시 transcript 파싱 → 응답 텍스트 + 도구 호출을 시간순으로 `viewer/response.md` 작성 + `127.0.0.1:19988` HTTP 서버 보장)
+  - 신규 정적 페이지: `.claude/viewer/response.html` — Claude.ai 톤(크림 + 코랄) 책 페이지 2단 UI, marked.js CDN 렌더, 2초 폴링, Edit/Write `+`/`-` diff 컬러링, 대기 중 상단 indeterminate progress bar + 책 흐림
+  - `.claude/settings.json` `UserPromptSubmit`·`Stop` 배열에 `python .claude/hooks/claude-viewer/*.py` 항목 추가 (기존 slack-notify 와 병렬 동작)
+  - `.gitignore` 및 `init.bat` 의 `$RequiredEntries` 에 `.claude/viewer/response.md` · `.claude/viewer/.waiting` 추가 (런타임 산출물 제외)
+  - 외부 의존성: Python 3.8+ (stdlib) · marked.js CDN. Anthropic API 송신 없음 → 토큰 사용량 0, HTTP 서버는 `127.0.0.1` 만 listen
+  - 포트 19988 고정 — 점유 시 충돌. `stop_hook.py` 의 `PORT` 상수에서 변경 가능
+  - 원본: `C:/Users/shine/Downloads/tools/claude-viewer/` (install.sh·README 는 미포함 — init.bat 가 `.claude/` 통째 복사 흐름이므로 별도 설치 스크립트 불필요)
+  - 원본 대비 수정: (1) `VIEWER_DIR` 경로를 `.parent.parent.parent / "viewer"` 로 한 단계 올림 (hooks/claude-viewer/ 하위 배치) (2) `response.md` 쓰기에 `errors="replace"` 추가 — transcript 의 외톨이 surrogate(`\udced` 등 잘린 emoji·바이너리) 로 인한 `UnicodeEncodeError` 방지 (3) 신규 `server.py` — `python -m http.server` 가 `text/markdown`·`text/html` 에 `charset` 헤더를 안 붙여 한글 Windows 에서 CP949 추측 → 한글 mojibake 발생. `SimpleHTTPRequestHandler.guess_type` 을 오버라이드해 text/* 타입에 `charset=utf-8` 강제 (4) `response.html` 의 `fetchMd` 를 `arrayBuffer + TextDecoder('utf-8')` 로 변경 — 서버 헤더와 무관하게 클라이언트에서도 UTF-8 강제 디코딩 (이중 방어) (5) `stop_hook.py` 의 `read_hook_data()` 를 `sys.stdin.buffer.read().decode("utf-8")` 로 변경 — Windows 한국어 로케일에서 `sys.stdin` 기본 인코딩이 cp949 라 Claude Code 의 UTF-8 페이로드가 디코딩 단계에서 이미 mojibake 됐던 문제 (입력측 방어)
+
+---
+
 ## 2026-05-21
 
 - [문서] `basics/03_claude-code-template_사용법.md` — 전면 재구성 (533줄 → 235줄)

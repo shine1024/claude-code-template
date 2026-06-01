@@ -7,6 +7,10 @@ CLAUDE.local.md
 # 훅 임시 파일
 .claude/hooks/.task_start
 
+# claude-viewer 런타임 산출물
+.claude/viewer/response.md
+.claude/viewer/.waiting
+
 # 개인 작업 캐시 (일감번호·슬랙 유저 ID 등 — 로컬 전용)
 .claude/cache/
 
