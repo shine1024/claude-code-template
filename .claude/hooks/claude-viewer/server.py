@@ -5,13 +5,27 @@ SimpleHTTPRequestHandler 가 .md / .html 에 charset 헤더를 안 붙여
 일부 브라우저(특히 한글 Windows)가 CP949 로 추측해 mojibake 발생.
 text/* 타입에는 항상 charset=utf-8 을 강제한다.
 
+DELETE /sessions/<id> 로 세션 + 응답·마커 파일을 정리한다.
+
 사용법:
     python server.py <port> <cwd>
 """
 
+import os
+import re
 import sys
+import threading
+import time
 import http.server
 import socketserver
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent))
+from _index import delete_session
+
+
+# Claude Code 세션 ID 는 UUID 형식. 안전을 위해 16진수·하이픈만 허용 (path traversal 방어)
+SESSION_ID_RE = re.compile(r'^[a-fA-F0-9-]{1,64}$')
 
 
 class UTF8Handler(http.server.SimpleHTTPRequestHandler):
@@ -20,6 +34,33 @@ class UTF8Handler(http.server.SimpleHTTPRequestHandler):
         if t and t.startswith('text/') and 'charset' not in t:
             return f'{t}; charset=utf-8'
         return t
+
+    def do_POST(self):
+        path = self.path.split('?', 1)[0]
+        if path == '/server/shutdown':
+            self.send_response(204)
+            self.end_headers()
+            # 응답 flush 직후 종료. serve_forever() 정리 없이 즉시 빠져나가도
+            # 다음 stop_hook 의 ensure_server() 가 새 프로세스를 띄운다.
+            threading.Thread(target=lambda: (time.sleep(0.1), os._exit(0)), daemon=True).start()
+            return
+        self.send_error(404)
+
+    def do_DELETE(self):
+        path = self.path.split('?', 1)[0]
+        prefix = '/sessions/'
+        if not path.startswith(prefix):
+            self.send_error(404)
+            return
+        sid = path[len(prefix):]
+        if not SESSION_ID_RE.match(sid):
+            self.send_error(400, "invalid session id")
+            return
+        if not delete_session(sid):
+            self.send_error(404, "session not found")
+            return
+        self.send_response(204)
+        self.end_headers()
 
     def log_message(self, format, *args):
         pass

@@ -52,12 +52,95 @@
       letter-spacing: -0.01em;
       color: var(--accent);
     }
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
     .toolbar-page {
       font-size: 14px;
       font-weight: 600;
       color: var(--accent);
       font-variant-numeric: tabular-nums;
     }
+    .toolbar-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px; height: 28px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-size: 15px;
+      cursor: pointer;
+      border-radius: 50%;
+      padding: 0;
+      transition: background 0.12s, color 0.12s;
+    }
+    .toolbar-btn:hover { background: var(--code-bg); color: var(--accent); }
+
+    .shutdown-banner {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: var(--accent);
+      color: var(--accent-fg);
+      text-align: center;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      z-index: 200;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    /* ── 커스텀 모달 (IntelliJ Preview 등 confirm/alert 미지원 환경 대응) ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(43, 41, 38, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+    .modal-dialog {
+      background: var(--surface);
+      border-radius: 8px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+      max-width: 420px;
+      width: 100%;
+      padding: 20px 20px 16px;
+    }
+    .modal-body {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text);
+      white-space: pre-wrap;
+      margin-bottom: 18px;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .modal-btn {
+      padding: 7px 16px;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.12s, border-color 0.12s;
+    }
+    .modal-btn:hover { background: var(--code-bg); }
+    .modal-btn.modal-ok {
+      background: var(--accent);
+      color: var(--accent-fg);
+      border-color: var(--accent);
+    }
+    .modal-btn.modal-ok:hover { background: var(--accent-hi); border-color: var(--accent-hi); }
 
     .reader {
       display: flex;
@@ -144,7 +227,31 @@
     .page a      { color: var(--link); text-decoration: none; }
     .page a:hover { text-decoration: underline; }
     .page code { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.85em; background: var(--code-bg); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--accent-hi); }
-    .page pre { background: var(--pre-bg); color: var(--pre-fg); padding: 16px 18px; border-radius: 6px; overflow-x: auto; margin: 14px 0; font-size: 0.84em; line-height: 1.6; }
+    .page pre { background: var(--pre-bg); color: var(--pre-fg); padding: 16px 18px; border-radius: 6px; overflow-x: auto; margin: 14px 0; font-size: 0.84em; line-height: 1.6; position: relative; }
+    .copy-btn {
+      position: absolute;
+      top: 8px; right: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px; height: 26px;
+      border: none;
+      background: rgba(240, 238, 230, 0.10);
+      color: var(--pre-fg);
+      font-size: 13px;
+      line-height: 1;
+      cursor: pointer;
+      border-radius: 4px;
+      padding: 0;
+      opacity: 0;
+      transition: opacity 0.15s, background 0.12s, color 0.12s;
+    }
+    .page pre:hover .copy-btn, .copy-btn:focus-visible { opacity: 1; }
+    .copy-btn:hover { background: rgba(240, 238, 230, 0.22); }
+    .copy-btn.copied { background: rgba(110, 231, 183, 0.22); color: #86efac; }
+    @media (max-width: 768px) {
+      .copy-btn { opacity: 0.7; }
+    }
     .page pre code { background: none; border: none; padding: 0; color: inherit; font-size: inherit; }
     /* diff 블록 — 추가/삭제 라인 컬러링 */
     .page pre.diff-block { padding: 12px 0; }
@@ -185,7 +292,10 @@
     }
     .tabs:empty { display: none; }
     .tab {
-      padding: 6px 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 6px 6px 12px;
       border-radius: 6px 6px 0 0;
       border: 1px solid var(--border);
       border-bottom: none;
@@ -195,22 +305,44 @@
       font-weight: 500;
       cursor: pointer;
       white-space: nowrap;
-      max-width: 240px;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      max-width: 260px;
       transition: background 0.12s, color 0.12s;
+      user-select: none;
     }
     .tab:hover:not(.active) { background: var(--code-bg); color: var(--text); }
     .tab.active { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+    .tab-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+    }
     .tab .badge {
-      display: inline-block;
+      flex-shrink: 0;
       width: 7px; height: 7px;
       border-radius: 50%;
       background: var(--accent);
-      margin-left: 6px;
-      vertical-align: middle;
     }
     .tab.active .badge { display: none; }
+    .tab-close {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px; height: 18px;
+      border: none;
+      background: transparent;
+      color: inherit;
+      font-size: 16px;
+      line-height: 1;
+      cursor: pointer;
+      border-radius: 50%;
+      padding: 0;
+      opacity: 0.55;
+      transition: background 0.12s, opacity 0.12s;
+    }
+    .tab-close:hover { background: rgba(0,0,0,0.12); opacity: 1; }
+    .tab.active .tab-close { opacity: 0.85; }
+    .tab.active .tab-close:hover { background: rgba(255,255,255,0.25); opacity: 1; }
 
     .empty-state {
       display: flex; align-items: center; justify-content: center;
@@ -266,7 +398,10 @@
 
 <div class="toolbar">
   <span class="toolbar-title">응답 결과</span>
-  <span class="toolbar-page" id="page-indicator"></span>
+  <div class="toolbar-right">
+    <span class="toolbar-page" id="page-indicator"></span>
+    <button class="toolbar-btn" id="btn-shutdown" type="button" title="viewer 서버 종료 (다음 응답에 자동 재시작)" aria-label="viewer 서버 종료">⏻</button>
+  </div>
 </div>
 <div class="tabs" id="tabs"></div>
 <div class="reader">
@@ -366,6 +501,35 @@
   // ── 렌더링 ────────────────────────────────────────────────
   function perSpread() { return isMobile() ? 1 : 2; }
 
+  function addCopyButtons(rootEl) {
+    rootEl.querySelectorAll('pre:not(.diff-block)').forEach(pre => {
+      if (pre.querySelector(':scope > .copy-btn')) return;
+      const code = pre.querySelector('code');
+      if (!code) return;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'copy-btn';
+      btn.title = '복사';
+      btn.setAttribute('aria-label', '코드 복사');
+      btn.textContent = '📋';
+      btn.onclick = async (e) => {
+        e.stopPropagation();
+        try {
+          await navigator.clipboard.writeText(code.textContent);
+          btn.classList.add('copied');
+          btn.textContent = '✓';
+        } catch (_) {
+          btn.textContent = '✗';
+        }
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.textContent = '📋';
+        }, 1200);
+      };
+      pre.appendChild(btn);
+    });
+  }
+
   function highlightDiffs(rootEl) {
     rootEl.querySelectorAll('pre code.language-diff').forEach(code => {
       const text = code.textContent.replace(/\n$/, '');
@@ -389,6 +553,7 @@
       scroll.scrollTop = 0;
       num.textContent = idx + 1;
       highlightDiffs(scroll);
+      addCopyButtons(scroll);
     } else {
       scroll.innerHTML = '';
       scroll.classList.remove('scrollable');
@@ -433,19 +598,134 @@
     }, 150);
   });
 
+  // ── 커스텀 다이얼로그 (IntelliJ Preview 등 native confirm/alert 미지원 환경 대응) ──
+  function customDialog(message, { okText = '확인', cancelText = '취소' } = {}) {
+    return new Promise(resolve => {
+      const overlay = document.createElement('div');
+      overlay.className = 'modal-overlay';
+      const dlg = document.createElement('div');
+      dlg.className = 'modal-dialog';
+      dlg.setAttribute('role', 'dialog');
+      dlg.setAttribute('aria-modal', 'true');
+      const body = document.createElement('div');
+      body.className = 'modal-body';
+      body.textContent = message;
+      const actions = document.createElement('div');
+      actions.className = 'modal-actions';
+      let cancelBtn = null;
+      if (cancelText) {
+        cancelBtn = document.createElement('button');
+        cancelBtn.type = 'button';
+        cancelBtn.className = 'modal-btn modal-cancel';
+        cancelBtn.textContent = cancelText;
+        actions.appendChild(cancelBtn);
+      }
+      const okBtn = document.createElement('button');
+      okBtn.type = 'button';
+      okBtn.className = 'modal-btn modal-ok';
+      okBtn.textContent = okText;
+      actions.appendChild(okBtn);
+      dlg.appendChild(body);
+      dlg.appendChild(actions);
+      overlay.appendChild(dlg);
+      document.body.appendChild(overlay);
+
+      const close = (result) => {
+        overlay.remove();
+        document.removeEventListener('keydown', onKey);
+        resolve(result);
+      };
+      const onKey = (e) => {
+        if (e.key === 'Escape' && cancelText) { e.preventDefault(); close(false); }
+        if (e.key === 'Enter') { e.preventDefault(); close(true); }
+      };
+      okBtn.onclick = () => close(true);
+      if (cancelBtn) cancelBtn.onclick = () => close(false);
+      overlay.onclick = (e) => { if (e.target === overlay && cancelText) close(false); };
+      document.addEventListener('keydown', onKey);
+      setTimeout(() => okBtn.focus(), 50);
+    });
+  }
+  const customConfirm = (msg) => customDialog(msg, { okText: '확인', cancelText: '취소' });
+  const customAlert   = (msg) => customDialog(msg, { okText: '확인', cancelText: '' });
+
   // ── 폴링 (세션 인덱스 기반) ─────────────────────────────
   let sessions = [], activeId = null;
+  let shuttingDown = false;
   const seenAt = {}; // session_id → 마지막으로 본 updated_at (배지 판정용)
+
+  // ── 로컬에서 숨긴 세션 (서버 DELETE 실패해도 화면에서 치울 수 있도록) ──
+  const HIDDEN_KEY = 'claude-viewer-hidden-sessions';
+  let hiddenIds = new Set();
+  try {
+    const raw = localStorage.getItem(HIDDEN_KEY);
+    if (raw) hiddenIds = new Set(JSON.parse(raw));
+  } catch (_) {}
+  function saveHidden() {
+    try { localStorage.setItem(HIDDEN_KEY, JSON.stringify([...hiddenIds])); } catch (_) {}
+  }
 
   async function fetchText(file) {
     try {
-      const res = await fetch(`${file}?t=` + Date.now());
+      // cache: 'no-store' — IntelliJ JCEF 등이 응답을 캐시하는 걸 방지
+      const res = await fetch(`${file}?t=` + Date.now(), { cache: 'no-store' });
       if (!res.ok) return null;
       // 서버가 charset 헤더를 안 보내면 브라우저가 다른 인코딩으로 추측할 수 있어 arrayBuffer + TextDecoder('utf-8') 로 명시 디코딩
       const buf = await res.arrayBuffer();
       return new TextDecoder('utf-8').decode(buf);
     } catch (_) { return null; }
   }
+
+  let shutdownPingTimer = null;
+
+  function showShutdownBanner() {
+    if (!document.getElementById('shutdown-banner')) {
+      const banner = document.createElement('div');
+      banner.id = 'shutdown-banner';
+      banner.className = 'shutdown-banner';
+      banner.textContent = '서버가 종료되었습니다. 다음 Claude 응답이 들어오면 자동으로 재시작됩니다.';
+      document.body.insertBefore(banner, document.body.firstChild);
+    }
+    // JCEF 등에서는 connection refused 가 캐시되거나 폴링이 throttling 될 수 있어,
+    // 별도 ping 루프로 서버 부활을 적극 감지한 뒤 페이지 자체를 새로 띄워 깨끗하게 복귀한다.
+    if (shutdownPingTimer) return;
+    shutdownPingTimer = setInterval(async () => {
+      try {
+        const res = await fetch('/sessions.json?ping=' + Date.now(), { cache: 'no-store' });
+        if (res.ok) {
+          clearInterval(shutdownPingTimer);
+          shutdownPingTimer = null;
+          location.reload();
+        }
+      } catch (_) {}
+    }, 1500);
+  }
+
+  function hideShutdownBanner() {
+    const banner = document.getElementById('shutdown-banner');
+    if (banner) banner.remove();
+    shuttingDown = false;
+    if (shutdownPingTimer) { clearInterval(shutdownPingTimer); shutdownPingTimer = null; }
+  }
+
+  document.getElementById('btn-shutdown').onclick = async () => {
+    if (!(await customConfirm('viewer 서버를 종료할까요?\n다음 Claude 응답이 들어오면 자동으로 재시작됩니다.'))) return;
+    let serverOk = false;
+    try {
+      const res = await fetch('/server/shutdown', { method: 'POST' });
+      // 연결이 끊겨도 ok 로 본다 (정상 종료 흐름)
+      serverOk = res.ok || res.status === 204;
+    } catch (_) {
+      // 종료 직후 fetch 가 실패하는 건 정상
+      serverOk = true;
+    }
+    if (!serverOk) {
+      await customAlert('서버가 종료 요청을 처리하지 못했습니다.\n옛 버전 서버가 떠 있을 가능성이 큽니다.\n수동으로 19988 포트 프로세스를 종료해주세요.');
+      return;
+    }
+    shuttingDown = true;
+    showShutdownBanner();
+  };
 
   function escapeHtml(s) {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -457,9 +737,60 @@
       const isActive = s.id === activeId;
       const hasNew = !isActive && seenAt[s.id] !== s.updated_at;
       const label = (s.label || s.id.slice(0, 8)) || '세션';
-      return `<button class="tab ${isActive ? 'active' : ''}" data-id="${escapeHtml(s.id)}">${escapeHtml(label)}${hasNew ? '<span class="badge"></span>' : ''}</button>`;
+      const waitingAttr = s.waiting ? '1' : '0';
+      return `<div class="tab ${isActive ? 'active' : ''}" data-id="${escapeHtml(s.id)}" data-waiting="${waitingAttr}">`
+           + `<span class="tab-label">${escapeHtml(label)}</span>`
+           + (hasNew ? '<span class="badge"></span>' : '')
+           + `<button class="tab-close" type="button" title="세션 닫기" aria-label="세션 닫기">×</button>`
+           + `</div>`;
     }).join('');
-    el.querySelectorAll('.tab').forEach(b => { b.onclick = () => selectTab(b.dataset.id); });
+    el.querySelectorAll('.tab').forEach(tab => {
+      tab.onclick = (e) => {
+        if (e.target.closest('.tab-close')) return;
+        selectTab(tab.dataset.id);
+      };
+    });
+    el.querySelectorAll('.tab-close').forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const tab = btn.closest('.tab');
+        if (tab) closeTab(tab.dataset.id, tab.dataset.waiting === '1');
+      };
+    });
+  }
+
+  async function closeTab(id, waiting) {
+    const msg = waiting
+      ? '응답을 받는 중입니다. 그래도 삭제하시겠습니까?\n응답 파일도 함께 삭제됩니다.'
+      : '이 세션을 삭제하시겠습니까?\n응답 파일도 함께 삭제됩니다.';
+    if (!(await customConfirm(msg))) return;
+
+    let serverOk = false;
+    let detail = '';
+    try {
+      const res = await fetch(`/sessions/${encodeURIComponent(id)}`, { method: 'DELETE' });
+      serverOk = res.ok || res.status === 204;
+      if (!serverOk) detail = 'HTTP ' + res.status;
+    } catch (err) {
+      detail = (err && err.message) ? err.message : String(err);
+    }
+
+    if (!serverOk) {
+      // 옛 버전 서버이거나 응답 불가 — 화면에서만이라도 치울지 묻는다
+      const ok = await customConfirm(
+        `서버가 세션을 삭제하지 못했습니다 (${detail}).\n옛 버전 서버가 떠 있을 가능성이 큽니다.\n\n탭을 화면에서만 숨길까요?\n(실제 파일은 24시간 후 자동 정리되며, 새 서버가 뜨면 정상 삭제도 가능합니다)`
+      );
+      if (!ok) return;
+      hiddenIds.add(id);
+      saveHidden();
+    }
+
+    if (id === activeId) {
+      activeId = null;
+      lastMd = null;
+    }
+    delete seenAt[id];
+    await pollSessions();
   }
 
   function selectTab(id) {
@@ -504,7 +835,21 @@
 
   async function pollSessions() {
     const raw = await fetchText('sessions.json');
-    try { sessions = raw ? JSON.parse(raw) : []; } catch (_) { sessions = []; }
+    if (raw !== null && shuttingDown) hideShutdownBanner();
+    let all = [];
+    try { all = raw ? JSON.parse(raw) : []; } catch (_) { all = []; }
+
+    // sessions.json 에 더 이상 없는 id 는 hiddenIds 에서도 정리 (재등장 가능성 0)
+    if (hiddenIds.size) {
+      const known = new Set(all.map(s => s.id));
+      let changed = false;
+      for (const id of [...hiddenIds]) {
+        if (!known.has(id)) { hiddenIds.delete(id); changed = true; }
+      }
+      if (changed) saveHidden();
+    }
+
+    sessions = all.filter(s => !hiddenIds.has(s.id));
 
     // 활성 세션이 없으면 가장 최근 세션으로 자동 선택 (탭 첫 진입 시에만)
     if (!activeId && sessions.length) {
@@ -526,6 +871,11 @@
 
   pollSessions();
   setInterval(pollSessions, 2000);
+
+  // IntelliJ JCEF 등 임베디드 브라우저에서 hidden 상태일 때 setInterval 이 throttling 되거나
+  // 멈추는 경우가 있어, 다시 보이거나 포커스 받는 순간 즉시 한 번 강제 폴링한다.
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) pollSessions(); });
+  window.addEventListener('focus', () => pollSessions());
 </script>
 </body>
 </html>

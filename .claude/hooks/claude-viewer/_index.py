@@ -39,6 +39,11 @@ def _save_atomic(sessions: list) -> None:
     tmp.replace(SESSIONS_JSON)
 
 
+def _purge_session_files(session_id: str) -> None:
+    (VIEWER_DIR / f"response-{session_id}.md").unlink(missing_ok=True)
+    (VIEWER_DIR / f".waiting-{session_id}").unlink(missing_ok=True)
+
+
 def _cleanup_stale(sessions: list, now: float) -> list:
     cutoff = now - STALE_AGE_SECONDS
     kept = []
@@ -46,10 +51,24 @@ def _cleanup_stale(sessions: list, now: float) -> list:
         if s.get("updated_at", 0) >= cutoff:
             kept.append(s)
             continue
-        # 만료된 세션의 응답·마커 파일도 같이 정리
-        (VIEWER_DIR / f"response-{s['id']}.md").unlink(missing_ok=True)
-        (VIEWER_DIR / f".waiting-{s['id']}").unlink(missing_ok=True)
+        _purge_session_files(s["id"])
     return kept
+
+
+def delete_session(session_id: str) -> bool:
+    """세션을 sessions.json 에서 제거하고 응답·마커 파일도 삭제한다.
+    실제로 제거된 항목이 있으면 True, 없으면 False.
+    """
+    sessions = _load()
+    remaining = [s for s in sessions if s.get("id") != session_id]
+    if len(remaining) == len(sessions):
+        return False
+    _purge_session_files(session_id)
+    try:
+        _save_atomic(remaining)
+    except Exception:
+        pass
+    return True
 
 
 def update_session(session_id: str, *, label: str = "", has_response: bool = False, waiting=None) -> None:

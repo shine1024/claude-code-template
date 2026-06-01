@@ -7,6 +7,13 @@
 
 ## 2026-06-01
 
+- [기능] `claude-viewer` — 세션 탭 × 닫기 + 서버 ⏻ 종료 + 코드 복사 + IntelliJ JCEF 호환
+  - **세션 수동 삭제**: 탭 우측 × 버튼 신규. `DELETE /sessions/<id>` 핸들러를 `server.py` 에 추가하고 `_index.py` 에 `delete_session()` + `_purge_session_files()` 헬퍼 분리 (기존 stale cleanup 과 공용). 세션 ID 는 `^[a-fA-F0-9-]{1,64}$` 화이트리스트로 path traversal 방어. 응답 수신 중인 탭은 별도 경고 후 삭제
+  - **서버 수동 종료**: 툴바 ⏻ 버튼 + `POST /server/shutdown` 신규. 204 응답 flush 후 `os._exit(0)` 로 즉시 종료, 다음 stop_hook 의 `ensure_server()` 가 새 프로세스를 띄움. 종료 직후 상단에 안내 배너 표시
+  - **코드블록 복사**: `pre` 우상단에 📋 버튼 (hover 시 표시, 모바일은 항상 표시). clipboard API 실패 시 ✗ 폴백, 성공 시 ✓ + 초록 강조 1.2s
+  - **커스텀 모달**: IntelliJ Preview 등 native `confirm/alert` 미지원 환경 대응 — overlay + dialog DOM 으로 대체 (Esc/Enter/배경 클릭 지원)
+  - **JCEF 호환 보강**: (1) `fetch` 에 `cache: 'no-store'` — 임베디드 브라우저 응답 캐싱 차단 (2) `visibilitychange`·`focus` 이벤트 시 강제 폴링 — hidden 탭의 setInterval throttling 보완 (3) 종료 후 1.5s 간격 ping 루프로 서버 부활 감지 시 `location.reload()` (4) localStorage `claude-viewer-hidden-sessions` — 옛 서버가 떠 있어 DELETE 가 404 일 때 화면에서만 숨김 fallback (sessions.json 에서 사라지면 정리)
+
 - [기능] `claude-viewer` — 멀티 세션 탭 UI + 동적 페이지 분할 + 가독성 개선
   - **멀티 세션 지원**: `response.md`·`.waiting` 을 세션별(`response-<sid>.md`·`.waiting-<sid>`)로 분리. 신규 `sessions.json` 인덱스로 세션 목록·라벨·`updated_at`·`waiting` 관리. 탭 UI 에 첫 prompt 한 줄을 라벨로 표시, 비활성 탭에 새 응답 도착 시 ● 배지 (자동 전환 X). 24시간 무활동 세션은 sessions.json·response·waiting 파일과 함께 자동 정리
   - 신규 `_index.py` — 세션 인덱스 공용 헬퍼 (`get_session_id`·`update_session`·stale cleanup). atomic write 로 multi-process race 완화

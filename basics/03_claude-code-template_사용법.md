@@ -228,6 +228,7 @@ Claude 응답을 콘솔 대신 브라우저(`http://localhost:19988/response.htm
 - 페이지는 2초 폴링으로 자동 갱신 — 측정 기반 페이지 분할로 세로 스크롤 없이 좌/우 페이지로 이동, `+`/`-` diff 컬러링, 응답 대기 중 상단 progress bar
 - 의존성은 Python stdlib 만 (marked.js 는 CDN). Anthropic API 송신 없음, HTTP 서버는 `127.0.0.1:19988` 만 listen
 - 포트 점유 시 충돌. `stop_hook.py` 의 `PORT` 상수에서 변경 가능
+- 탭 우측 × 버튼으로 세션 수동 삭제, 툴바 ⏻ 버튼으로 서버 수동 종료(다음 응답에 자동 재기동) 가능
 
 ### RULE_MODE — 규칙 작성 모드
 
