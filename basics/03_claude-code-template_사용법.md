@@ -223,8 +223,9 @@ Redmine 일감 기반으로 작업하는 팀을 위한 통합 워크플로우입
 
 Claude 응답을 콘솔 대신 브라우저(`http://localhost:19988/response.html`)에서 책 페이지 UI로 봅니다.
 
-- `UserPromptSubmit` 훅이 대기 마커(`viewer/.waiting`)를 만들고, `Stop` 훅이 transcript 를 파싱해 `viewer/response.md` 에 응답 + 도구 호출을 시간순으로 기록합니다
-- 페이지는 2초 폴링으로 자동 갱신 — 마크다운 렌더링, `+`/`-` diff 컬러링, 응답 대기 중 상단 progress bar
+- `UserPromptSubmit` 훅이 세션별 대기 마커(`viewer/.waiting-<sid>`)를 만들고, `Stop` 훅이 transcript 를 파싱해 `viewer/response-<sid>.md` 에 응답 + 도구 호출을 시간순으로 기록합니다
+- 멀티 세션 지원 — `sessions.json` 인덱스를 통해 여러 세션을 탭으로 분리. 비활성 탭에 새 응답이 도착하면 ● 배지로 알림 (자동 전환 없음). 24시간 무활동 세션은 자동 정리
+- 페이지는 2초 폴링으로 자동 갱신 — 측정 기반 페이지 분할로 세로 스크롤 없이 좌/우 페이지로 이동, `+`/`-` diff 컬러링, 응답 대기 중 상단 progress bar
 - 의존성은 Python stdlib 만 (marked.js 는 CDN). Anthropic API 송신 없음, HTTP 서버는 `127.0.0.1:19988` 만 listen
 - 포트 점유 시 충돌. `stop_hook.py` 의 `PORT` 상수에서 변경 가능
 

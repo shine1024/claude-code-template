@@ -8,8 +8,13 @@ CLAUDE.local.md
 .claude/hooks/.task_start
 
 # claude-viewer 런타임 산출물
-.claude/viewer/response.md
-.claude/viewer/.waiting
+.claude/viewer/response-*.md
+.claude/viewer/.waiting-*
+.claude/viewer/sessions.json
+.claude/viewer/sessions.json.tmp
+
+# Python 캐시
+__pycache__/
 
 # 개인 작업 캐시 (일감번호·슬랙 유저 ID 등 — 로컬 전용)
 .claude/cache/

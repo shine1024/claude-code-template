@@ -40,7 +40,6 @@
 
     .toolbar {
       width: 100%;
-      max-width: 1600px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -65,7 +64,6 @@
       align-items: stretch;
       gap: 12px;
       width: 100%;
-      max-width: 1600px;
       flex: 1;
       min-height: 0;
     }
@@ -114,12 +112,13 @@
     .page-scroll {
       position: absolute;
       inset: 0;
-      padding: 36px 44px 40px;
-      overflow-y: auto;
+      padding: 18px 22px 20px;
+      overflow-y: hidden;
       font-size: 14px;
       line-height: 1.8;
       color: var(--text);
     }
+    .page-scroll.scrollable { overflow-y: auto; }
 
     .page-num {
       position: absolute;
@@ -135,7 +134,7 @@
     .page-right .page-num { right: 12px; }
 
     .page h1 { font-size: 1.5em; font-weight: 700; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid var(--accent); letter-spacing: -0.02em; color: var(--text); }
-    .page h2 { font-size: 1.2em; font-weight: 600; margin: 28px 0 10px; letter-spacing: -0.01em; color: var(--text); }
+    .page h2 { font-size: 1.2em; font-weight: 600; margin: 14px 0 5px; letter-spacing: -0.01em; color: var(--text); }
     .page h3 { font-size: 1.05em; font-weight: 600; margin: 20px 0 8px; color: var(--text); }
     .page p  { margin-bottom: 14px; }
     .page ul, .page ol { margin: 8px 0 14px 20px; }
@@ -172,6 +171,51 @@
     .page hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
 
     .hint { margin-top: 14px; font-size: 12px; font-weight: 500; color: var(--accent); letter-spacing: 0.04em; }
+
+    /* ── 세션 탭 ── */
+    .tabs {
+      width: 100%;
+      display: flex;
+      gap: 4px;
+      margin-bottom: 10px;
+      overflow-x: auto;
+      flex-shrink: 0;
+      padding: 0 4px;
+      scrollbar-width: thin;
+    }
+    .tabs:empty { display: none; }
+    .tab {
+      padding: 6px 12px;
+      border-radius: 6px 6px 0 0;
+      border: 1px solid var(--border);
+      border-bottom: none;
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      max-width: 240px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: background 0.12s, color 0.12s;
+    }
+    .tab:hover:not(.active) { background: var(--code-bg); color: var(--text); }
+    .tab.active { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+    .tab .badge {
+      display: inline-block;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .tab.active .badge { display: none; }
+
+    .empty-state {
+      display: flex; align-items: center; justify-content: center;
+      height: 100%; color: var(--muted); font-size: 14px;
+    }
 
     /* ── 대기 중 프로그레스 (상단 indeterminate 바) ── */
     .progress-bar {
@@ -224,6 +268,7 @@
   <span class="toolbar-title">응답 결과</span>
   <span class="toolbar-page" id="page-indicator"></span>
 </div>
+<div class="tabs" id="tabs"></div>
 <div class="reader">
   <button class="nav-btn" id="btn-prev" onclick="prevSpread()" title="이전 (←)">&#8249;</button>
   <div class="book">
@@ -246,19 +291,76 @@
 
   marked.setOptions({ breaks: true });
 
-  // ── 페이지 분할 ────────────────────────────────────────────
-  function hasContent(s) {
-    return s.replace(/^[\s\-\*\_]+$/gm, '').trim().length > 0;
+  // ── 문장 단위 개행 — 코드/인라인코드/링크 URL 보호 후 [.?!] + 공백 + 한글|영문대문자 패턴을 마크다운 hard break 로 치환
+  function wrapSentences(md) {
+    const fences = [];
+    md = md.replace(/```[\s\S]*?```/g, m => { fences.push(m); return ` F${fences.length - 1} `; });
+    const inlines = [];
+    md = md.replace(/`[^`\n]+`/g, m => { inlines.push(m); return ` I${inlines.length - 1} `; });
+    const urls = [];
+    md = md.replace(/\]\([^)]*\)/g, m => { urls.push(m); return ` U${urls.length - 1} `; });
+
+    md = md.replace(/([.?!]) (?=[가-힣A-Z])/g, '$1  \n');
+
+    md = md.replace(/ U(\d+) /g, (_, i) => urls[+i]);
+    md = md.replace(/ I(\d+) /g, (_, i) => inlines[+i]);
+    md = md.replace(/ F(\d+) /g, (_, i) => fences[+i]);
+    return md;
   }
-  function splitIntoPages(md) {
-    const sections = md.split(/(?=^#{1,2} )/m).filter(hasContent);
-    if (sections.length > 1) return sections;
-    const paras = md.split(/\n\n+/).filter(p => p.trim());
-    if (paras.length <= 4) return [md];
-    const result = [];
-    for (let i = 0; i < paras.length; i += 4)
-      result.push(paras.slice(i, i + 4).join('\n\n'));
-    return result;
+
+  // ── 측정 기반 페이지 분할 — sandbox 에 렌더해 자식 블록 단위로 페이지에 채우고, 한 블록이 페이지보다 크면 그 페이지만 내부 스크롤 허용
+  function paginate(md) {
+    const pageEl = document.querySelector('.page');
+    if (!pageEl || !pageEl.clientHeight) return [{ html: marked.parse(md), scrollable: false }];
+    const maxH = pageEl.clientHeight;
+
+    const sandbox = document.createElement('div');
+    sandbox.className = 'page-scroll';
+    Object.assign(sandbox.style, {
+      position: 'absolute', left: '-99999px', top: '0',
+      width: pageEl.clientWidth + 'px',
+      height: 'auto', maxHeight: 'none', overflow: 'visible',
+      visibility: 'hidden', pointerEvents: 'none',
+    });
+    document.body.appendChild(sandbox);
+
+    sandbox.innerHTML = marked.parse(md);
+    const blocks = [...sandbox.children].map(c => c.outerHTML);
+
+    // 헤딩 + 직후 비헤딩 블록들을 하나의 섹션으로 묶는다 — 헤딩이 본문과 떨어지지 않도록 그룹 자체를 분할 단위로 삼는다
+    const sections = [];
+    let buf = '';
+    for (const block of blocks) {
+      if (/^<h[1-6]\b/.test(block) && buf) {
+        sections.push(buf);
+        buf = '';
+      }
+      buf += block;
+    }
+    if (buf) sections.push(buf);
+
+    const pages = [];
+    let current = '';
+    for (const section of sections) {
+      sandbox.innerHTML = section;
+      if (sandbox.scrollHeight > maxH) {
+        if (current) pages.push({ html: current, scrollable: false });
+        pages.push({ html: section, scrollable: true });
+        current = '';
+        continue;
+      }
+      sandbox.innerHTML = current + section;
+      if (sandbox.scrollHeight > maxH && current) {
+        pages.push({ html: current, scrollable: false });
+        current = section;
+      } else {
+        current += section;
+      }
+    }
+    if (current) pages.push({ html: current, scrollable: false });
+
+    document.body.removeChild(sandbox);
+    return pages;
   }
 
   // ── 렌더링 ────────────────────────────────────────────────
@@ -279,26 +381,26 @@
     });
   }
 
+  function setPage(scroll, num, idx) {
+    const p = pages[idx];
+    if (p) {
+      scroll.innerHTML = p.html;
+      scroll.classList.toggle('scrollable', !!p.scrollable);
+      scroll.scrollTop = 0;
+      num.textContent = idx + 1;
+      highlightDiffs(scroll);
+    } else {
+      scroll.innerHTML = '';
+      scroll.classList.remove('scrollable');
+      num.textContent = '';
+    }
+  }
+
   function renderSpread() {
     const n = perSpread(), li = currentSpread * n, ri = li + 1, total = pages.length;
-    const leftScroll  = document.getElementById('page-left-scroll');
-    const leftNum     = document.getElementById('page-left-num');
-    const rightScroll = document.getElementById('page-right-scroll');
-    const rightNum    = document.getElementById('page-right-num');
-
-    leftScroll.innerHTML = pages[li] ? marked.parse(pages[li]) : '';
-    leftScroll.scrollTop = 0;
-    leftNum.textContent  = pages[li] ? (li + 1) : '';
-    highlightDiffs(leftScroll);
-
-    if (!isMobile()) {
-      rightScroll.innerHTML = pages[ri] ? marked.parse(pages[ri]) : '';
-      rightScroll.scrollTop = 0;
-      rightNum.textContent  = pages[ri] ? (ri + 1) : '';
-      highlightDiffs(rightScroll);
-    } else {
-      rightNum.textContent = '';
-    }
+    setPage(document.getElementById('page-left-scroll'),  document.getElementById('page-left-num'),  li);
+    if (!isMobile()) setPage(document.getElementById('page-right-scroll'), document.getElementById('page-right-num'), ri);
+    else document.getElementById('page-right-num').textContent = '';
 
     const cur = n > 1 && pages[ri] ? `${li + 1}-${Math.min(ri + 1, total)}` : `${li + 1}`;
     document.getElementById('page-indicator').textContent = total ? `${cur} / ${total}` : '';
@@ -308,7 +410,7 @@
   }
 
   function loadMd(md) {
-    pages = splitIntoPages(md);
+    pages = paginate(wrapSentences(md));
     currentSpread = 0;
     renderSpread();
   }
@@ -320,45 +422,110 @@
     if (e.key === 'ArrowLeft')  prevSpread();
     if (e.key === 'ArrowRight') nextSpread();
   });
-  window.addEventListener('resize', renderSpread);
 
-  // ── 폴링 ─────────────────────────────────────────────────
-  async function fetchMd(file) {
-    const res = await fetch(`${file}?t=` + Date.now());
-    if (!res.ok) return null;
-    // 서버가 charset 헤더를 안 보내면 브라우저가 다른 인코딩으로 추측할 수 있어
-    // arrayBuffer + TextDecoder('utf-8') 로 명시 디코딩
-    const buf = await res.arrayBuffer();
-    return new TextDecoder('utf-8').decode(buf);
-  }
+  // resize 시 페이지 폭/높이가 바뀌므로 paginate 부터 다시 — 짧은 debounce
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      if (lastMd != null) loadMd(lastMd);
+      else renderSpread();
+    }, 150);
+  });
 
-  async function checkWaiting() {
+  // ── 폴링 (세션 인덱스 기반) ─────────────────────────────
+  let sessions = [], activeId = null;
+  const seenAt = {}; // session_id → 마지막으로 본 updated_at (배지 판정용)
+
+  async function fetchText(file) {
     try {
-      const res = await fetch(`.waiting?t=${Date.now()}`, { method: 'HEAD' });
-      return res.ok;
-    } catch (_) { return false; }
+      const res = await fetch(`${file}?t=` + Date.now());
+      if (!res.ok) return null;
+      // 서버가 charset 헤더를 안 보내면 브라우저가 다른 인코딩으로 추측할 수 있어 arrayBuffer + TextDecoder('utf-8') 로 명시 디코딩
+      const buf = await res.arrayBuffer();
+      return new TextDecoder('utf-8').decode(buf);
+    } catch (_) { return null; }
   }
 
-  function setWaiting(on) {
-    document.body.classList.toggle('waiting', !!on);
+  function escapeHtml(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  async function poll() {
-    try {
-      const [latest, waiting] = await Promise.all([
-        fetchMd('response.md'),
-        checkWaiting(),
-      ]);
-      setWaiting(waiting);
-      if (latest && latest !== lastMd) {
-        lastMd = latest;
-        loadMd(latest);
-      }
-    } catch (_) {}
+  function renderTabs() {
+    const el = document.getElementById('tabs');
+    el.innerHTML = sessions.map(s => {
+      const isActive = s.id === activeId;
+      const hasNew = !isActive && seenAt[s.id] !== s.updated_at;
+      const label = (s.label || s.id.slice(0, 8)) || '세션';
+      return `<button class="tab ${isActive ? 'active' : ''}" data-id="${escapeHtml(s.id)}">${escapeHtml(label)}${hasNew ? '<span class="badge"></span>' : ''}</button>`;
+    }).join('');
+    el.querySelectorAll('.tab').forEach(b => { b.onclick = () => selectTab(b.dataset.id); });
   }
 
-  poll();
-  setInterval(poll, 2000);
+  function selectTab(id) {
+    if (id === activeId) return;
+    activeId = id;
+    lastMd = null;
+    const s = sessions.find(x => x.id === id);
+    if (s) seenAt[id] = s.updated_at;
+    renderTabs();
+    pollActiveResponse();
+    updateWaiting();
+  }
+
+  function updateWaiting() {
+    const s = sessions.find(x => x.id === activeId);
+    document.body.classList.toggle('waiting', !!(s && s.waiting));
+  }
+
+  function showEmptyState() {
+    const msg = '<div class="empty-state">활성 세션이 없습니다. Claude Code 에서 응답을 받으면 여기에 표시됩니다.</div>';
+    document.getElementById('page-left-scroll').innerHTML = msg;
+    document.getElementById('page-right-scroll').innerHTML = '';
+    document.getElementById('page-left-num').textContent = '';
+    document.getElementById('page-right-num').textContent = '';
+    document.getElementById('page-indicator').textContent = '';
+    document.getElementById('btn-prev').disabled = true;
+    document.getElementById('btn-next').disabled = true;
+  }
+
+  async function pollActiveResponse() {
+    if (!activeId) { showEmptyState(); return; }
+    const md = await fetchText(`response-${activeId}.md`);
+    if (md && md !== lastMd) {
+      lastMd = md;
+      loadMd(md);
+      const s = sessions.find(x => x.id === activeId);
+      if (s) seenAt[activeId] = s.updated_at;
+    } else if (!md && lastMd === null) {
+      showEmptyState();
+    }
+  }
+
+  async function pollSessions() {
+    const raw = await fetchText('sessions.json');
+    try { sessions = raw ? JSON.parse(raw) : []; } catch (_) { sessions = []; }
+
+    // 활성 세션이 없으면 가장 최근 세션으로 자동 선택 (탭 첫 진입 시에만)
+    if (!activeId && sessions.length) {
+      activeId = sessions[0].id;
+      seenAt[activeId] = sessions[0].updated_at;
+      lastMd = null;
+    }
+    // 활성 세션이 자동 정리됐으면 가장 최근으로 전환
+    if (activeId && !sessions.find(s => s.id === activeId)) {
+      activeId = sessions.length ? sessions[0].id : null;
+      lastMd = null;
+      if (activeId) seenAt[activeId] = sessions.find(s => s.id === activeId).updated_at;
+    }
+
+    renderTabs();
+    await pollActiveResponse();
+    updateWaiting();
+  }
+
+  pollSessions();
+  setInterval(pollSessions, 2000);
 </script>
 </body>
 </html>

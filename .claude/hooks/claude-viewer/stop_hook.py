@@ -11,10 +11,10 @@ import subprocess
 from datetime import datetime
 from pathlib import Path
 
-VIEWER_DIR  = Path(__file__).parent.parent.parent / "viewer"
-RESPONSE_MD = VIEWER_DIR / "response.md"
-WAITING     = VIEWER_DIR / ".waiting"
-PORT        = 19988
+sys.path.insert(0, str(Path(__file__).parent))
+from _index import get_session_id, update_session, VIEWER_DIR
+
+PORT = 19988
 
 TOOL_ICONS = {
     "Read": "📖", "Edit": "📝", "MultiEdit": "📝", "Write": "💾",
@@ -220,6 +220,7 @@ def ensure_server():
 
 def main():
     data = read_hook_data()
+    session_id = get_session_id(data)
     turn_text = extract_turn_blocks(data)
 
     if not turn_text.strip():
@@ -228,12 +229,13 @@ def main():
     VIEWER_DIR.mkdir(parents=True, exist_ok=True)
     # transcript 에 외톨이 surrogate(잘린 emoji·바이너리 일부) 가 섞일 수 있어
     # utf-8 인코딩 실패 문자는 � 로 대체한다
-    RESPONSE_MD.write_text(turn_text, encoding="utf-8", errors="replace")
-    WAITING.unlink(missing_ok=True)
+    (VIEWER_DIR / f"response-{session_id}.md").write_text(turn_text, encoding="utf-8", errors="replace")
+    (VIEWER_DIR / f".waiting-{session_id}").unlink(missing_ok=True)
+    update_session(session_id, has_response=True, waiting=False)
 
     ensure_server()
     ts = datetime.now().strftime("%H:%M:%S")
-    print(f"[claude-viewer] ✓ {ts}", file=sys.stderr)
+    print(f"[claude-viewer] ✓ {ts} ({session_id[:8]})", file=sys.stderr)
     sys.exit(0)
 
 

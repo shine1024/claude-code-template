@@ -7,6 +7,19 @@
 
 ## 2026-06-01
 
+- [기능] `claude-viewer` — 멀티 세션 탭 UI + 동적 페이지 분할 + 가독성 개선
+  - **멀티 세션 지원**: `response.md`·`.waiting` 을 세션별(`response-<sid>.md`·`.waiting-<sid>`)로 분리. 신규 `sessions.json` 인덱스로 세션 목록·라벨·`updated_at`·`waiting` 관리. 탭 UI 에 첫 prompt 한 줄을 라벨로 표시, 비활성 탭에 새 응답 도착 시 ● 배지 (자동 전환 X). 24시간 무활동 세션은 sessions.json·response·waiting 파일과 함께 자동 정리
+  - 신규 `_index.py` — 세션 인덱스 공용 헬퍼 (`get_session_id`·`update_session`·stale cleanup). atomic write 로 multi-process race 완화
+  - `prompt_hook.py` 재작성 — stdin UTF-8 디코딩 + payload `session_id`/`transcript_path` 에서 세션 ID 추출 + 첫 prompt 한 줄(최대 60자) 라벨 캡처
+  - `stop_hook.py` — 세션별 응답 파일 저장 + `update_session(has_response=True)`
+  - **페이지 폭**: `.toolbar`·`.reader` 의 `max-width: 1600px` 제거 — 와이드 모니터에서 폭 활용도 ↑
+  - **페이지 높이**: 세로 스크롤 제거, 측정 기반 페이지 분할 신설 (`paginate()`) — 화면 밖 sandbox 에 렌더해 자식 블록 단위로 페이지 채움. 한 블록/섹션이 페이지보다 큰 경우만 `scrollable` 페이지로 예외 처리
+  - **헤딩 정렬**: 헤딩(`<h1>`~`<h6>`) + 직후 비헤딩 블록을 하나의 섹션으로 묶어 페이지 분할 단위로 삼음 — 헤딩만 페이지 끝에 외로이 남는 orphan 문제 해소
+  - **문장 단위 개행**: `wrapSentences()` 신설 — `[.?!] + 공백 + 한글/영문대문자` 패턴을 마크다운 hard break 로 치환. 코드 블록·인라인 코드·링크 URL 은 NUL sentinel 로 보호해 `init.bat`·`1.5`·URL 안의 `.` 영향 없음
+  - **CSS 정돈**: `.page-scroll` padding 36/44/40 → 18/22/20, `.page h2` margin 28/0/10 → 14/0/5 (사용자 피드백 반영)
+  - **resize 대응**: 창 크기 변경 시 150ms debounce 후 paginate 재실행 (페이지 폭/높이 변화 반영)
+  - `.gitignore`·`init.bat` — 와일드카드 패턴(`response-*.md`·`.waiting-*`·`sessions.json[.tmp]`) + `__pycache__/`
+
 - [기능] `claude-viewer` — Claude 응답을 브라우저에서 실시간으로 보는 자체 뷰어 도입 (`http://localhost:19988/response.html`)
   - 신규 훅: `.claude/hooks/claude-viewer/prompt_hook.py` (UserPromptSubmit 시 `viewer/.waiting` 마커 생성) · `stop_hook.py` (Stop 시 transcript 파싱 → 응답 텍스트 + 도구 호출을 시간순으로 `viewer/response.md` 작성 + `127.0.0.1:19988` HTTP 서버 보장)
   - 신규 정적 페이지: `.claude/viewer/response.html` — Claude.ai 톤(크림 + 코랄) 책 페이지 2단 UI, marked.js CDN 렌더, 2초 폴링, Edit/Write `+`/`-` diff 컬러링, 대기 중 상단 indeterminate progress bar + 책 흐림
