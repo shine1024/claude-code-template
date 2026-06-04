@@ -5,6 +5,18 @@
 
 ---
 
+## 2026-06-02
+
+- [기능] `version-update` — 버전 업데이트 자동화 스킬 신규 (버전 정책 단일 원본 분리)
+  - `/version-update`: CHANGES.md 마지막 섹션 이후 누락 커밋을 분석 → 미리보기 → `pom.xml`·`CHANGES.md` 일괄 갱신하는 3단계 스킬. 패키지/고객사 모드 자동 감지
+  - 버전 정책(분류→bump 매핑 `[변경/개편]→major`·`[신규/구성]→minor`·`[수정/개선]→patch`·patch 한도 20·초기화 규칙·고객사 버전 형식)을 `.claude/rules/version-policy.md` 단일 진실 원본으로 분리 — SKILL.md ① 분석에 `1-0. 정책 로드` 단계를 두어 실행 시 Read 로 로드. 정책 변경 시 SKILL.md 불수정
+  - 결과 보고에 `정책: .claude/rules/version-policy.md` 명시 — 적용된 정책 트레이서빌리티 확보
+  - `.claude/guides/skills.md` "현재 구성된 스킬" 카탈로그에 `### /version-update` 등재
+  - sandbox 통합 테스트 시나리오 신규 (`tests/scenarios/version-update/`) — patch bump · CHANGES.md 섹션 추가 · 정책 참조 출력 · 성공 마커 4건 검증 (4/4 PASS)
+  - 배경: 사내 Redmine 위키 "버전 네이밍 수립" 문서와 SKILL.md 사이의 정책 중복 관리 문제 해소. 향후 위키는 정책 파일 링크로 축약
+
+---
+
 ## 2026-06-01
 
 - [기능] `claude-viewer` — 세션 탭 × 닫기 + 서버 ⏻ 종료 + 코드 복사 + IntelliJ JCEF 호환

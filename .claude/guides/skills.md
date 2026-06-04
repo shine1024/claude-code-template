@@ -350,3 +350,30 @@ node .claude/skills/validate-rules/scripts/seed-index.js
 - 자동 커밋·푸시 안 함
 - 충돌은 자동 병합 금지 — 잘못 합치면 더 큰 문제
 - 병합 방향이 보고서에 명시되지 않으면 임의로 정하지 않고 사용자에게 확인
+
+### /version-update — 버전 업데이트 자동화
+
+**용도**: `CHANGES.md` 마지막 섹션 이후 누락 커밋을 정리하고 새 버전을 산출해 `pom.xml` + `CHANGES.md` 를 일괄 갱신. 패키지/고객사 두 모드를 자동 감지한다. 버전 정책의 단일 진실 원본은 `.claude/rules/version-policy.md` 이며 실행 시 Read 로 로드한다.
+
+| 항목 | 내용 |
+|------|------|
+| 호출 방법 | 프로젝트 루트에서 `/version-update` ("버전 올려줘"·"릴리즈") |
+| 정책 원본 | `.claude/rules/version-policy.md` (분류→bump 매핑·patch 한도·모드별 형식·초기화 규칙) |
+| 누락 범위 | `CHANGES.md` 마지막 섹션 이후 git log 자동 탐색, 실패 시 최종 수정 커밋으로 fallback |
+| 수정 대상 | `pom.xml` 의 `<version>` (모듈별 정밀 치환) + `CHANGES.md` (목차 + 새 섹션) |
+| 분류 매핑 | `[변경/개편]→major`·`[신규/구성]→minor`·`[수정/개선]→patch`, patch 한도 20 초과 시 minor 승격 |
+
+**실행 절차**
+
+| 단계 | 내용 |
+|------|------|
+| ① 분석 | 정책 로드(`1-0`) → 현재 버전·누락 커밋·모드 수집 → 새 버전 산출 (질문 없이 일괄) |
+| ② 미리보기 | 모드·버전 변화·포함/제외 커밋·수정 대상·새 섹션을 1회 출력, 사용자 yes/no |
+| ③ 수정 | `pom.xml` 들 + `CHANGES.md` 병렬 Edit, 결과 한 줄 보고 (적용 정책 경로 명시) |
+
+**주의 사항**
+
+- 파일 수정까지만 — 커밋·푸시·커밋메시지는 사용자가 직접
+- `pom.xml` 의 다른 dependency 버전은 절대 건드리지 않음 (주변 태그 묶어 정밀 치환)
+- 고객사 모드의 prefix·고객사명은 고정, 뒤 관리버전만 bump
+- 정책 변경은 `version-policy.md` 에서만 — `SKILL.md` 는 수정 불필요
