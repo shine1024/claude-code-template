@@ -5,6 +5,15 @@
 
 ---
 
+## 2026-06-04
+
+- [수정] `sync-template` — `core.autocrlf=true` 환경의 phantom 변경(내용 무변경 파일이 modified 로 무더기 표시) 해결
+  - 3단계 clone: `git clone` → `git -c core.autocrlf=false -c core.eol=lf clone` 로 LF 체크아웃. clone 시 working tree 가 CRLF 로 떨어져 프로젝트에 CRLF 가 주입되던 문제 차단
+  - 5단계 복사: "폴더 통째 삭제·재복사" 방식을 내용 기반 동기화로 교체. 개행 정규화(CRLF·CR→LF) 후 SHA256 비교(`Get-NormHash`)로 **내용이 다른 파일만 덮어쓰고 동일 파일은 건드리지 않음**(mtime 보존 → stat-dirty 방지). 템플릿에 없는 파일·빈 디렉토리는 제거하여 미러 상태 유지. `settings.json` 도 내용 다를 때만 덮어쓰기
+  - 배경: `.claude` 만 외부 도구(sync)가 덮어쓰는 유일한 폴더라 그곳에서만 개행 평형이 깨져 noise 발생. 개행 정규화 비교(2번)는 단독으로도 phantom 을 차단
+
+---
+
 ## 2026-06-02
 
 - [기능] `version-update` — 버전 업데이트 자동화 스킬 신규 (버전 정책 단일 원본 분리)

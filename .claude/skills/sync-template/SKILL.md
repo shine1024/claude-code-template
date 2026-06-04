@@ -49,8 +49,10 @@ if ($LocalHash -eq $RemoteHash) {
 
 ```powershell
 $TempDir = Join-Path $env:TEMP "claude-sync-$(Get-Random)"
-git clone $env:TEMPLATE_REPO_URL $TempDir
+git -c core.autocrlf=false -c core.eol=lf clone $env:TEMPLATE_REPO_URL $TempDir
 ```
+
+**`core.autocrlf=false` 로 clone 한다.** 전역 `core.autocrlf=true` 환경에서는 clone 시 working tree 파일이 CRLF 로 체크아웃되어, 5단계 내용 비교에서 LF 인 프로젝트 파일과 전부 불일치 → 모든 파일이 복사되고 프로젝트에 CRLF 가 주입된다. LF 로 체크아웃해야 동일 파일이 일치로 판정되어 실제 변경만 복사된다.
 
 clone 실패 시 아래 메시지를 출력하고 종료한다.
 
@@ -95,15 +97,60 @@ CHANGES.md 가 수정되지 않은 동기화 구간(예: 사소한 오타 수정
 ```powershell
 $TargetClaude = ".claude"
 $exclude = @("state")
+
+# 개행 정규화 후 SHA256 (텍스트 트리 기준 — 개행 차이를 무시한 내용 비교)
+function Get-NormHash($path) {
+    $text = [System.IO.File]::ReadAllText($path) -replace "`r`n", "`n" -replace "`r", "`n"
+    $sha  = [System.Security.Cryptography.SHA256]::Create()
+    return [BitConverter]::ToString($sha.ComputeHash([System.Text.Encoding]::UTF8.GetBytes($text)))
+}
+
+# 내용이 다른 파일만 덮어쓰고, 템플릿에 없는 파일은 제거한다
+function Sync-Tree($srcRoot, $dstRoot) {
+    $srcRoot = (Resolve-Path $srcRoot).Path
+    if (-not (Test-Path $dstRoot)) { New-Item -ItemType Directory -Force -Path $dstRoot | Out-Null }
+    $dstRoot = (Resolve-Path $dstRoot).Path
+
+    # 1) 신규·변경 파일만 복사 (개행 정규화 비교)
+    Get-ChildItem $srcRoot -Recurse -File | ForEach-Object {
+        $rel = $_.FullName.Substring($srcRoot.Length).TrimStart('\')
+        $dst = Join-Path $dstRoot $rel
+        $copy = $true
+        if (Test-Path $dst -PathType Leaf) {
+            if ((Get-NormHash $_.FullName) -eq (Get-NormHash $dst)) { $copy = $false }
+        }
+        if ($copy) {
+            $dstDir = Split-Path $dst -Parent
+            if (-not (Test-Path $dstDir)) { New-Item -ItemType Directory -Force -Path $dstDir | Out-Null }
+            Copy-Item $_.FullName $dst -Force
+        }
+    }
+
+    # 2) 템플릿에 없는 파일 제거 후 빈 디렉토리 정리
+    Get-ChildItem $dstRoot -Recurse -File | ForEach-Object {
+        $rel = $_.FullName.Substring($dstRoot.Length).TrimStart('\')
+        if (-not (Test-Path (Join-Path $srcRoot $rel) -PathType Leaf)) { Remove-Item $_.FullName -Force }
+    }
+    Get-ChildItem $dstRoot -Recurse -Directory | Sort-Object { $_.FullName.Length } -Descending | ForEach-Object {
+        if (-not (Get-ChildItem $_.FullName -Force)) { Remove-Item $_.FullName -Force }
+    }
+}
+
 Get-ChildItem (Join-Path $TempDir ".claude") -Directory |
     Where-Object { $exclude -notcontains $_.Name } |
-    ForEach-Object {
-        $target = Join-Path $TargetClaude $_.Name
-        if (Test-Path $target) { Remove-Item $target -Recurse -Force }
-        Copy-Item $_.FullName $TargetClaude -Recurse
-    }
-Copy-Item (Join-Path $TempDir ".claude\settings.json") $TargetClaude -Force
+    ForEach-Object { Sync-Tree $_.FullName (Join-Path $TargetClaude $_.Name) }
+
+# settings.json — 내용이 다를 때만 덮어쓴다
+$srcSettings = Join-Path $TempDir ".claude\settings.json"
+$dstSettings = Join-Path $TargetClaude "settings.json"
+if (-not (Test-Path $dstSettings) -or (Get-NormHash $srcSettings) -ne (Get-NormHash $dstSettings)) {
+    Copy-Item $srcSettings $dstSettings -Force
+}
 ```
+
+**폴더를 통째로 삭제·재복사하지 않는다.** 내용이 다른 파일만 덮어쓰고 동일한 파일은 건드리지 않는다(mtime 보존 → stat-dirty phantom 방지). 템플릿에서 삭제된 파일은 대상에서도 제거하여 미러 상태를 유지한다.
+
+내용 비교는 **개행을 정규화(CRLF·CR → LF)한 뒤 해시**한다. `core.autocrlf=true` 환경에서 clone(또는 프로젝트 작업트리)의 개행이 서로 달라도, 내용이 같으면 동일로 판정되어 불필요한 복사·CRLF 주입을 막는다. 단순 바이트 해시는 개행 차이만으로 전부 불일치가 되어 phantom 을 유발하므로 사용하지 않는다.
 
 ---
 
