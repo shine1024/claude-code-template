@@ -5,6 +5,14 @@
 
 ---
 
+## 2026-06-05
+
+- [수정] `sync-template` — 한글 인코딩 깨짐(`?` 치환) 해결
+  - 4단계: `git diff` 출력 캡처 전 `[Console]::OutputEncoding` 을 UTF-8 로 지정. cp949 환경에서 CHANGES.md 신규 항목의 한글이 캡처 시점에 `?` 로 깨지던 문제 차단
+  - 9단계: `node`(notify.js) 파이프 전달 전 `$OutputEncoding` 을 UTF-8 로 지정. us-ascii 기본값 탓에 Slack DM 한글이 `?` 로 치환되던 문제 차단
+
+---
+
 ## 2026-06-04
 
 - [수정] `sync-template` — `core.autocrlf=true` 환경의 phantom 변경(내용 무변경 파일이 modified 로 무더기 표시) 해결

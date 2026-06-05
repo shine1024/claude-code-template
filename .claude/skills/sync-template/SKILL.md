@@ -67,6 +67,10 @@ clone 실패 시 아래 메시지를 출력하고 종료한다.
 `oldHash..HEAD` 구간에서 `CHANGES.md` 에 **추가된 라인**(`+` 시작, `+++` 헤더 제외)만 추출한다. 로컬 hash 가 없으면(초기 동기화) 목록을 비우고 "초기 동기화" 로 표시한다.
 
 ```powershell
+# CHANGES.md 는 UTF-8 인데 [Console]::OutputEncoding 이 cp949 면 git diff 출력의 한글이
+# 캡처 시점에 '?' 로 깨진다. UTF-8 로 지정해 native 명령 출력을 올바로 디코드한다.
+[Console]::OutputEncoding = New-Object System.Text.UTF8Encoding $false
+
 $Changes = @()
 if ($LocalHash) {
     $DiffOut = git -C $TempDir diff "$LocalHash..HEAD" -- CHANGES.md
@@ -206,6 +210,9 @@ $payload = @{
     changes     = (ConvertFrom-Json $ChangesJson)
 } | ConvertTo-Json -Compress -Depth 5
 
+# native 명령 파이프 기본 인코딩($OutputEncoding)이 us-ascii 라 한글이 '?' 로 치환된다.
+# UTF-8 로 지정해야 notify.js(stdin utf8)에 한글이 온전히 전달된다.
+$OutputEncoding = New-Object System.Text.UTF8Encoding $false
 $payload | node ".claude/skills/sync-template/scripts/notify.js"
 ```
 
