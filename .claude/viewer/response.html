@@ -152,7 +152,6 @@
     }
 
     .nav-btn {
-      flex-shrink: 0;
       width: 52px; height: 52px;
       border-radius: 50%;
       border: 2px solid var(--accent);
@@ -166,10 +165,16 @@
       transition: background 0.15s, border-color 0.15s, transform 0.1s, box-shadow 0.15s;
       box-shadow: 0 4px 12px rgba(217,119,87,0.30);
       user-select: none;
+      flex-shrink: 0;
     }
     .nav-btn:hover:not(:disabled) { background: var(--accent-hi); border-color: var(--accent-hi); transform: scale(1.08); box-shadow: 0 6px 20px rgba(196,89,59,0.40); }
-    .nav-btn:disabled { opacity: 0.2; cursor: default; box-shadow: none; transform: none; }
-    #btn-prev, #btn-next { align-self: center; }
+    .nav-btn:disabled { opacity: 0.35; cursor: default; box-shadow: none; transform: none; }
+    .nav-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-self: center;
+    }
 
     .book {
       flex: 1;
@@ -195,10 +200,10 @@
     .page-scroll {
       position: absolute;
       inset: 0;
-      padding: 18px 22px 20px;
+      padding: 16px 22px 16px;
       overflow-y: hidden;
       font-size: 14px;
-      line-height: 1.8;
+      line-height: 1.5;
       color: var(--text);
     }
     .page-scroll.scrollable { overflow-y: auto; }
@@ -216,18 +221,20 @@
     .page-left  .page-num { left: 12px; }
     .page-right .page-num { right: 12px; }
 
-    .page h1 { font-size: 1.5em; font-weight: 700; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid var(--accent); letter-spacing: -0.02em; color: var(--text); }
-    .page h2 { font-size: 1.2em; font-weight: 600; margin: 14px 0 5px; letter-spacing: -0.01em; color: var(--text); }
-    .page h3 { font-size: 1.05em; font-weight: 600; margin: 20px 0 8px; color: var(--text); }
-    .page p  { margin-bottom: 14px; }
-    .page ul, .page ol { margin: 8px 0 14px 20px; }
-    .page li { margin-bottom: 6px; }
+    .page h1 { font-size: 1.5em; font-weight: 700; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); letter-spacing: -0.02em; color: var(--text); }
+    .page h2 { font-size: 1.2em; font-weight: 600; margin: 10px 0 4px; letter-spacing: -0.01em; color: var(--text); }
+    .page h3 { font-size: 1.05em; font-weight: 600; margin: 12px 0 5px; color: var(--text); }
+    .page p  { margin-bottom: 8px; }
+    .page p.tool-head { margin-top: 20px; }
+    .page-scroll > p.tool-head:first-child { margin-top: 0; }
+    .page ul, .page ol { margin: 5px 0 8px 20px; }
+    .page li { margin-bottom: 3px; }
     .page strong { font-weight: 700; }
     .page em     { font-style: italic; color: var(--muted); }
     .page a      { color: var(--link); text-decoration: none; }
     .page a:hover { text-decoration: underline; }
     .page code { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.85em; background: var(--code-bg); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--accent-hi); }
-    .page pre { background: var(--pre-bg); color: var(--pre-fg); padding: 16px 18px; border-radius: 6px; overflow-x: auto; margin: 14px 0; font-size: 0.84em; line-height: 1.6; position: relative; }
+    .page pre { background: var(--pre-bg); color: var(--pre-fg); padding: 12px 18px; border-radius: 6px; overflow-x: auto; margin: 9px 0; font-size: 0.84em; line-height: 1.5; position: relative; }
     .copy-btn {
       position: absolute;
       top: 8px; right: 8px;
@@ -271,11 +278,11 @@
       color: #fca5a5;
     }
     .page .diff-line.diff-ctx { opacity: 0.7; }
-    .page blockquote { border-left: 3px solid var(--accent); padding-left: 16px; color: var(--muted); margin: 14px 0; }
-    .page table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 0.9em; }
-    .page th { background: var(--code-bg); font-weight: 600; padding: 8px 12px; border: 1px solid var(--border); text-align: left; color: var(--text); }
-    .page td { padding: 7px 12px; border: 1px solid var(--border); }
-    .page hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+    .page blockquote { border-left: 3px solid var(--accent); padding-left: 16px; color: var(--muted); margin: 9px 0; }
+    .page table { border-collapse: collapse; width: 100%; margin: 9px 0; font-size: 0.9em; }
+    .page th { background: var(--code-bg); font-weight: 600; padding: 6px 12px; border: 1px solid var(--border); text-align: left; color: var(--text); }
+    .page td { padding: 5px 12px; border: 1px solid var(--border); }
+    .page hr { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
 
     .hint { margin-top: 14px; font-size: 12px; font-weight: 500; color: var(--accent); letter-spacing: 0.04em; }
 
@@ -374,20 +381,17 @@
       0%   { left: -30%; }
       100% { left: 100%; }
     }
-    .book { transition: opacity 0.25s, filter 0.25s; }
+    .book { transition: opacity 0.25s; }
     body.waiting .book {
-      opacity: 0.35;
-      filter: blur(1.5px);
+      opacity: 0.75;
       pointer-events: none;
     }
-    body.waiting .nav-btn { opacity: 0.3; pointer-events: none; }
 
     @media (max-width: 768px) {
       body { padding: 10px 8px 8px; }
       .page-right { display: none; }
       .page-left  { border-right: none; }
       .page-scroll { padding: 24px 22px 32px; font-size: 13px; }
-      .nav-btn { width: 40px; height: 40px; font-size: 19px; align-self: center; }
       .reader { gap: 6px; }
     }
   </style>
@@ -405,7 +409,6 @@
 </div>
 <div class="tabs" id="tabs"></div>
 <div class="reader">
-  <button class="nav-btn" id="btn-prev" onclick="prevSpread()" title="이전 (←)">&#8249;</button>
   <div class="book">
     <div class="page page-left">
       <div class="page-scroll" id="page-left-scroll"></div>
@@ -416,7 +419,10 @@
       <div class="page-num" id="page-right-num"></div>
     </div>
   </div>
-  <button class="nav-btn" id="btn-next" onclick="nextSpread()" title="다음 (→)">&#8250;</button>
+  <div class="nav-group">
+    <button class="nav-btn" id="btn-prev" onclick="prevSpread()" title="이전 (←)">&#8249;</button>
+    <button class="nav-btn" id="btn-next" onclick="nextSpread()" title="다음 (→)">&#8250;</button>
+  </div>
 </div>
 <div class="hint">← → 키로도 이동</div>
 
@@ -443,59 +449,175 @@
     return md;
   }
 
-  // ── 측정 기반 페이지 분할 — sandbox 에 렌더해 자식 블록 단위로 페이지에 채우고, 한 블록이 페이지보다 크면 그 페이지만 내부 스크롤 허용
+  // ── 측정 기반 페이지 분할 — 페이지를 maxH 까지 빈틈없이 채운다.
+  //    다음 블록이 안 들어가면 남은 공간만큼 문장/항목/코드줄/표행 단위로 잘라 채우고 나머지는 다음 페이지로 넘긴다.
+  //    분할 불가능한 단일 거대 블록일 때만 그 페이지에 내부 스크롤을 허용한다.
   function paginate(md) {
+    const scrollEl = document.querySelector('.page-scroll');
     const pageEl = document.querySelector('.page');
-    if (!pageEl || !pageEl.clientHeight) return [{ html: marked.parse(md), scrollable: false }];
-    const maxH = pageEl.clientHeight;
+    if (!scrollEl || !pageEl) return [{ html: marked.parse(md), scrollable: false }];
+    const maxH = scrollEl.clientHeight;
+    const pageW = scrollEl.clientWidth;
+    if (!maxH || !pageW) return [{ html: marked.parse(md), scrollable: false }];
 
     const sandbox = document.createElement('div');
     sandbox.className = 'page-scroll';
     Object.assign(sandbox.style, {
-      position: 'absolute', left: '-99999px', top: '0',
-      width: pageEl.clientWidth + 'px',
+      position: 'absolute', left: '-99999px', top: '0', right: 'auto', bottom: 'auto',
+      width: pageW + 'px',
       height: 'auto', maxHeight: 'none', overflow: 'visible',
       visibility: 'hidden', pointerEvents: 'none',
     });
     document.body.appendChild(sandbox);
 
+    // html 조각의 렌더 높이(px) 측정
+    const measure = (html) => { sandbox.innerHTML = html; return sandbox.scrollHeight; };
+
     sandbox.innerHTML = marked.parse(md);
+    // 도구 호출 문단(아이콘 + **도구명**)에 구분용 상단 여백 클래스 부여
+    [...sandbox.children].forEach(el => {
+      if (el.tagName === 'P' && el.querySelector('strong') && /^(?:📖|📝|💾|▶|🔍|✓|🤖|🌐|⚙)\s/u.test(el.textContent)) {
+        el.classList.add('tool-head');
+      }
+    });
     const blocks = [...sandbox.children].map(c => c.outerHTML);
 
-    // 헤딩 + 직후 비헤딩 블록들을 하나의 섹션으로 묶는다 — 헤딩이 본문과 떨어지지 않도록 그룹 자체를 분할 단위로 삼는다
-    const sections = [];
-    let buf = '';
-    for (const block of blocks) {
-      if (/^<h[1-6]\b/.test(block) && buf) {
-        sections.push(buf);
-        buf = '';
+    // 마지막 요소가 헤딩이면 떼어내 다음 페이지 머리로 넘긴다 (페이지 끝 고아 헤딩 방지)
+    function trimTrailingHeading(html) {
+      const w = document.createElement('div');
+      w.innerHTML = html;
+      const last = w.lastElementChild;
+      if (last && /^H[1-6]$/.test(last.tagName)) {
+        last.remove();
+        return { body: w.innerHTML, heading: last.outerHTML };
       }
-      buf += block;
+      return { body: html, heading: '' };
     }
-    if (buf) sections.push(buf);
+
+    // 단일 블록을 avail 높이에 맞춰 [채울 부분, 남는 부분] 으로 분할. 불가능하면 null.
+    function splitToFit(html, avail) {
+      if (avail <= 0) return null;
+      const wrap = document.createElement('div');
+      wrap.innerHTML = html;
+      const el = wrap.firstElementChild;
+      if (!el) return null;
+      const tag = el.tagName;
+
+      // 코드 블록: 줄 단위 이진탐색
+      if (tag === 'PRE') {
+        const code = el.querySelector('code');
+        if (!code) return null;
+        const lines = code.textContent.split('\n');
+        if (lines.length < 2) return null;
+        const build = (k) => { const c = el.cloneNode(true); c.querySelector('code').textContent = lines.slice(0, k).join('\n'); return c.outerHTML; };
+        const buildRest = (k) => { const c = el.cloneNode(true); c.querySelector('code').textContent = lines.slice(k).join('\n'); return c.outerHTML; };
+        let n = 0, lo = 1, hi = lines.length;
+        while (lo <= hi) {
+          const mid = (lo + hi) >> 1;
+          if (measure(build(mid)) <= avail) { n = mid; lo = mid + 1; } else hi = mid - 1;
+        }
+        if (n === 0) return null;
+        if (n >= lines.length) return { fit: html, rest: '' };
+        return { fit: build(n), rest: buildRest(n) };
+      }
+
+      // 리스트: 항목 단위
+      if (tag === 'UL' || tag === 'OL') {
+        const items = [...el.children];
+        if (items.length < 2) return null;
+        const build = (slice) => { const c = el.cloneNode(false); slice.forEach(it => c.appendChild(it.cloneNode(true))); return c.outerHTML; };
+        let n = 0;
+        for (let k = 1; k <= items.length; k++) {
+          if (measure(build(items.slice(0, k))) <= avail) n = k; else break;
+        }
+        if (n === 0) return null;
+        if (n >= items.length) return { fit: html, rest: '' };
+        return { fit: build(items.slice(0, n)), rest: build(items.slice(n)) };
+      }
+
+      // 문단: 문장(<br>) 단위
+      if (tag === 'P') {
+        const parts = el.innerHTML.split(/<br\s*\/?>/i);
+        if (parts.length < 2) return null;
+        const build = (slice) => { const c = el.cloneNode(false); c.innerHTML = slice.join('<br>'); return c.outerHTML; };
+        let n = 0;
+        for (let k = 1; k <= parts.length; k++) {
+          if (measure(build(parts.slice(0, k))) <= avail) n = k; else break;
+        }
+        if (n === 0) return null;
+        if (n >= parts.length) return { fit: html, rest: '' };
+        return { fit: build(parts.slice(0, n)), rest: build(parts.slice(n)) };
+      }
+
+      // 표: 본문 행 단위 (thead 유지)
+      if (tag === 'TABLE') {
+        const tbody = el.querySelector('tbody');
+        const rows = tbody ? [...tbody.children] : [];
+        if (rows.length < 2) return null;
+        const thead = el.querySelector('thead');
+        const build = (slice) => {
+          const c = el.cloneNode(false);
+          if (thead) c.appendChild(thead.cloneNode(true));
+          const tb = document.createElement('tbody');
+          slice.forEach(r => tb.appendChild(r.cloneNode(true)));
+          c.appendChild(tb);
+          return c.outerHTML;
+        };
+        let n = 0;
+        for (let k = 1; k <= rows.length; k++) {
+          if (measure(build(rows.slice(0, k))) <= avail) n = k; else break;
+        }
+        if (n === 0) return null;
+        if (n >= rows.length) return { fit: html, rest: '' };
+        return { fit: build(rows.slice(0, n)), rest: build(rows.slice(n)) };
+      }
+
+      return null;
+    }
 
     const pages = [];
     let current = '';
-    for (const section of sections) {
-      sandbox.innerHTML = section;
-      if (sandbox.scrollHeight > maxH) {
-        if (current) pages.push({ html: current, scrollable: false });
-        pages.push({ html: section, scrollable: true });
-        current = '';
+    let i = 0;
+    while (i < blocks.length) {
+      const block = blocks[i];
+      if (measure(current + block) <= maxH) {
+        current += block;
+        i++;
         continue;
       }
-      sandbox.innerHTML = current + section;
-      if (sandbox.scrollHeight > maxH && current) {
-        pages.push({ html: current, scrollable: false });
-        current = section;
-      } else {
-        current += section;
+      // 현재 페이지에 안 들어감 — 남은 공간에 잘라서라도 채운다 (헤딩은 분할/하단배치 금지)
+      const isHeading = /^<h[1-6]\b/.test(block);
+      const avail = maxH - (current ? measure(current) : 0);
+      const split = isHeading ? null : splitToFit(block, avail);
+      if (split && split.fit) {
+        pages.push({ html: current + split.fit, scrollable: false });
+        current = '';
+        blocks[i] = split.rest;
+        if (!split.rest) i++;
+        continue;
       }
+      if (current) {
+        // 현재 페이지를 닫고 새 페이지에서 block 부터 다시 — 끝이 고아 헤딩이면 다음 페이지로 넘김
+        const t = trimTrailingHeading(current);
+        if (t.body) {
+          pages.push({ html: t.body, scrollable: false });
+          current = t.heading;
+        } else {
+          // current 가 헤딩뿐 — 분할 불가한 큰 block 과 함께 스크롤 페이지로
+          pages.push({ html: current + block, scrollable: true });
+          current = '';
+          i++;
+        }
+        continue;
+      }
+      // 새 페이지인데도 한 조각도 못 넣고 분할도 불가 → 통째로 스크롤 허용
+      pages.push({ html: block, scrollable: true });
+      i++;
     }
     if (current) pages.push({ html: current, scrollable: false });
 
     document.body.removeChild(sandbox);
-    return pages;
+    return pages.length ? pages : [{ html: '', scrollable: false }];
   }
 
   // ── 렌더링 ────────────────────────────────────────────────
@@ -549,11 +671,12 @@
     const p = pages[idx];
     if (p) {
       scroll.innerHTML = p.html;
-      scroll.classList.toggle('scrollable', !!p.scrollable);
       scroll.scrollTop = 0;
       num.textContent = idx + 1;
       highlightDiffs(scroll);
       addCopyButtons(scroll);
+      // 측정 오차·리사이즈 등으로 내용이 페이지를 넘치면 잘려서 안 보이지 않도록 스크롤 허용
+      scroll.classList.toggle('scrollable', !!p.scrollable || scroll.scrollHeight > scroll.clientHeight + 1);
     } else {
       scroll.innerHTML = '';
       scroll.classList.remove('scrollable');
@@ -575,13 +698,39 @@
   }
 
   function loadMd(md) {
-    pages = paginate(wrapSentences(md));
-    currentSpread = 0;
-    renderSpread();
+    requestAnimationFrame(() => {
+      pages = paginate(wrapSentences(md));
+      currentSpread = 0;
+      renderSpread();
+    });
   }
 
   function prevSpread() { if (currentSpread > 0) { currentSpread--; renderSpread(); } }
   function nextSpread() { if ((currentSpread + 1) * perSpread() < pages.length) { currentSpread++; renderSpread(); } }
+
+  // ── 리사이즈 재분할 — 보던 위치(현재 왼쪽 페이지 머리글)를 앵커로 보존 ──
+  function textOf(html) {
+    const d = document.createElement('div');
+    d.innerHTML = html;
+    return (d.textContent || '').replace(/\s+/g, ' ').trim();
+  }
+  function repaginate() {
+    if (lastMd == null) { renderSpread(); return; }
+    const cur = pages[currentSpread * perSpread()];
+    const anchor = cur ? textOf(cur.html).slice(0, 30) : '';
+    requestAnimationFrame(() => {
+      pages = paginate(wrapSentences(lastMd));
+      const n = perSpread();
+      let idx = 0;
+      if (anchor) {
+        idx = pages.findIndex(p => textOf(p.html).startsWith(anchor));
+        if (idx < 0) idx = pages.findIndex(p => textOf(p.html).includes(anchor.slice(0, 16)));
+        if (idx < 0) idx = 0;
+      }
+      currentSpread = Math.floor(idx / n);
+      renderSpread();
+    });
+  }
 
   document.addEventListener('keydown', e => {
     if (e.key === 'ArrowLeft')  prevSpread();
@@ -590,13 +739,16 @@
 
   // resize 시 페이지 폭/높이가 바뀌므로 paginate 부터 다시 — 짧은 debounce
   let resizeTimer = null;
-  window.addEventListener('resize', () => {
+  function scheduleRepaginate() {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-      if (lastMd != null) loadMd(lastMd);
-      else renderSpread();
-    }, 150);
-  });
+    resizeTimer = setTimeout(repaginate, 150);
+  }
+  window.addEventListener('resize', scheduleRepaginate);
+  // IntelliJ JCEF 등 임베디드 브라우저는 window resize 가 안 뜨는 경우가 있어 ResizeObserver 로도 감지
+  if (window.ResizeObserver) {
+    const bookEl = document.querySelector('.book');
+    if (bookEl) new ResizeObserver(scheduleRepaginate).observe(bookEl);
+  }
 
   // ── 커스텀 다이얼로그 (IntelliJ Preview 등 native confirm/alert 미지원 환경 대응) ──
   function customDialog(message, { okText = '확인', cancelText = '취소' } = {}) {
@@ -652,17 +804,27 @@
   // ── 폴링 (세션 인덱스 기반) ─────────────────────────────
   let sessions = [], activeId = null;
   let shuttingDown = false;
+  let lastMaxUpdated = 0; // 지금까지 본 가장 최신 updated_at — 새 응답 도착 감지용
   const seenAt = {}; // session_id → 마지막으로 본 updated_at (배지 판정용)
 
   // ── 로컬에서 숨긴 세션 (서버 DELETE 실패해도 화면에서 치울 수 있도록) ──
   const HIDDEN_KEY = 'claude-viewer-hidden-sessions';
-  let hiddenIds = new Set();
+  // id → 숨긴 시점의 updated_at. 이후 그보다 새 응답(updated_at 증가)이 오면 자동 해제.
+  let hiddenAt = {};
   try {
     const raw = localStorage.getItem(HIDDEN_KEY);
-    if (raw) hiddenIds = new Set(JSON.parse(raw));
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        // 구버전(id 배열) 마이그레이션 — 임계값 0 이면 새 응답 시 즉시 해제
+        for (const id of parsed) hiddenAt[id] = 0;
+      } else if (parsed && typeof parsed === 'object') {
+        hiddenAt = parsed;
+      }
+    }
   } catch (_) {}
   function saveHidden() {
-    try { localStorage.setItem(HIDDEN_KEY, JSON.stringify([...hiddenIds])); } catch (_) {}
+    try { localStorage.setItem(HIDDEN_KEY, JSON.stringify(hiddenAt)); } catch (_) {}
   }
 
   async function fetchText(file) {
@@ -712,7 +874,8 @@
     if (!(await customConfirm('viewer 서버를 종료할까요?\n다음 Claude 응답이 들어오면 자동으로 재시작됩니다.'))) return;
     let serverOk = false;
     try {
-      const res = await fetch('/server/shutdown', { method: 'POST' });
+      await apiReady;
+      const res = await fetch(`${apiBase}/server/shutdown`, { method: 'POST' });
       // 연결이 끊겨도 ok 로 본다 (정상 종료 흐름)
       serverOk = res.ok || res.status === 204;
     } catch (_) {
@@ -720,7 +883,7 @@
       serverOk = true;
     }
     if (!serverOk) {
-      await customAlert('서버가 종료 요청을 처리하지 못했습니다.\n옛 버전 서버가 떠 있을 가능성이 큽니다.\n수동으로 19988 포트 프로세스를 종료해주세요.');
+      await customAlert(`서버가 종료 요청을 처리하지 못했습니다.\n옛 버전 서버가 떠 있을 가능성이 큽니다.\n수동으로 ${location.port} 포트 프로세스를 종료해주세요.`);
       return;
     }
     shuttingDown = true;
@@ -768,7 +931,8 @@
     let serverOk = false;
     let detail = '';
     try {
-      const res = await fetch(`/sessions/${encodeURIComponent(id)}`, { method: 'DELETE' });
+      await apiReady;
+      const res = await fetch(`${apiBase}/sessions/${encodeURIComponent(id)}`, { method: 'DELETE' });
       serverOk = res.ok || res.status === 204;
       if (!serverOk) detail = 'HTTP ' + res.status;
     } catch (err) {
@@ -781,7 +945,8 @@
         `서버가 세션을 삭제하지 못했습니다 (${detail}).\n옛 버전 서버가 떠 있을 가능성이 큽니다.\n\n탭을 화면에서만 숨길까요?\n(실제 파일은 24시간 후 자동 정리되며, 새 서버가 뜨면 정상 삭제도 가능합니다)`
       );
       if (!ok) return;
-      hiddenIds.add(id);
+      const cur = sessions.find(s => s.id === id);
+      hiddenAt[id] = cur ? (cur.updated_at || 0) : 0;
       saveHidden();
     }
 
@@ -839,17 +1004,19 @@
     let all = [];
     try { all = raw ? JSON.parse(raw) : []; } catch (_) { all = []; }
 
-    // sessions.json 에 더 이상 없는 id 는 hiddenIds 에서도 정리 (재등장 가능성 0)
-    if (hiddenIds.size) {
-      const known = new Set(all.map(s => s.id));
+    // 숨긴 뒤 새 응답이 온 세션은 해제하고(살아 있는 세션 재등장), sessions.json 에서 사라진 id 도 정리
+    if (Object.keys(hiddenAt).length) {
+      const byId = new Map(all.map(s => [s.id, s]));
       let changed = false;
-      for (const id of [...hiddenIds]) {
-        if (!known.has(id)) { hiddenIds.delete(id); changed = true; }
+      for (const id of Object.keys(hiddenAt)) {
+        const s = byId.get(id);
+        if (!s) { delete hiddenAt[id]; changed = true; }                                  // 더 이상 존재하지 않음
+        else if ((s.updated_at || 0) > hiddenAt[id]) { delete hiddenAt[id]; changed = true; } // 새 응답 도착 → 재등장
       }
       if (changed) saveHidden();
     }
 
-    sessions = all.filter(s => !hiddenIds.has(s.id));
+    sessions = all.filter(s => hiddenAt[s.id] === undefined);
 
     // 활성 세션이 없으면 가장 최근 세션으로 자동 선택 (탭 첫 진입 시에만)
     if (!activeId && sessions.length) {
@@ -864,13 +1031,39 @@
       if (activeId) seenAt[activeId] = sessions.find(s => s.id === activeId).updated_at;
     }
 
+    // 새 응답이 도착하면(최신 updated_at 갱신) 그 세션으로 자동 전환 —
+    // 탭을 닫았거나 다른 탭을 보고 있어도 진행 중인 응답을 놓치지 않는다.
+    const newest = sessions.reduce((a, b) => (!a || b.updated_at > a.updated_at) ? b : a, null);
+    if (newest && newest.updated_at > lastMaxUpdated) {
+      if (lastMaxUpdated !== 0 && newest.id !== activeId) {
+        activeId = newest.id;
+        seenAt[activeId] = newest.updated_at;
+        lastMd = null;
+      }
+      lastMaxUpdated = newest.updated_at;
+    }
+
     renderTabs();
     await pollActiveResponse();
     updateWaiting();
   }
 
+  // ── 다른 서버(예: IntelliJ 내장 서버 63342)에서 열렸으면 viewer 전용 API 를 절대주소로 라우팅 ──
+  // 정적 파일(sessions.json·응답)은 그 서버가 그대로 서빙하고, 삭제·종료만 viewer 서버(meta.port)로 보낸다.
+  let apiBase = '';
+  const apiReady = (async () => {
+    try {
+      const res = await fetch('viewer-meta.json?t=' + Date.now(), { cache: 'no-store' });
+      if (!res.ok) return;
+      const meta = JSON.parse(await res.text());
+      if (meta && meta.port && String(meta.port) !== location.port) {
+        apiBase = `http://127.0.0.1:${meta.port}`;
+      }
+    } catch (_) {}
+  })();
+
   pollSessions();
-  setInterval(pollSessions, 2000);
+  setInterval(pollSessions, 800);
 
   // IntelliJ JCEF 등 임베디드 브라우저에서 hidden 상태일 때 setInterval 이 throttling 되거나
   // 멈추는 경우가 있어, 다시 보이거나 포커스 받는 순간 즉시 한 번 강제 폴링한다.

@@ -25,7 +25,7 @@
 | `.claude/rules/*.md` | 관심사별 규칙 — 세션 시작 시 자동 로드 |
 | `.claude/skills/` | 커스텀 슬래시 커맨드 |
 | `.claude/hooks/` | 이벤트 훅 스크립트 |
-| `.claude/viewer/` | Claude 응답을 브라우저에서 실시간으로 보는 자체 뷰어 (`http://localhost:19988/response.html`) |
+| `.claude/viewer/` | Claude 응답을 브라우저에서 실시간으로 보는 자체 뷰어 (프로젝트별 고정 포트, 주소는 응답 시 콘솔 출력) |
 | `tests/` | 통합 테스트 (claude-code-sandbox 자식 세션 활용 — 사전 검증용, sync 대상 아님) |
 
 ---

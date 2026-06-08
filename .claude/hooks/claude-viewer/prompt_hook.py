@@ -5,23 +5,16 @@ Claude Code UserPromptSubmit Hook - claude-viewer
 """
 
 import sys
-import json
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from _index import get_session_id, update_session, VIEWER_DIR
-
-
-def read_hook_data() -> dict:
-    # Windows 한국어 로케일에서 sys.stdin 기본 인코딩이 cp949 라 UTF-8 JSON 이 mojibake 됨 → buffer 에서 직접 디코딩
-    try:
-        raw = sys.stdin.buffer.read().decode("utf-8", errors="replace")
-        return json.loads(raw) if raw.strip() else {}
-    except Exception:
-        return {}
+from _index import get_session_id, update_session, read_hook_data, is_viewer_enabled, VIEWER_DIR
 
 
 def main():
+    if not is_viewer_enabled():
+        sys.exit(0)
+
     data = read_hook_data()
     session_id = get_session_id(data)
 

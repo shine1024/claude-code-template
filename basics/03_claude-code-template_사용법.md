@@ -221,14 +221,15 @@ Redmine 일감 기반으로 작업하는 팀을 위한 통합 워크플로우입
 
 ### `claude-viewer` — 브라우저 응답 뷰어
 
-Claude 응답을 콘솔 대신 브라우저(`http://localhost:19988/response.html`)에서 책 페이지 UI로 봅니다.
+Claude 응답을 콘솔 대신 브라우저에서 책 페이지 UI로 봅니다. 정확한 주소는 응답 직후 콘솔에 출력됩니다(`http://127.0.0.1:<포트>/response.html`).
 
-- `UserPromptSubmit` 훅이 세션별 대기 마커(`viewer/.waiting-<sid>`)를 만들고, `Stop` 훅이 transcript 를 파싱해 `viewer/response-<sid>.md` 에 응답 + 도구 호출을 시간순으로 기록합니다
-- 멀티 세션 지원 — `sessions.json` 인덱스를 통해 여러 세션을 탭으로 분리. 비활성 탭에 새 응답이 도착하면 ● 배지로 알림 (자동 전환 없음). 24시간 무활동 세션은 자동 정리
-- 페이지는 2초 폴링으로 자동 갱신 — 측정 기반 페이지 분할로 세로 스크롤 없이 좌/우 페이지로 이동, `+`/`-` diff 컬러링, 응답 대기 중 상단 progress bar
-- 의존성은 Python stdlib 만 (marked.js 는 CDN). Anthropic API 송신 없음, HTTP 서버는 `127.0.0.1:19988` 만 listen
-- 포트 점유 시 충돌. `stop_hook.py` 의 `PORT` 상수에서 변경 가능
-- 탭 우측 × 버튼으로 세션 수동 삭제, 툴바 ⏻ 버튼으로 서버 수동 종료(다음 응답에 자동 재기동) 가능
+- `UserPromptSubmit` 훅이 세션별 대기 마커(`viewer/.waiting-<sid>`)를 만들고, `PostToolUse` 훅이 도구 호출마다 `viewer/response-<sid>.md` 를 점진 갱신하며, `Stop` 훅이 transcript 를 파싱해 최종 응답 + 도구 호출을 시간순으로 확정합니다
+- 멀티 세션 지원 — `sessions.json` 인덱스를 통해 여러 세션을 탭으로 분리. 비활성 탭에 새 응답이 도착하면 ● 배지로 알림 (자동 전환 없음). 24시간 무활동 세션은 자동 정리. 종료한 탭도 같은 세션에 새 응답이 오면 자동 재등장
+- 페이지는 폴링으로 자동 갱신 — 측정 기반 페이지 분할로 세로 스크롤 없이 좌/우 페이지로 이동, `+`/`-` diff 컬러링, 응답 대기 중 상단 progress bar
+- 의존성은 Python stdlib 만 (marked.js 는 CDN). Anthropic API 송신 없음, HTTP 서버는 `127.0.0.1` 의 프로젝트별 고정 포트만 listen
+- 포트는 프로젝트 경로 해시로 자동 산출(`_index.py` `get_port()`, 20000–29999)되어 프로젝트 간 충돌하지 않으며, 현재 포트는 `viewer/viewer-meta.json` 에 기록됩니다
+- IntelliJ 등 IDE 내장 서버(예: 63342)로 페이지를 열어도 삭제·종료가 동작 — `viewer-meta.json` 의 viewer 포트로 API 를 교차출처 호출(서버가 로컬호스트 Origin 만 CORS 허용)
+- 탭 우측 × 버튼으로 세션 수동 삭제, 툴바 ⏻ 버튼으로 서버 종료 — 종료 시 런타임 파일(`response-*`·`.waiting-*`·`sessions.json`·`viewer-meta.json`)을 함께 클리어하고 다음 응답에 자동 재기동
 
 ### RULE_MODE — 규칙 작성 모드
 

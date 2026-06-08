@@ -47,6 +47,17 @@
         ]
       }
     ],
+    "PostToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/claude-viewer/post_tool_hook.py"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "matcher": "",

@@ -5,6 +5,23 @@
 
 ---
 
+## 2026-06-08
+
+- [기능] `claude-viewer` — 프로젝트별 고정 포트 자동 산출
+  - `_index.py` `get_port()` 가 viewer 디렉터리 경로 해시로 포트(20000–29999)를 고정 산출. 기존 고정 포트(19988)를 대체해 한 머신에서 여러 프로젝트가 viewer 를 동시에 띄워도 충돌하지 않음
+- [기능] `claude-viewer` — `PostToolUse` 훅으로 응답 실시간 점진 표시
+  - `post_tool_hook.py` 신규: 도구 호출마다 `response-<sid>.md` 를 점진 갱신, `Stop` 이 최종 확정. `settings.json` 에 `PostToolUse` 등록
+  - transcript 파싱(`extract_turn_blocks`)을 `stop_hook` 에서 `_index` 로 이동해 두 훅이 공유
+- [기능] `claude-viewer` — IntelliJ Built-in Preview 통합
+  - `viewer-meta.json` 에 viewer 포트를 기록하고, IDE 내장 서버(예: 63342)에서 페이지를 열어도 삭제·종료 API 를 viewer 포트로 교차출처 호출하도록 라우팅
+  - `server.py` 에 로컬호스트 계열 Origin 만 허용하는 CORS + `OPTIONS` 프리플라이트 처리 추가 (서버는 `127.0.0.1` 로컬 바인딩)
+- [기능] `claude-viewer` — 서버 종료(⏻) 시 런타임 파일 클리어
+  - `purge_all_runtime()` 추가: 종료 직전 `response-*.md`·`.waiting-*`·`sessions.json`·`viewer-meta.json` 삭제(정적 `response.html` 보존). 인덱스에서 빠져 청소되지 않던 고아 마커도 일괄 정리
+- [수정] `claude-viewer` — 종료한 세션 탭이 새 응답에 자동 재등장
+  - 숨김 추적을 `Set` → `{id: 숨긴 시점 updated_at}` 로 변경. 숨긴 뒤 응답이 갱신되면 자동 해제. 살아 있는 세션이 한 번 닫으면 영구히 숨겨지던 문제 해결
+
+---
+
 ## 2026-06-05
 
 - [수정] `sync-template` — 한글 인코딩 깨짐(`?` 치환) 해결

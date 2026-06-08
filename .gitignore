@@ -12,6 +12,7 @@ CLAUDE.local.md
 .claude/viewer/.waiting-*
 .claude/viewer/sessions.json
 .claude/viewer/sessions.json.tmp
+.claude/viewer/viewer-meta.json
 
 # Python 캐시
 __pycache__/
