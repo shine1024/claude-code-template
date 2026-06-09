@@ -73,6 +73,7 @@ $JsonContent = "{
     `"SLACK_USER_EMAIL`": `"Slack 알림 훅 — 슬랙 개인 계정 메일주소`",
     `"SESSION_USER_NAME`": `"session-log·share-rules — 작성자 이름`",
     `"PROJECT_NAME`": `"session-log·share-rules·analyze-report — 프로젝트명 (시트의 project 컬럼 / 보고서 헤더에 기록)`",
+    `"CLAUDE_VIEWER_ENABLED`": `"claude-viewer 브라우저 응답 뷰어 — true 로 변경 시 활성화 (기본 비활성)`",
     `"GOOGLE_SERVICE_ACCOUNT_KEY_PATH`": `"Google Sheets 연동 — 서비스 계정 JSON 키 경로`",
     `"GOOGLE_SHEETS_FEEDBACK_ID`": `"Google Sheets 연동 — 대상 Spreadsheet ID`",
     `"GOOGLE_SHEETS_SESSION_LOG_GID`": `"session-log·analyze-report — 회고 시트의 gid`",

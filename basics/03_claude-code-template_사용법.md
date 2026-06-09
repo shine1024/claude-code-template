@@ -223,6 +223,7 @@ Redmine 일감 기반으로 작업하는 팀을 위한 통합 워크플로우입
 
 Claude 응답을 콘솔 대신 브라우저에서 책 페이지 UI로 봅니다. 정확한 주소는 응답 직후 콘솔에 출력됩니다(`http://127.0.0.1:<포트>/response.html`).
 
+- 기본은 비활성(opt-in) — `.claude/settings.local.json` 의 `env` 에 `"CLAUDE_VIEWER_ENABLED": "true"` 를 추가해야 동작합니다 (미설정 시 세 훅 모두 즉시 종료)
 - `UserPromptSubmit` 훅이 세션별 대기 마커(`viewer/.waiting-<sid>`)를 만들고, `PostToolUse` 훅이 도구 호출마다 `viewer/response-<sid>.md` 를 점진 갱신하며, `Stop` 훅이 transcript 를 파싱해 최종 응답 + 도구 호출을 시간순으로 확정합니다
 - 멀티 세션 지원 — `sessions.json` 인덱스를 통해 여러 세션을 탭으로 분리. 비활성 탭에 새 응답이 도착하면 ● 배지로 알림 (자동 전환 없음). 24시간 무활동 세션은 자동 정리. 종료한 탭도 같은 세션에 새 응답이 오면 자동 재등장
 - 페이지는 폴링으로 자동 갱신 — 측정 기반 페이지 분할로 세로 스크롤 없이 좌/우 페이지로 이동, `+`/`-` diff 컬러링, 응답 대기 중 상단 progress bar

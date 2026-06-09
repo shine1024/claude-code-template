@@ -5,6 +5,14 @@
 
 ---
 
+## 2026-06-09
+
+- [문서] `claude-viewer` — 활성화 환경변수(`CLAUDE_VIEWER_ENABLED`) 사용법 누락 보완
+  - 코드 기본값은 비활성(opt-in)인데 README 가 "init.bat 후 바로 사용 가능"으로 단언하던 모순 정정
+  - `guides/hooks.md` 에 claude-viewer 훅 섹션 + 환경변수 표 행 추가, `basics/03` 뷰어 섹션에 활성화 방법 명시, `init.bat` settings.local.json 시드에 변수 추가
+
+---
+
 ## 2026-06-08
 
 - [기능] `claude-viewer` — 프로젝트별 고정 포트 자동 산출

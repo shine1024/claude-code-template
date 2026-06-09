@@ -62,7 +62,7 @@ init.bat <대상프로젝트경로>     # .claude/ 폴더 복사 + settings.loca
 
 ### 응답 뷰어 (claude-viewer)
 
-Claude 응답을 콘솔 대신 브라우저에서 책 페이지 UI로 봅니다. 포트는 프로젝트 경로 해시로 고정 산출되어(20000–29999) 프로젝트 간 충돌하지 않으며, 정확한 주소(`http://127.0.0.1:<포트>/response.html`)는 응답 직후 콘솔에 출력됩니다. `UserPromptSubmit`·`PostToolUse`·`Stop` 훅이 자동으로 동작하므로 별도 실행 불필요 — `init.bat` 적용 후 바로 사용 가능합니다. 여러 Claude Code 세션을 동시에 띄워도 탭 UI 로 세션별 응답이 분리됩니다.
+Claude 응답을 콘솔 대신 브라우저에서 책 페이지 UI로 봅니다. 포트는 프로젝트 경로 해시로 고정 산출되어(20000–29999) 프로젝트 간 충돌하지 않으며, 정확한 주소(`http://127.0.0.1:<포트>/response.html`)는 응답 직후 콘솔에 출력됩니다. 기본은 비활성(opt-in)이며, `.claude/settings.local.json` 의 `env` 에 `"CLAUDE_VIEWER_ENABLED": "true"` 를 추가하면 `UserPromptSubmit`·`PostToolUse`·`Stop` 훅이 동작합니다. 여러 Claude Code 세션을 동시에 띄워도 탭 UI 로 세션별 응답이 분리됩니다.
 
 > 상세: [③ 사용법 §5](./basics/03_claude-code-template_사용법.md#5-부가-기능)
 
